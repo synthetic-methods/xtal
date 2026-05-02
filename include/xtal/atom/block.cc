@@ -22,6 +22,9 @@ static_assert(bond::pack_size_q<block_t<double[2]>>);
 static_assert(fixed_shaped_q<block_t<int(&)[1]>>);
 static_assert(fixed_valued_q<block_t<int(&)[1]>>);
 
+static_assert( objective_q<block_t<int   [1]>>);
+static_assert(subjective_q<block_t<int(&)[1]>>);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/

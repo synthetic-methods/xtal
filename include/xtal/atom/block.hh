@@ -69,6 +69,17 @@ struct superblock<Us...>
 		template <size_type I>
 		using       tuple_element = _std::tuple_element<I, archetype>;
 
+	public:// OPERATE
+		XTAL_FN0_(go) (XTAL_DEF_(return,inline,let)
+		objectify, [] (auto &&o) XTAL_0FN {
+			if constexpr ((...or _xtd::mutable_reference<Us>)) {
+				return qualify_f<T>(XTAL_REF_(o)).twin();
+			}
+			else {
+				return qualify_f<T>(XTAL_REF_(o)).self();
+			}
+		})
+
 	public:// CONSTRUCT
 		using S_::S_;
 
@@ -117,6 +128,10 @@ struct superblock<A>
 
 		static_assert(_std::same_as<U, typename S_::value_type>);
 
+	public:// OPERATE
+		XTAL_FN0_(go) (XTAL_DEF_(return,inline,let)
+		objectify, [] (auto &&o) XTAL_0FN_(to) (qualify_f<T>(XTAL_REF_(o)).twin()))
+
 	public:// CONSTRUCT
 		using S_::S_;
 
@@ -157,6 +172,10 @@ struct superblock<A>
 
 		static_assert(_std::same_as<U, typename S_::value_type>);
 
+	public:// OPERATE
+		XTAL_FN0_(go) (XTAL_DEF_(return,inline,let)
+		objectify, [] (auto &&o) XTAL_0FN_(to) (qualify_f<T>(XTAL_REF_(o))))
+
 	public:// CONSTRUCT
 	//	using S_::S_;
 		XTAL_NEW_(delete) (homotype, noexcept=default)
@@ -165,7 +184,6 @@ struct superblock<A>
 		XTAL_NEW_(copy)   (homotype, noexcept=default)
 		XTAL_NEW_(then)   (homotype, noexcept:homotype)
 	//	XTAL_NEW_(else)   (homotype, noexcept:S_)
-
 
 		XTAL_NEW_(explicit)
 		homotype(variable<size_type> const n)

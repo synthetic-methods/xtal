@@ -41,10 +41,13 @@ struct stash
 	{
 		using S_ = holotype<T>;
 		using U  = _std::underlying_type_t<_std::byte>;
-
+		/**/
+		static size_type constexpr N_bytes = _detail::aligned<As...>::size();
+		_std::byte mutable m_bytes[N_bytes];
+		/*/
 		static size_type constexpr N_bytes = one << _std::bit_width(_detail::aligned<As...>::size() - one);
-		alignas (N_bytes) static _std::byte constexpr m_zeros[N_bytes]{};
-		alignas (N_bytes)        _std::byte mutable   m_bytes[N_bytes]  ;
+		alignas(N_bytes) _std::byte mutable m_bytes[N_bytes];
+		/***/
 
 	protected:
 		template <class ...Us>
@@ -119,7 +122,7 @@ struct stash
 
 };
 template <>
-struct stash<> : stash<size_type[bond::fit<>::alignment{}()]>
+struct stash<> : stash<size_type[bond::fit<>::alignment]>
 {
 };
 

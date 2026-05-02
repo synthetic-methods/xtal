@@ -293,7 +293,13 @@ template <metaconstant_q T    >	struct   fixed_valued<T> {using value_type =   t
 template <array_valued_q T    >	struct   fixed_valued<T> {using value_type =  array_valued_t<T>;};
 template <inner_valued_q T    >	struct   fixed_valued<T> {using value_type =  inner_valued_t<T>;};
 template <under_valued_q T    >	struct   fixed_valued<T> {using value_type =  under_valued_t<T>;};
+/*/
+template <class U, class ...Us>	requires (...and _std::same_as<U, Us>)
+struct   fixed_valued<_std::tuple<U, Us...>> {using value_type =  common_t<U, Us...>;};
 
+template <class U, class ...Us>	requires (...and _std::same_as<U, Us>)
+struct   fixed_valued<_std::pair <U, Us...>> {using value_type =  common_t<U, Us...>;};
+/***/
 template <class T             >	struct   fluid_valued    {using value_type =                 T ;};// TODO: Remove scalar specialization?
 template < fixed_valued_q T   >	struct   fluid_valued<T> {using value_type =  fixed_valued_t<T>;};
 template <scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = scalar_valued_t<T>;};

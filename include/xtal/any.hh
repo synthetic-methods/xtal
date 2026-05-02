@@ -37,6 +37,7 @@ objective_f(auto &&o)
 noexcept -> auto
 {
 	XTAL_IF0
+	XTAL_0IF_(to) (XTAL_REF_(o).objectify())
 	XTAL_0IF (constant_q<decltype(o)>) {return XTAL_REF_(o)();}
 	XTAL_0IF (variable_q<decltype(o)>) {return XTAL_REF_(o)  ;}
 }

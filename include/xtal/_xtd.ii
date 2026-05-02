@@ -496,24 +496,32 @@ template <class T=void> using       plus = _std::      plus<T>;
 template <class T=void>
 struct real
 {
+private:
+	using U = XTAL_NOM_(T);
+
+public:
 	XTAL_DEF_(return,inline,let)
-	operator() (auto &&w) const
+	operator() (auto &&u) const
 	noexcept -> auto
+	requires _std::same_as<U, void> or _std::same_as<U, XTAL_ALL_(u)>
 	{
-		if constexpr (_std::same_as<T, void>) {return                _std::real(XTAL_REF_(w)) ;}
-		else                                  {return static_cast<T>(_std::real(XTAL_REF_(w)));}
+		_std::real(XTAL_REF_(u));
 	}
 
 };
 template <class T=void>
 struct imag
 {
+private:
+	using U = XTAL_NOM_(T);
+
+public:
 	XTAL_DEF_(return,inline,let)
-	operator() (auto &&w) const
+	operator() (auto &&u) const
 	noexcept -> auto
+	requires _std::same_as<U, void> or _std::same_as<U, XTAL_ALL_(u)>
 	{
-		if constexpr (_std::same_as<T, void>) {return                _std::imag(XTAL_REF_(w)) ;}
-		else                                  {return static_cast<T>(_std::imag(XTAL_REF_(w)));}
+		_std::imag(XTAL_REF_(u));
 	}
 
 };

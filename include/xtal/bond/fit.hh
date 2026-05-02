@@ -12,6 +12,40 @@ namespace xtal::bond
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace _detail
+{//////////////////////////////////////////////////////////////////////////////
+
+template <cardinal_variable_q U>
+struct fitting
+{
+	U const width{};
+	U const depth{};
+	U const shift;
+	U const  mark;
+	U const  mask;
+
+	XTAL_NEW_(explicit)
+	fitting(U m_depth, U n_shift=0)
+	noexcept
+	:	width (m_depth >> 3U)
+	,	depth (m_depth)
+	,	shift (n_shift)
+	,	mark  (mark_f(m_depth))
+	,	mask  (mask_f(m_depth, n_shift))
+	{}
+
+private:
+	XTAL_DEF_(set) N_width  =  sizeof(U) << 0;
+	XTAL_DEF_(set) N_depth  =  sizeof(U) << 3;
+	XTAL_DEF_(set) N_mask   = ~U{};
+
+	XTAL_DEF_(return,inline,set) mark_f(U const m) noexcept -> auto {return N_mask >> N_depth - (m);}
+	XTAL_DEF_(return,inline,set) mask_f(U const m,
+	                                    U const n) noexcept -> auto {return        mark_f(m) << (n);}
+
+};
+
+
 //////////////////////////////////////////////////////////////////////////////////
 
 template <size_type N_size>
@@ -27,49 +61,58 @@ struct fit_recognize : fit_recognize<N_size/2>
 template <>
 struct fit_recognize<0x1>
 {
-	using        fix =  cardinal_constant_t<0>;
-	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 0)>;
-	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 0)>;
-//	using alpha_type =                       XTAL_STD_(flt, 0) ;
-//	using aphex_type = _std::complex<alpha_type>;
-
-	static sigma_type constexpr N_exponent = 3;
-	static sigma_type constexpr N_fraction = 4;
+	XTAL_TYP_(set)        fix =  cardinal_constant_t<0>;
+	XTAL_TYP_(set) delta_type = _std::  make_signed_t<XTAL_STD_(int, 0)>;
+	XTAL_TYP_(set) sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 0)>;
+//	XTAL_TYP_(set) alpha_type =                       XTAL_STD_(flt, 0) ;
+//	XTAL_TYP_(set) aphex_type = _std::complex<alpha_type>;
+	XTAL_TYP_(set)    fitting = _detail::fitting<sigma_type>;
+	XTAL_DEF_(set)   negative =  fitting{ 8};
+	XTAL_DEF_(set)   positive =  fitting{ 7};
+	XTAL_DEF_(set)   fraction =  fitting{ 4};
+	XTAL_DEF_(set)   IEC      =  constant_t<sigma_type{0}>{};
+	XTAL_DEF_(set)   FMA      =  constant_t<sigma_type{0}>{};
+	XTAL_TYP_(set)   MT19937  =  void;
 
 };
 template <>
 struct fit_recognize<0x2>
 {
-	using        fix =  cardinal_constant_t<0>;
-	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 1)>;
-	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 1)>;
-//	using alpha_type =                       XTAL_STD_(flt, 1) ;
-//	using aphex_type =  _std::complex<alpha_type>;
-
-	static sigma_type constexpr N_exponent =  5;
-	static sigma_type constexpr N_fraction = 10;
+	XTAL_TYP_(set)        fix =  cardinal_constant_t<0>;
+	XTAL_TYP_(set) delta_type = _std::  make_signed_t<XTAL_STD_(int, 1)>;
+	XTAL_TYP_(set) sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 1)>;
+//	XTAL_TYP_(set) alpha_type =                       XTAL_STD_(flt, 1) ;
+//	XTAL_TYP_(set) aphex_type = _std::complex<alpha_type>;
+	XTAL_TYP_(set)    fitting = _detail::fitting<sigma_type>;
+	XTAL_DEF_(set)   negative =  fitting{16};
+	XTAL_DEF_(set)   positive =  fitting{15};
+	XTAL_DEF_(set)   fraction =  fitting{10};
+	XTAL_DEF_(set)   IEC      =  constant_t<sigma_type{0}>{};
+	XTAL_DEF_(set)   FMA      =  constant_t<sigma_type{0}>{};
+	XTAL_TYP_(set)   MT19937  =  void;
 
 };
 #if 0x20 <= XTAL_SYS_(CPU)
 template <>
 struct fit_recognize<0x4>
 {
-	using        fix =  cardinal_constant_t<0>;
-	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 2)>;
-	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 2)>;
-	using alpha_type =                       XTAL_STD_(flt, 2) ;
-	using aphex_type = _std::complex<alpha_type>;
+	XTAL_TYP_(set)        fix =  cardinal_constant_t<0>;
+	XTAL_TYP_(set) delta_type = _std::  make_signed_t<XTAL_STD_(int, 2)>;
+	XTAL_TYP_(set) sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 2)>;
+	XTAL_TYP_(set) alpha_type =                       XTAL_STD_(flt, 2) ;
+	XTAL_TYP_(set) aphex_type = _std::complex<alpha_type>;
+	XTAL_TYP_(set)    fitting = _detail::fitting<sigma_type>;
+	XTAL_DEF_(set)   negative =  fitting{32};
+	XTAL_DEF_(set)   positive =  fitting{31};
+	XTAL_DEF_(set)   fraction =  fitting{23};
 
-	static sigma_type constexpr N_exponent =  8;
-	static sigma_type constexpr N_fraction = 23;
-
+	XTAL_DEF_(set)   IEC      =  constant_t<sigma_type{_std::numeric_limits<alpha_type>::is_iec559? XTAL_SYS_(IEC): 0}>{};
 #ifdef FP_FAST_FMAF
-	static sigma_type constexpr N_fused = 0b1;
+	XTAL_DEF_(set)   FMA      =  constant_t<sigma_type{1}>{};
 #else
-	static sigma_type constexpr N_fused = 0b0;
+	XTAL_DEF_(set)   FMA      =  constant_t<sigma_type{0}>{};
 #endif
-
-	using mt19937_t = _std::mersenne_twister_engine<sigma_type, 32, 624, 397, 31
+	XTAL_TYP_(set)   MT19937  = _std::mersenne_twister_engine<sigma_type, 32, 624, 397, 31
 	,	0x9908B0DFU, 11
 	,	0xFFFFFFFFU,  7
 	,	0x9D2C5680U, 15
@@ -83,22 +126,23 @@ struct fit_recognize<0x4>
 template <>
 struct fit_recognize<0x8>
 {
-	using        fix =  cardinal_constant_t<0>;
-	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 3)>;
-	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 3)>;
-	using alpha_type =                       XTAL_STD_(flt, 3) ;
-	using aphex_type = _std::complex<alpha_type>;
+	XTAL_TYP_(set)        fix =  cardinal_constant_t<0>;
+	XTAL_TYP_(set) delta_type = _std::  make_signed_t<XTAL_STD_(int, 3)>;
+	XTAL_TYP_(set) sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 3)>;
+	XTAL_TYP_(set) alpha_type =                       XTAL_STD_(flt, 3) ;
+	XTAL_TYP_(set) aphex_type = _std::complex<alpha_type>;
+	XTAL_TYP_(set)    fitting = _detail::fitting<sigma_type>;
+	XTAL_DEF_(set)   negative =  fitting{64};
+	XTAL_DEF_(set)   positive =  fitting{63};
+	XTAL_DEF_(set)   fraction =  fitting{52};
 
-	static sigma_type constexpr N_exponent = 11;
-	static sigma_type constexpr N_fraction = 52;
-
+	XTAL_DEF_(set)   IEC      =  constant_t<sigma_type{_std::numeric_limits<alpha_type>::is_iec559? XTAL_SYS_(IEC): 0}>{};
 #ifdef FP_FAST_FMA
-	static sigma_type constexpr N_fused = 0b1;
+	XTAL_DEF_(set)   FMA      =  constant_t<sigma_type{1}>{};
 #else
-	static sigma_type constexpr N_fused = 0b0;
+	XTAL_DEF_(set)   FMA      =  constant_t<sigma_type{0}>{};
 #endif
-
-	using mt19937_t = _std::mersenne_twister_engine<sigma_type, 64, 312, 156, 31
+	XTAL_TYP_(set)   MT19937  = _std::mersenne_twister_engine<sigma_type, 64, 312, 156, 31
 	,	0xB5026F5A'A96619E9U, 29
 	,	0x55555555'55555555U, 17
 	,	0x71D67FFF'EDA60000U, 37
@@ -133,73 +177,36 @@ private:
 	using S_ = fit_recognize<N_size>;
 
 public:
-	using typename S_::delta_type;
-	using typename S_::sigma_type;
+	XTAL_TYP_(set) typename S_::sigma_type;
+	XTAL_TYP_(set) typename S_::delta_type;
+	XTAL_DEF_(set)    sigma_0 = sigma_type{0};
+	XTAL_DEF_(set)    sigma_1 = sigma_type{1};
+	XTAL_DEF_(set)    delta_0 = delta_type{0};
+	XTAL_DEF_(set)    delta_1 = delta_type{1};
 
-	static delta_type constexpr delta_0{0};
-	static delta_type constexpr delta_1{1};
+	XTAL_DEF_(return,inline,set) value_f(cardinal_q auto  i) noexcept -> auto {return static_cast<sigma_type>(i);}
+	XTAL_DEF_(return,inline,set) value_f( ordinal_q auto  i) noexcept -> auto {return static_cast<delta_type>(i);}
+	XTAL_DEF_(return,inline,set) value_f(sigma_type const i) noexcept -> auto {return                        (i);}
+	XTAL_DEF_(return,inline,set) value_f(delta_type const i) noexcept -> auto {return                        (i);}
 
-	static sigma_type constexpr sigma_0{0};
-	static sigma_type constexpr sigma_1{1};
+	XTAL_TYP_(set) S_::negative;
+	XTAL_TYP_(set) S_::positive;
+	XTAL_TYP_(set) S_::fraction;
+	XTAL_DEF_(set)     exponent = typename S_::fitting{positive.depth - fraction.depth, fraction.depth};
+	XTAL_DEF_(set)         unit = typename S_::fitting{exponent.depth -        sigma_1, fraction.depth};
+	XTAL_DEF_(set)         sign = typename S_::fitting{negative.depth - positive.depth, positive.depth};
+	XTAL_DEF_(set)         full = typename S_::fitting{negative.depth};
+	XTAL_DEF_(set)         half = typename S_::fitting{full.depth/2, full.depth/2};
 
-	static sigma_type constexpr N_width = N_size;
-	static sigma_type constexpr N_depth = N_size << 3U;
-
-	static sigma_type constexpr N_fraction =          S_::N_fraction;
-	static sigma_type constexpr N_exponent =          S_::N_exponent;
-	static sigma_type constexpr N_positive = N_fraction + N_exponent;
-	static sigma_type constexpr N_negative = N_positive + 1;
-	static sigma_type constexpr N_unit     = N_exponent - 1;
-	static sigma_type constexpr N_sign     =              1;
-
-	struct word
-	{
-		sigma_type const width;
-		sigma_type const depth;
-		sigma_type const shift;
-		sigma_type const mark;
-		sigma_type const mask;
-
-		XTAL_DEF_(return,inline,set) flag_f(sigma_type const m=0)                       noexcept -> sigma_type {return sigma_1 << 1 << m - 1;};
-		XTAL_DEF_(return,inline,set) mark_f(sigma_type const m=0)                       noexcept -> sigma_type {return ~-flag_f(m)     ;};
-		XTAL_DEF_(return,inline,set) mask_f(sigma_type const m=0, sigma_type const n=0) noexcept -> sigma_type {return   mark_f(m) << n;};
-
-		XTAL_NEW_(explicit)
-		word(sigma_type m_depth, sigma_type n_shift=0)
-		noexcept
-		:	width (m_depth >> 3U)
-		,	depth (m_depth)
-		,	shift (n_shift)
-		,	mark  (mark_f(m_depth))
-		,	mask  (mask_f(m_depth, n_shift))
-		{}
-
-	};
-	static word constexpr negative {N_negative};
-	static word constexpr positive {N_positive};
-	static word constexpr fraction {N_fraction};
-	static word constexpr exponent {N_exponent, N_fraction};
-	static word constexpr     unit     {N_unit, N_fraction};
-	static word constexpr     sign     {N_sign, N_positive};
-	static word constexpr     half {N_depth >> 1U, N_depth >> 1U};
-	static word constexpr     full = negative;
-
-	using default_alignment = cardinal_constant_t<XTAL_SYS_(L1)/N_width>;
-
+	XTAL_DEF_(set)         default_alignment = cardinal_constant_t<XTAL_SYS_(L1)/full.width>{};
 #ifdef __cpp_lib_hardware_interference_size
-	using constructive_alignment = cardinal_constant_t<_std::hardware_constructive_interference_size/N_width>;
-	using  destructive_alignment = cardinal_constant_t<_std:: hardware_destructive_interference_size/N_width>;
+	XTAL_DEF_(set)    constructive_alignment = cardinal_constant_t<_std::hardware_constructive_interference_size/full.width>{};
+	XTAL_DEF_(set)     destructive_alignment = cardinal_constant_t<_std:: hardware_destructive_interference_size/full.width>{};
 #else
-	using constructive_alignment = default_alignment;
-	using  destructive_alignment = default_alignment;
+	XTAL_DEF_(set)    constructive_alignment = default_alignment;
+	XTAL_DEF_(set)     destructive_alignment = default_alignment;
 #endif
-	using alignment = destructive_alignment;
-
-
-	XTAL_DEF_(return,inline,set) working_f(     delta_type i) noexcept -> auto {return i;}
-	XTAL_DEF_(return,inline,set) working_f(     sigma_type i) noexcept -> auto {return i;}
-	XTAL_DEF_(return,inline,set) working_f( ordinal_q auto i) noexcept -> auto {return static_cast<delta_type>(i);}
-	XTAL_DEF_(return,inline,set) working_f(cardinal_q auto i) noexcept -> auto {return static_cast<sigma_type>(i);}
+	XTAL_DEF_(set)                 alignment = destructive_alignment;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -235,12 +242,7 @@ private:
 public:
 	template <int N_shift=0>
 	using adjust = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
-	
-	using halved = fit_realize<(N_size>>1)>;
-
-	using S_::N_width;
-	using S_::N_depth;
-	using S_::N_fused;
+	using halved = fit_realize<(N_size >> 1)>;
 
 	using S_:: negative;
 	using S_:: positive;
@@ -248,67 +250,44 @@ public:
 	using S_:: exponent;
 	using S_::     unit;
 	using S_::     sign;
-	using S_::     half;
 	using S_::     full;
-
+	using S_::     half;
+	using S_::  sigma_0;
+	using S_::  sigma_1;
 	using S_::  delta_0;
 	using S_::  delta_1;
 
-	using S_::  sigma_0;
-	using S_::  sigma_1;
-
-	using typename S_::delta_type;
-	using typename S_::sigma_type;
-	using typename S_::alpha_type;
-	using typename S_::aphex_type;
-	using typename S_::mt19937_t;
-
-
-	static alpha_type constexpr alpha_0{0};
-	static alpha_type constexpr alpha_1{1};
-	static alpha_type constexpr alpha_oo{_std::numeric_limits<alpha_type>().infinity()};
-	
-	static aphex_type constexpr aphex_0{0, 0};
-	static aphex_type constexpr aphex_1{1, 0};
-	static aphex_type constexpr aphex_i{0, 1};
-
-	XTAL_DEF_(return,inline,set) working_f(alpha_type      i) noexcept -> auto {return                         i ;}
-	XTAL_DEF_(return,inline,set) working_f(    real_q auto i) noexcept -> auto {return static_cast<alpha_type>(i);}
-	XTAL_DEF_(return,inline,set) working_f(integral_q auto i) noexcept -> auto {return          S_::working_f(i);}
-
+	XTAL_TYP_(set) typename S_::MT19937;
+	XTAL_TYP_(set) typename S_::sigma_type;
+	XTAL_TYP_(set) typename S_::delta_type;
+	XTAL_TYP_(set) typename S_::alpha_type;
+	XTAL_TYP_(set) typename S_::aphex_type;
+	XTAL_DEF_(set)    alpha_0 = alpha_type{0};
+	XTAL_DEF_(set)    alpha_1 = alpha_type{1};
+	XTAL_DEF_(set)    aphex_0 = aphex_type{0, 0};
+	XTAL_DEF_(set)    aphex_1 = aphex_type{1, 0};
+	XTAL_DEF_(set)    aphex_i = aphex_type{0, 1};
 
 	XTAL_DEF_(return,inline,set)
 	delta_f(auto &&o)
 	noexcept -> delta_type
 	{
-		if constexpr (cardinal_q<decltype(o)>) {
-			return _std::bit_cast<delta_type>(static_cast<sigma_type>(XTAL_REF_(o)));
-		}
-		else {
-			return static_cast<delta_type>(XTAL_REF_(o));
-		}
+		if constexpr (cardinal_q<decltype(o)>) {return _std::bit_cast<delta_type>(static_cast<sigma_type>(XTAL_REF_(o)));}
+		else                                   {return    static_cast<delta_type>(                        XTAL_REF_(o) );}
 	}
 	XTAL_DEF_(return,inline,set)
 	sigma_f(auto &&o)
 	noexcept -> sigma_type
 	{
-		if constexpr (cardinal_q<decltype(o)>) {
-			return static_cast<sigma_type>(XTAL_REF_(o));
-		}
-		else {
-			return _std::bit_cast<sigma_type>(static_cast<delta_type>(XTAL_REF_(o)));
-		}
+		if constexpr (cardinal_q<decltype(o)>) {return    static_cast<sigma_type>(                        XTAL_REF_(o) );}
+		else                                   {return _std::bit_cast<sigma_type>(static_cast<delta_type>(XTAL_REF_(o)));}
 	}
 	XTAL_DEF_(return,inline,set)
 	alpha_f(auto &&o)
 	noexcept -> alpha_type
 	{
-		if constexpr (integral_q<decltype(o)>) {
-			return static_cast<alpha_type>(delta_f(XTAL_REF_(o)));
-		}
-		else {
-			return static_cast<alpha_type>(XTAL_REF_(o));
-		}
+		if constexpr (integral_q<decltype(o)>) {return    static_cast<alpha_type>(delta_f(XTAL_REF_(o)));}
+		else                                   {return    static_cast<alpha_type>(        XTAL_REF_(o) );}
 	}
 
 	XTAL_DEF_(return,inline,set)
@@ -330,11 +309,9 @@ public:
 		return aphex_f(o.real(), o.imag());
 	}
 
-
-	static sigma_type constexpr IEC = _std::numeric_limits<alpha_type>::is_iec559? XTAL_SYS_(IEC)&60559: 0;
-
-	static logical_constant_t<IEC&559> constexpr use_IEC{};
-	static logical_constant_t<N_fused> constexpr use_FMA{};
+	XTAL_DEF_(return,inline,set) value_f(integral_q auto i) noexcept -> auto {return             S_::value_f(i);}
+	XTAL_DEF_(return,inline,set) value_f(alpha_type      i) noexcept -> auto {return                        (i);}
+	XTAL_DEF_(return,inline,set) value_f(    real_q auto i) noexcept -> auto {return static_cast<alpha_type>(i);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -394,7 +371,7 @@ public:
 	XTAL_DEF_(return,inline,set) diplo_f(auto n_zoom, alpha_type o_silon)
 	noexcept -> auto
 	{
-		return diplo_f(working_f(XTAL_REF_(n_zoom)), o_silon);
+		return diplo_f(value_f(XTAL_REF_(n_zoom)), o_silon);
 	}
 
 	template <int N_silon=0>
@@ -413,21 +390,21 @@ public:
 	diplo_f()
 	noexcept -> alpha_type
 	{
-		return diplo_f<N_silon>(N_depth);
+		return diplo_f<N_silon>(full.depth);
 	}
-	static alpha_type constexpr diplo_0 = diplo_f(0);
-	static alpha_type constexpr diplo_1 = diplo_f(1);
-	static alpha_type constexpr diplo_2 = diplo_f(2);
+	XTAL_DEF_(set) diplo_0 = diplo_f(0);
+	XTAL_DEF_(set) diplo_1 = diplo_f(1);
+	XTAL_DEF_(set) diplo_2 = diplo_f(2);
 
 
 	/*!
 	\returns	The `constexpr` equivalent of `std:pow(0.5, n_zoom)`.
 	*/
-	template <int N_silon=0> XTAL_DEF_(return,inline,set) haplo_f(auto const &n_zoom) noexcept -> auto {return diplo_f<-N_silon>(-n_zoom );}
-	template <int N_silon=0> XTAL_DEF_(return,inline,set) haplo_f(                  ) noexcept -> auto {return diplo_f<-N_silon>(-N_depth);}
-	static alpha_type constexpr haplo_0 = haplo_f(0);
-	static alpha_type constexpr haplo_1 = haplo_f(1);
-	static alpha_type constexpr haplo_2 = haplo_f(2);
+	template <int N_silon=0> XTAL_DEF_(return,inline,set) haplo_f(auto const &n_zoom) noexcept -> auto {return diplo_f<-N_silon>(-   n_zoom );}
+	template <int N_silon=0> XTAL_DEF_(return,inline,set) haplo_f(                  ) noexcept -> auto {return diplo_f<-N_silon>(-full.count);}
+	XTAL_DEF_(set) haplo_0 = haplo_f(0);
+	XTAL_DEF_(set) haplo_1 = haplo_f(1);
+	XTAL_DEF_(set) haplo_2 = haplo_f(2);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -453,9 +430,9 @@ public:
 		}
 		XTAL_0IF_(void)
 	}
-	static alpha_type constexpr ratio_0 = ratio_f(0, 1);
-	static alpha_type constexpr ratio_1 = ratio_f(1, 1);
-	static alpha_type constexpr ratio_2 = ratio_f(2, 1);
+	XTAL_DEF_(set) ratio_0 = ratio_f(0, 1);
+	XTAL_DEF_(set) ratio_1 = ratio_f(1, 1);
+	XTAL_DEF_(set) ratio_2 = ratio_f(2, 1);
 
 	/*!
 	\returns	The ratio of `n_num` to `n_nom` multiplied by `Pi`.
@@ -467,9 +444,9 @@ public:
 	{
 		return ratio_f<N_pow>(_std::numbers::pi_v<alpha_type>*n_num, n_nom);
 	}
-	static alpha_type constexpr patio_0 = patio_f(0, 1);
-	static alpha_type constexpr patio_1 = patio_f(1, 1);
-	static alpha_type constexpr patio_2 = patio_f(2, 1);
+	XTAL_DEF_(set) patio_0 = patio_f(0, 1);
+	XTAL_DEF_(set) patio_1 = patio_f(1, 1);
+	XTAL_DEF_(set) patio_2 = patio_f(2, 1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -547,10 +524,10 @@ public:
 		using X = XTAL_ALL_(x);
 		XTAL_IF0
 		XTAL_0IF (sizeof(W) < full.width) {
-			return minimum_f(working_f(XTAL_REF_(w)), XTAL_REF_(x));
+			return minimum_f(value_f(XTAL_REF_(w)), XTAL_REF_(x));
 		}
 		XTAL_0IF (sizeof(X) < full.width) {
-			return minimum_f(XTAL_REF_(w), working_f(XTAL_REF_(x)));
+			return minimum_f(XTAL_REF_(w), value_f(XTAL_REF_(x)));
 		}
 		XTAL_0IF (different_q<W, X>) {
 			return w > x? XTAL_REF_(x): XTAL_REF_(w);
@@ -609,10 +586,10 @@ public:
 		using X = XTAL_ALL_(x);
 		XTAL_IF0
 		XTAL_0IF (sizeof(W) < full.width) {
-			return maximum_f(working_f(XTAL_REF_(w)), XTAL_REF_(x));
+			return maximum_f(value_f(XTAL_REF_(w)), XTAL_REF_(x));
 		}
 		XTAL_0IF (sizeof(X) < full.width) {
-			return maximum_f(XTAL_REF_(w), working_f(XTAL_REF_(x)));
+			return maximum_f(XTAL_REF_(w), value_f(XTAL_REF_(x)));
 		}
 		XTAL_0IF (different_q<W, X>) {
 			return w < x? XTAL_REF_(x): XTAL_REF_(w);
@@ -648,7 +625,7 @@ public:
 		return alpha_type(n)*haplo_f(fraction.depth);
 	}
 	XTAL_DEF_(return,inline,set)
-	mantissa_f(mt19937_t &m)
+	mantissa_f(MT19937 &m)
 	noexcept -> alpha_type
 	{
 		return mantissa_f(m());
@@ -660,68 +637,15 @@ public:
 };
 
 
-//}///////////////////////////////////////////////////////////////////////////////
+}///////////////////////////////////////////////////////////////////////////////
 /*!
 \brief  	Provides floating-point format information and related helpers.
 \note   	Resolves to the maximum supported `sizeof <= 8`.
 \details	Reduces the supplied parameters to the common scalar, using the `sizeof` to index the underlying provider.
 */
-template <class ...Ts>
-struct   fit
-:	complete_t<fit_realize<sizeof(unstruct_t<Ts...>)>>
-{
-	/*!
-	\brief  	Performs `value_type` substitution.
-	*/
-	template <class V>
-	using subtype = V;
-
-};
-template <>
-struct   fit<void> : fit<size_type>
-{
-};
-template <>
-struct   fit<    > : fit<size_type>
-{
-};
-/*!
-\brief  	Performs `value_type` substitution using the provided `template <class>`, via the member-`subtype`.
-*/
-template <template <class> class T_, class U>
-struct fit<T_<U>> : fit<U>
-{
-	template <class V>
-	using subtype = T_<V>;
-
-};
-template <template <class> class T_, vector_q W>
-struct fit<T_<W>> : fit<_xtd::remove_extent_t<W>>
-{
-	template <class V>
-	using subtype = T_<_xtd::remove_extent_t<W>>[_xtd::extent_v<W>];
-
-};
-/*!
-\brief  	Performs `value_type` substitution using the provided `template <class, class ...>`, via the member-`subtype`.
-*/
-template <template <class, class ...> class T_, class U, class ..._s> requires some_q<_s...>
-struct fit<T_<U, _s...>> : fit<U>
-{
-	template <class V>
-	using subtype = T_<V, _s...>;
-
-};
-/*!
-\brief  	Performs `value_type` substitution using the provided `template <class, auto  ...>`, via the member-`subtype`.
-*/
-template <template <class, auto  ...> class T_, class U, auto  ..._s> requires some_v<_s...>
-struct fit<T_<U, _s...>> : fit<U>
-{
-	template <class V>
-	using subtype = T_<V, _s...>;
-
-};
+template <class ...Ts> struct fit       : complete_t<_detail::fit_realize<sizeof(unstruct_t<Ts...>)>> {};
+template <           > struct fit<void> : fit<size_type> {};
+template <           > struct fit<    > : fit<size_type> {};
 
 
 ///////////////////////////////////////////////////////////////////////////////

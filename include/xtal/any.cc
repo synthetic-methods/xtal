@@ -125,6 +125,12 @@ static_assert(_retail::assayed<    0, 1, 2, 3, 4, 5>::rank() ==   5);
 static_assert(_retail::assayed<-1, 0, 1, 2, 3, 4, 5>::rank() ==   5);
 
 
+//static_assert(    fixed_valued_q<_std::tuple<float, float>>);
+//static_assert(not fixed_valued_q<_std::tuple<float,   int>>);
+//
+//static_assert(    fixed_valued_q<_std::tuple<float, float> const &>);
+//static_assert(not fixed_valued_q<_std::tuple<float,   int> const &>);
+
 static_assert(fluid_shaped<_std::vector  <float   >>::extent() == -1);
 static_assert(fixed_shaped<_std::array   <float, 1>>::extent() ==  1);
 static_assert(fixed_shaped<_std::complex <float   >>::extent() ==  2);
