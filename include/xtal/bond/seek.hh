@@ -15,7 +15,7 @@ namespace xtal::bond
 
 template <class T             >	XTAL_TYP_(new) seek_is                                         : logical_constant_t<0> {};
 template <class U, auto  ...Ns>	XTAL_TYP_(new) seek_is    <_std::integer_sequence<U  , Ns...>> : logical_constant_t<1> {};
-template <         class ...Ts>	XTAL_TYP_(ask) seek_is_q =             (...and seek_is<Ts>{}());///<\brief Determines whether `Ts...` are `std::integer_sequence`s.
+template <         class ...Ts>	XTAL_TYP_(ask) seek_q =             (...and seek_is<Ts>{}());///<\brief Determines whether `Ts...` are `std::integer_sequence`s.
 template <         int   ...Ns>	XTAL_TYP_(let) seek_in_t = _std::integer_sequence<int, Ns...>  ;///<\brief Defines                        `std::integer_sequence<int, Ns...>`.
 
 
@@ -210,6 +210,51 @@ struct seek_value
 template <auto ...Ns>
 using    seek_value_t = typename seek_value<Ns...>::type;
 ///<\brief   Produces a map from the indicies of `Ns...` to their respective values.
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template        <int I= terminal_constant_v<int>, int ...Ns>
+requires      same_v<I, terminal_constant_v<int>>
+XTAL_DEF_(return,inline,let)
+seek_expose_f(seek_in_t<Ns...>)
+noexcept -> decltype(auto)
+{
+	XTAL_IF0
+	XTAL_0IF (2 == sizeof...(Ns)) {return _std::tuple<constant_t<Ns>...>{};}
+	XTAL_0IF (2 != sizeof...(Ns)) {return _std::pair <constant_t<Ns>...>{};}
+}
+template        <int I= terminal_constant_v<int>, int ...Ns>
+requires different_v<I, terminal_constant_v<int>>
+XTAL_DEF_(return,inline,let)
+seek_expose_f(seek_in_t<Ns...>)
+noexcept -> decltype(auto)
+{
+	auto constexpr N_lim = sizeof...(Ns);
+	auto constexpr N_ind = modulo_v<N_lim, I>;
+	return get<N_ind>(seek_expose_f(seek_in_t<Ns...>{}));
+}
+///<\returns The `integer_sequence` as a `{tuple,pair}` of constants, or the constant at index `I` if supplied.
+///<\note    May eventually be `fixed` and replaced by `repack`.
+template <class N_, int I=terminal_constant_v<int>> XTAL_TYP_(let) seek_expose_t = XTAL_ALL_(seek_expose_f<I>(N_{}));
+template <class N_, int I=terminal_constant_v<int>> XTAL_DEF_(let) seek_expose_v = seek_expose_t<N_, I>{};
+
+
+template <template <auto ...> class T_>
+XTAL_TYP_(new)
+seek_impose
+{
+	template <class N_, size_type K, int ...Ns>
+	struct  diatype : diatype<N_, K - 1, seek_expose_t<N_, K - 1>{}, Ns...> {};
+
+	template <class N_,              int ...Ns>
+	struct  diatype<N_, 0, Ns...> {using type = T_<Ns...>;};
+
+	template <class N_>
+	XTAL_TYP_(set) subtype = typename diatype<N_, N_::size()>::type;
+
+};
+///<\brief   Expands the `integer_sequence` passed to `subtype` using the template supplied.
 
 
 ////////////////////////////////////////////////////////////////////////////////

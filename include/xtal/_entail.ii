@@ -122,6 +122,10 @@ using _retail::  cardinal_constant_t;
 using _retail::   ordinal_constant_t;
 using _retail::   logical_constant_t;
 
+using _retail::  terminal_constant_t;
+using _retail::  terminal_constant_v;
+template <         class ...Ts>	concept   terminal_constant_q	= (some_q<Ts...> and...and _retail::  terminal_constant_q<Ts>);
+
 template <         class ...Ts>  concept   integral_variable_q	= (some_q<Ts...> and...and _retail::  integral_variable_q<Ts>);
 template <         class ...Ts>  concept   cardinal_variable_q	= (some_q<Ts...> and...and _retail::  cardinal_variable_q<Ts>);
 template <         class ...Ts>  concept    ordinal_variable_q	= (some_q<Ts...> and...and _retail::   ordinal_variable_q<Ts>);

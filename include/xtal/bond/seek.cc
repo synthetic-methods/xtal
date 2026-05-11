@@ -1,18 +1,24 @@
 #pragma once
 #include "./any.cc"
-#include "./seek.hh"// testing...
+
+#include "./pack.hh"
 
 
 
-
-
+#include "./seek.hh"
 XTAL_ENV_(push)
-namespace xtal::bond::_test
+namespace xtal::bond::_test::XTAL_NUM
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+using namespace xtal::bond::_test;
 
-static_assert(seek_is_q<seek_to_t<0>>);
-static_assert(seek_is_q<seek_to_t<1>>);
+template <int ...Ns>
+struct spread_out
+{
+};
+
+static_assert(seek_q<seek_to_t<0>>);
+static_assert(seek_q<seek_to_t<1>>);
 
 static_assert(seek_truth_v<                   > == -1);
 static_assert(seek_truth_v<               true> ==  0);
@@ -48,6 +54,11 @@ TAG_("seek")
 		TRUE_(seek_index_t<0, 1,-1>{}[ 0] == 0);
 		TRUE_(seek_index_t<0, 1,-1>{}[ 1] == 1);
 		TRUE_(seek_index_t<0, 1,-1>{}[-1] == 2);
+
+	}
+	TRY_("seek_impose<...>")
+	{
+		using bar = compose_s<seek_in_t<0, 1>, seek_impose<spread_out>>;
 
 	}
 }

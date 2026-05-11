@@ -215,6 +215,12 @@ template <class T        >	concept    numeric_q	=  numeric_variable_q<T> or  num
 template <class T        >	concept    instant_q	= integral_q         <T> or          constant_q<T>;
 
 
+template <class T        >	auto constexpr terminal_constant_v	= _xtd::bit_cast<T>(~_xtd::make_unsigned_t<T>{} >> 1U);
+template <class T        >	using          terminal_constant_t	=  constant_t<terminal_constant_v<T>>;
+template <class T        >	concept        terminal_constant_q	=  constant_q<T> and same_q<T, terminal_constant_t<decltype(T{}())>>;
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
