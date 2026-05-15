@@ -487,6 +487,10 @@ public:
 		return n_unit*diplo_f(n_zone);
 	}
 
+	XTAL_DEF_(set) epsilon_1 = epsilon_f(1), epsilon_2 = epsilon_f(2);
+	XTAL_DEF_(set) upsilon_1 = upsilon_f(1), upsilon_2 = upsilon_f(2);
+	XTAL_DEF_(set) dnsilon_1 = dnsilon_f(1), dnsilon_2 = dnsilon_f(2);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -19,7 +19,27 @@ template <class ...Us>	struct  couple;
 template <class ...Us>	using   couple_t = typename couple<Us...>::type; ///<\brief  Type-factory for `couple`.
 template <class ...Us>	concept couple_q = bond::tag_inner_fixed_p<couple_t, Us...>;
 
-XTAL_DEF_(let) couple_f = [] XTAL_1FN_(call) (_detail::factory<couple_t>::make);///<\brief Value-factory for `couple`.
+///\brief Factory for `couple`.
+XTAL_DEF_(return,inline,let)
+couple_f(auto &&...oo)
+noexcept -> decltype(auto)
+{
+	return _detail::factory<couple_t>::make(XTAL_REF_(oo)...);
+}
+XTAL_DEF_(return,inline,let)
+couple_f(decltype(_std::in_place), auto &&o)
+noexcept -> decltype(auto)
+{
+	using O = objective_t<XTAL_ALL_(o)>;
+	return couple_t<O[2]>{_std::in_place, XTAL_REF_(o)};
+}
+XTAL_DEF_(return,inline,let)
+couple_f(auto &&o, decltype(_std::in_place))
+noexcept -> decltype(auto)
+{
+	using O = objective_t<XTAL_ALL_(o)>;
+	return couple_t<O[2]>{XTAL_REF_(o), _std::in_place};
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
