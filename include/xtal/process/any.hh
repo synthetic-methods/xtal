@@ -133,8 +133,6 @@ struct define
 				return [this] XTAL_1FN_(call) (self().template operator()<decltype(is){}...>);
 			}
 			else {
-				//\
-				return [this, deity=self().template deify<Xs...>(is...)] XTAL_1FN_(call) ((self().*deity));
 				return _std::bind_front(self().template deify<Xs...>(is...), &self());
 			}
 		})

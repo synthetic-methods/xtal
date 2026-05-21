@@ -40,15 +40,16 @@ XTAL_0FN_(to) (monomer_t<based_t<U>, As...>(XTAL_REF_(u)));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <incomplete_q A, typename ...As>
-struct monomer<A, As...>
+template <incomplete_q _, typename ...As>
+struct monomer<_, As...>
 :	monomer<As...>
 {
 };
-template <class U, typename ...As>
+template <  complete_q U, typename ...As>
 struct monomer<U, As...>
 {
-	using superkind = confer<U, As..., provision::stated<>, provision::voiced<>>;
+	using superkind = confer<U, As..., provision::stated<>>;
+
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{

@@ -300,8 +300,8 @@ template <class X         > concept XTAL_NYM_(synthesized) = not ::std::same_as<
 
 
 #define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
-#define XTAL_NEW_explicit        constexpr explicit                             ///< Start        `explicit` constructor.
-#define XTAL_NEW_implicit        constexpr                                      ///< Start        `implicit` constructor.
+#define XTAL_NEW_explicit        XTAL_DEF_inline constexpr explicit             ///< Start        `explicit` constructor.
+#define XTAL_NEW_implicit        XTAL_DEF_inline constexpr                      ///< Start        `implicit` constructor.
 
 #define XTAL_NEW_else(TYP,...)   template     <class ...XTAL_NYM_(As)>                          \
                                  constexpr explicit TYP(XTAL_NYM_(As) &&...XTAL_NYM_(as))       \

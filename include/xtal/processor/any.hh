@@ -3,7 +3,7 @@
 #include "../process/any.hh"// `_retail`
 #include "../occur/cursor.hh"
 #include "../occur/resize.hh"
-#include "../provision/voiced.hh"
+
 
 
 XTAL_ENV_(push)
@@ -27,8 +27,9 @@ struct define
 	using U_cursor = occur::cursor_t<>;
 	using U_resize = occur::resize_t<>;
 
-	using superkind = _retail::define<T>;
-
+	using superkind = bond::compose<void
+	,	_retail::define<T>
+	>;
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{

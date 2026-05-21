@@ -23,7 +23,7 @@ The `scan` method of `spool` must return the most recently activated voice for a
 The default implementation uses `lower_bound` to this effect.
 */
 template <typename ...As>	struct  polymer;
-template <typename ...As>	using   polymer_t      =     confined_t<polymer< As...>>;///<\ingroup XTAL_processor_polymer
+template <typename ...As>	using   polymer_t      =        confined_t<polymer< As...>>;///<\ingroup XTAL_processor_polymer
 template <typename ...Qs>	concept polymer_head_q = bond::tag_outer_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
 template <typename ...Qs>	concept polymer_body_q = bond::tag_inner_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
 
@@ -39,30 +39,19 @@ XTAL_0FN_(to) (polymer_t<based_t<U>, As...>(XTAL_REF_(u)));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <incomplete_q A, typename ...As>
-struct polymer<A, As...>
+template <incomplete_q _, typename ...As>
+struct polymer<_, As...>
 :	polymer<As...>
 {
 };
-template <class U, typename ...As>
+template <  complete_q U, typename ...As>
 struct polymer<U, As...>
 {
-	/*/
-	using supertype = monomer_t<U, As...>;
-	using superkind = monomer  <process::conferred_t<decltype([] (auto &&...oo)
-		//\
-		XTAL_0FN_(to) (based_t<iteratee_t<XTAL_ALL_(XTAL_ANY_(supertype) (XTAL_REF_(oo)...))>> {})
-		XTAL_0FN_(to) (based_t<iteratee_t<typename supertype::template bind_t<decltype(oo)...>>> {})
-	)>
-	,	As...
-	>;
-	/*/
 	using superkind = monomer<U, As...>;
-	/***/
+
 public:
 	/*!
 	\brief  	Defines a `monomer`-derived type that aggregates the internally managed voices.
-	\brief  	Uses `provision::voiced` to configure the collective `ensemble`.
 	*/
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -71,10 +60,11 @@ public:
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 		using U_ = typename S_::head_type;
-
-		//\
-		using M_voice = monomer_t<U_, typename S_::template voice<>>;
-		using M_voice = monomer_t<U , typename S_::template voice<>>;
+		/*/
+		using V_ = monomer_t<U>;
+		/*/
+		using V_ = _std::conditional_t<any_q<U>, U, monomer_t<U>>;
+		/***/
 
 	public:
 		using S_::S_;
@@ -83,7 +73,7 @@ public:
 		struct binding
 		{
 		private:
-			using V_voice = typename M_voice::template bind_t<Xs...>;
+			using V_voice = typename V_::template bind_t<Xs...>;
 			using U_stage = occur::stage_t<>;
 			
 			using U_voice = flow::key_s<V_voice>;

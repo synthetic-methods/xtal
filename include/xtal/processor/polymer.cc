@@ -38,9 +38,6 @@ void polymer_provision_spine__locamotion()
 	//\
 	using U_vox = polymer_t<let_t<U_gate>::bind_t<>, A_stored, A_spooled
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
-//	, provision::voiced<void
-//		,	provision::stored<extent_constant_t<-1>>
-//		>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -93,9 +90,6 @@ TAG_("polymer", "occur", "spine")
 	>;
 
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
-//	, provision::voiced<void
-//		,	provision::stored<extent_constant_t<-1>>
-//		>
 	>;
 	auto u_vox = U_vox::bind_f();
 /**/
