@@ -258,12 +258,12 @@ Determines whether `...xs` can be zipped with `f`.
 */
 template <class F, class ...Xs>
 concept initerative_p = incomplete_q<F>
-or same_q<F, _std::tuple<_std::remove_cvref_t<_xtd::ranges::range_reference_t<Xs>>...>>
-or same_q<F, _std::pair <_std::remove_cvref_t<_xtd::ranges::range_reference_t<Xs>>...>>;
+or same_q<F, std::tuple<std::remove_cvref_t<xtd::ranges::range_reference_t<Xs>>...>>
+or same_q<F, std::pair <std::remove_cvref_t<xtd::ranges::range_reference_t<Xs>>...>>;
 
 template <class F, class ...Xs>
 concept   iterative_p = not initerative_p<F, Xs...>
-and _std::invocable<F, _xtd::ranges::range_reference_t<Xs> ...>;
+and std::invocable<F, xtd::ranges::range_reference_t<Xs> ...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -337,16 +337,6 @@ noexcept -> decltype(auto)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-// Valued...
-
-XTAL_DEF_(return,inline,let)  ordinal_f(           auto const o) noexcept -> auto {return            _xtd::  make_signed_f(o)   ;}
-XTAL_DEF_(return,inline,let)  ordinal_f(constant_q auto const o) noexcept -> auto {return constant_t<_xtd::  make_signed_f(o)>{};}
-XTAL_DEF_(return,inline,let) cardinal_f(           auto const o) noexcept -> auto {return            _xtd::make_unsigned_f(o)   ;}
-XTAL_DEF_(return,inline,let) cardinal_f(constant_q auto const o) noexcept -> auto {return constant_t<_xtd::make_unsigned_f(o)>{};}
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 // Shaped...
 
 XTAL_DEF_(return,inline,let)
@@ -361,7 +351,7 @@ noexcept -> decltype(auto)
 		return XTAL_REF_(t);
 	}
 	XTAL_0IF (different_q<T_ref, T_val &>) {
-		return   _xtd::bit_cast<based_t<destruct_t<T_ref>>  >(XTAL_REF_(t));
+		return   xtd::bit_cast<based_t<destruct_t<T_ref>>  >(XTAL_REF_(t));
 	}
 	XTAL_0IF (     same_q<T_ref, T_val &>) {
 		return reinterpret_cast<        destruct_t<T_ref> &&>(XTAL_REF_(t));
@@ -372,7 +362,7 @@ XTAL_DEF_(return,inline,let)
 destruct_f(auto &&t)
 noexcept -> decltype(auto)
 {
-	using _std::get;
+	using std::get;
 	using T = decltype(t);
 	static_assert(fixed_shaped_q<T>);
 	auto constexpr K_ext = fixed_shaped<decltype(t)>::extent();
@@ -418,8 +408,8 @@ XTAL_DEF_(return,inline,let)
 point_f(T &&t, int const n_dt=0)
 noexcept -> auto
 {
-	if constexpr (iterator_q<_std::decay_t<T>>) {
-		return _xtd::ranges::next(XTAL_REF_(t), N_dt + n_dt);
+	if constexpr (iterator_q<std::decay_t<T>>) {
+		return xtd::ranges::next(XTAL_REF_(t), N_dt + n_dt);
 	}
 	else {
 		XTAL_IF0
@@ -432,8 +422,8 @@ XTAL_DEF_(return,inline,let)
 endpoint_f(T &&t, int const n_dt=0)
 noexcept -> auto
 {
-	if constexpr (iterator_q<_std::decay_t<T>>) {
-		return _xtd::ranges::prev(XTAL_REF_(t), N_dt + n_dt);
+	if constexpr (iterator_q<std::decay_t<T>>) {
+		return xtd::ranges::prev(XTAL_REF_(t), N_dt + n_dt);
 	}
 	else {
 		XTAL_IF0
@@ -466,10 +456,10 @@ XTAL_DEF_(return,inline,let)
 count_f(auto const &...ts)
 noexcept -> based_t<Y>
 {
-	return _std::min<based_t<Y>>({(count_f(ts) - 1)...}) + 1;
+	return std::min<based_t<Y>>({(count_f(ts) - 1)...}) + 1;
 }
-XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
-XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}
+XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return xtd::ranges::views::drop_exactly(count_f(ts...));}
+XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return xtd::ranges::views::take_exactly(count_f(ts...));}
 XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires in_v<fluid_shaped_q<decltype(ts)...>> {return  account_f(ts...);}
 XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires un_v<fluid_shaped_q<decltype(ts)...>> {return discount_f(0    );}
 
@@ -494,7 +484,7 @@ derange_f(iterable_q auto &&t)
 noexcept -> auto
 {
 	using      T  = XTAL_ALL_(t);
-	using      T_ = _xtd::ranges::any_view<iteratee_t<T>, _xtd::ranges::get_categories<T>()>;
+	using      T_ = xtd::ranges::any_view<iteratee_t<T>, xtd::ranges::get_categories<T>()>;
 	auto const n_ = recount_f(t);
 	return T_{XTAL_REF_(t)}|XTAL_MOV_(n_);
 }
@@ -508,12 +498,12 @@ The result of zipping `...xs` with `f`.
 \note
 The name is intended to mimic Haskell's `ApplicativeFunctor`.
 */
-template <class F             >	requires   iterative_p<F       > XTAL_DEF_(inline,let) iterative_f(F &&f            ) noexcept -> decltype(auto) {return _xtd::ranges::views:: generate(XTAL_REF_(f)                    );}
-template <class F, class    X >	requires   iterative_p<F, X    > XTAL_DEF_(inline,let) iterative_f(F &&f, X  &&   x ) noexcept -> decltype(auto) {return _xtd::ranges::views::transform(XTAL_REF_(x),   XTAL_REF_(f)    );}
-template <class F, class ...Xs>	requires   iterative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip_with(XTAL_REF_(f),   XTAL_REF_(xs)...);}
-template <class F, class ...Xs>	requires initerative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
+template <class F             >	requires   iterative_p<F       > XTAL_DEF_(inline,let) iterative_f(F &&f            ) noexcept -> decltype(auto) {return xtd::ranges::views:: generate(XTAL_REF_(f)                    );}
+template <class F, class    X >	requires   iterative_p<F, X    > XTAL_DEF_(inline,let) iterative_f(F &&f, X  &&   x ) noexcept -> decltype(auto) {return xtd::ranges::views::transform(XTAL_REF_(x),   XTAL_REF_(f)    );}
+template <class F, class ...Xs>	requires   iterative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip_with(XTAL_REF_(f),   XTAL_REF_(xs)...);}
+template <class F, class ...Xs>	requires initerative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
 
-//mplate <         class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
+//mplate <         class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
 template <auto  f, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return            iterative_f(                    f,  XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return            iterative_f<[] XTAL_1FN_(make) (F)>(XTAL_REF_(xs)...);}
 
@@ -528,9 +518,9 @@ identical_f(X &&x, Y &&y)
 noexcept -> bool
 {
 	XTAL_IF0
-	XTAL_0IF (not _std::is_lvalue_reference_v<X>) {return false;}
-	XTAL_0IF (not _std::is_lvalue_reference_v<Y>) {return false;}
-	XTAL_0IF_(to) (_std::addressof(x) == _std::addressof(y))
+	XTAL_0IF (not std::is_lvalue_reference_v<X>) {return false;}
+	XTAL_0IF (not std::is_lvalue_reference_v<Y>) {return false;}
+	XTAL_0IF_(to) (std::addressof(x) == std::addressof(y))
 	XTAL_0IF_(else) return false;
 }
 
@@ -549,7 +539,7 @@ equal_f(X &&x, Y &&y)
 noexcept -> bool
 {
 	XTAL_IF0
-	XTAL_0IF_(to) (_xtd::ranges::equal(x, y))
+	XTAL_0IF_(to) (xtd::ranges::equal(x, y))
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 
@@ -582,11 +572,11 @@ The 1st/2nd bits of the input are interpreted as `greater`/`less`,
 with `0`/`~0` interpreted repectively as `equivalent`/`unordered`.
 */
 XTAL_DEF_(return,inline,set)
-ordering_f(_std::uint8_t const o)
-noexcept -> _std::partial_ordering
+ordering_f(std::uint8_t const o)
+noexcept -> std::partial_ordering
 {
-	using is = _std::partial_ordering;
-	return _std::array{is::equivalent, is::greater, is::less, is::unordered}[0b11U&o];
+	using is = std::partial_ordering;
+	return std::array{is::equivalent, is::greater, is::less, is::unordered}[0b11U&o];
 }
 /*!
 \returns
@@ -596,14 +586,14 @@ A `std::uint8_t` representing the given `std::partial_ordering` or signed value.
 The result can be aggregated by bitwise-or (...in other words, a _dis_junctive _ordering_).
 */
 XTAL_DEF_(return,inline,set)
-disordering_f(_std::partial_ordering const o)
-noexcept -> _std::uint8_t
+disordering_f(std::partial_ordering const o)
+noexcept -> std::uint8_t
 {
-	using       is  = _std::partial_ordering;
-	using       B   = _std::uint8_t;
+	using       is  = std::partial_ordering;
+	using       B   = std::uint8_t;
 	B constexpr B11 = 0b11U;
-	if constexpr (requires {requires 2 == _xtd::bit_cast<B>(is::unordered);}) {
-		auto x = _xtd::bit_cast<B>(o); x &= B11; x ^= x >> 1; return x;
+	if constexpr (requires {requires 2 == xtd::bit_cast<B>(is::unordered);}) {
+		auto x = xtd::bit_cast<B>(o); x &= B11; x ^= x >> 1; return x;
 	}
 	else {
 		return B(0 < o)|(B(o < 0) << 1)|B11&-B(o == is::unordered);
@@ -611,16 +601,16 @@ noexcept -> _std::uint8_t
 }
 XTAL_DEF_(return,inline,set)
 disordering_f(number_q auto const x)
-noexcept -> _std::uint8_t
+noexcept -> std::uint8_t
 {
-	using B = _std::uint8_t;
+	using B = std::uint8_t;
 	auto  w = reinterpret_cast<const B(&)[sizeof(x)]>(x)[sizeof(x) - 1] >> 7;
 	w += x != XTAL_ALL_(x){};
 	return w;
 }
 XTAL_DEF_(return,inline,set)
 disordering_f()
-noexcept -> _std::uint8_t
+noexcept -> std::uint8_t
 {
 	return 0U;
 }

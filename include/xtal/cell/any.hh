@@ -1,6 +1,6 @@
 #pragma once
-#include "../bond.hh"
-#include "../bond/any.hh"// `_retail`
+#include "../bond/all.hh"// `_retail`
+
 
 
 
@@ -97,7 +97,7 @@ struct refine
 
 	};
 	template <class S> requires iterable_q<S> and un_v<iterated_q<S>> and incomplete_q<typename S::head_type>
-	class subtype<S> : public bond::compose_s<S, superkind>, public _xtd::ranges::view_interface<T>
+	class subtype<S> : public bond::compose_s<S, superkind>, public xtd::ranges::view_interface<T>
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
@@ -107,7 +107,7 @@ struct refine
 
 	};
 	template <class S> requires iterable_q<S> and un_v<iterated_q<S>> and   complete_q<typename S::head_type>
-	class subtype<S> : public bond::compose_s<S, superkind>, public _xtd::ranges::view_interface<T>
+	class subtype<S> : public bond::compose_s<S, superkind>, public xtd::ranges::view_interface<T>
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
@@ -118,8 +118,8 @@ struct refine
 		using S_::S_;
 
 		XTAL_NEW_(implicit)
-		subtype(_std::initializer_list<U_> u_)
-		noexcept requires make_p<W_, _std::initializer_list<U_>>
+		subtype(std::initializer_list<U_> u_)
+		noexcept requires make_p<W_, std::initializer_list<U_>>
 		:	S_{W_(u_)}
 		{}
 

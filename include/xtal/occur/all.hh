@@ -1,5 +1,4 @@
 #include "./any.hh"
-#include "./auxiliary.hh"
 #include "./cursor.hh"
 #include "./resample.hh"
 #include "./resize.hh"

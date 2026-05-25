@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hh"
-#include "./applied.hh"
-#include "./group.hh"
-#include "./field.hh"
+#include "./qualify.hh"
+#include "./quantity.hh"
+
 
 
 
@@ -12,7 +12,7 @@ namespace xtal::atom
 /////////////////////////////////////////////////////////////////////////////////
 /*!
 \brief
-Extends `group_multiplication` with the scalar sum/product,
+Extends `quantity_multiplies` with the scalar sum/product,
 providing even/odd-reflection iff `size() == 2`.
 */
 template <class ...Us>	struct  couple;
@@ -27,18 +27,18 @@ noexcept -> decltype(auto)
 	return _detail::factory<couple_t>::make(XTAL_REF_(oo)...);
 }
 XTAL_DEF_(return,inline,let)
-couple_f(decltype(_std::in_place), auto &&o)
+couple_f(decltype(std::in_place), auto &&o)
 noexcept -> decltype(auto)
 {
 	using O = objective_t<XTAL_ALL_(o)>;
-	return couple_t<O[2]>{_std::in_place, XTAL_REF_(o)};
+	return couple_t<O[2]>{std::in_place, XTAL_REF_(o)};
 }
 XTAL_DEF_(return,inline,let)
-couple_f(auto &&o, decltype(_std::in_place))
+couple_f(auto &&o, decltype(std::in_place))
 noexcept -> decltype(auto)
 {
 	using O = objective_t<XTAL_ALL_(o)>;
-	return couple_t<O[2]>{XTAL_REF_(o), _std::in_place};
+	return couple_t<O[2]>{XTAL_REF_(o), std::in_place};
 }
 
 
@@ -58,9 +58,7 @@ struct couple
 	using alpha_type = typename _fit::alpha_type;
 	
 	template <class T>
-	//\
-	using endotype = typename field_arithmetic    <Us...>::template homotype<T>;
-	using endotype = typename group_multiplication<Us...>::template homotype<T>;
+	using endotype = typename quantity_multiplies<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>
@@ -103,27 +101,27 @@ struct couple
 		using S_::S_;
 
  		XTAL_NEW_(explicit)
-		homotype(different_q<_std::in_place_t> auto &&u, _std::in_place_t)
+		homotype(different_q<std::in_place_t> auto &&u, std::in_place_t)
 		noexcept
 		requires in_v<size, 2>
 		:	S_{versus_f< 0>(u), versus_f< 1>(u)}
 		{}
  		XTAL_NEW_(explicit)
-		homotype(_std::in_place_t, different_q<_std::in_place_t> auto &&u)
+		homotype(std::in_place_t, different_q<std::in_place_t> auto &&u)
 		noexcept
 		requires in_v<size, 2>
 		:	S_{versus_f<-1>(u), versus_f<0>(u)}
 		{}
 
 		XTAL_NEW_(explicit)
-		homotype(U_arg const u, _std::in_place_t)
+		homotype(U_arg const u, std::in_place_t)
  		noexcept
 		requires in_v<size, 2>
 		:	S_{versus_f< 0>(u), versus_f< 1>(u)}
  		{
  		}
 		XTAL_NEW_(explicit)
-		homotype(_std::in_place_t, U_arg const u)
+		homotype(std::in_place_t, U_arg const u)
  		noexcept
 		requires in_v<size, 2>
 		:	S_{versus_f<-1>(u), versus_f< 0>(u)}
@@ -283,11 +281,11 @@ struct couple
 			return reflection<XTAL_ALL_(n){}>();
 		}
 
-		XTAL_DEF_(return,inline,let)  maximum() const noexcept -> auto const & {return *_xtd::ranges::max_element(self());}
-		XTAL_DEF_(return,inline,let)  minimum() const noexcept -> auto const & {return *_xtd::ranges::min_element(self());}
+		XTAL_DEF_(return,inline,let)  maximum() const noexcept -> auto const & {return *xtd::ranges::max_element(self());}
+		XTAL_DEF_(return,inline,let)  minimum() const noexcept -> auto const & {return *xtd::ranges::min_element(self());}
 		XTAL_DEF_(return,inline,let)  miximum() const noexcept -> auto const & {
-			auto const &[min_, max_] = _xtd::ranges::minmax_element(self());
-			return _std::tie(*min_, *max_);
+			auto const &[min_, max_] = xtd::ranges::minmax_element(self());
+			return std::tie(*min_, *max_);
 		}
 		template <int N=0>
 		XTAL_DEF_(return,inline,let)
@@ -300,8 +298,8 @@ struct couple
 			XTAL_0IF_(else)  {return miximum();}
 		}
 
-		XTAL_DEF_(return,inline,let) maximal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (_std::lcm)>();}
-		XTAL_DEF_(return,inline,let) minimal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (_std::gcd)>();}
+		XTAL_DEF_(return,inline,let) maximal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (std::lcm)>();}
+		XTAL_DEF_(return,inline,let) minimal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (std::gcd)>();}
 		XTAL_DEF_(return,inline,let) miximal() const noexcept -> auto {return bond::pack_f(minimal(), maximal());}
 		template <int N=0>
 		XTAL_DEF_(return,inline,let)

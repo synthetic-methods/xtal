@@ -1,5 +1,4 @@
 #include "./any.cc"
-#include "./auxiliary.cc"
 #include "./cursor.cc"
 #include "./resample.cc"
 #include "./resize.cc"

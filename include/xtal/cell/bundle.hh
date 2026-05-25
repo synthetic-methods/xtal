@@ -35,7 +35,7 @@ template <class ...Xs>
 struct bundle
 {
 	using superkind = bond::compose<bond::tag<bundle>
-	,	defer<bond::pack_t<_xtd::decay_trivial_value_reference_t<Xs>...>>
+	,	defer<bond::pack_t<xtd::decay_trivial_value_reference_t<Xs>...>>
 	>;
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -67,11 +67,11 @@ struct bundle
 
 		XTAL_FN0_(go) (template <auto f>
 		XTAL_DEF_(return,inline,get) arguments,
-			[] (auto &&o          ) XTAL_0FN_(to) (_std::apply(          f , XTAL_REF_(o).head())))
+			[] (auto &&o          ) XTAL_0FN_(to) (std::apply(          f , XTAL_REF_(o).head())))
 
 		XTAL_FN1_(go) (
 		XTAL_DEF_(return,inline,get) arguments,
-			[] (auto &&o, auto &&f) XTAL_0FN_(to) (_std::apply(XTAL_REF_(f), XTAL_REF_(o).head())))
+			[] (auto &&o, auto &&f) XTAL_0FN_(to) (std::apply(XTAL_REF_(f), XTAL_REF_(o).head())))
 
 		XTAL_FN2_(to) (template <size_type ...Ns>
 		XTAL_DEF_(return,inline,get)

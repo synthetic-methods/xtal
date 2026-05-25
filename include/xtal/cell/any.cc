@@ -142,7 +142,7 @@ TAG_("cell", "conversion")
 		auto const bar = foo.pack();
 		using U_bar = XTAL_ALL_(bar);
 
-	//	static_assert(_std::same_as<U_bar, _std::tuple<bool, int, float>>);
+	//	static_assert(std::same_as<U_bar, std::tuple<bool, int, float>>);
 
 		//\
 		auto baz = (U_bar) foo;
@@ -152,11 +152,11 @@ TAG_("cell", "conversion")
 		TRUE_(get<2>(baz) == get<2>(bar));
 
 		//\
-		TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(to) (XTAL_REF_(oo) +...+ 0), foo));// nope...
-		TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(to) (XTAL_REF_(oo) +...+ 0), bond::repack_f(foo)));
+		TRUE_(6 == std::apply([] (auto &&...oo) XTAL_0FN_(to) (XTAL_REF_(oo) +...+ 0), foo));// nope...
+		TRUE_(6 == std::apply([] (auto &&...oo) XTAL_0FN_(to) (XTAL_REF_(oo) +...+ 0), bond::repack_f(foo)));
 	//	TRUE_(6 ==   foo.apply([] (auto &&...oo) XTAL_0FN_(to) (XTAL_REF_(oo) +...+ 0)));
-		TRUE_(3 == _std::tuple_size_v<U_foo>);
-		TRUE_(3 == _std::tuple_size_v<U_bar>);
+		TRUE_(3 == std::tuple_size_v<U_foo>);
+		TRUE_(3 == std::tuple_size_v<U_bar>);
 
 		auto [_1, _2, _3] = foo;
 		TRUE_(_1 == 1);
@@ -169,12 +169,12 @@ TAG_("cell", "conversion")
 		TRUE_(get<1>(foo) == get<1>(bar));
 		TRUE_(get<2>(foo) == get<2>(bar));
 
-		TRUE_(same_q<_std::tuple_element_t<0, U_foo>,  bool>);
-		TRUE_(same_q<_std::tuple_element_t<1, U_foo>,   int>);
-		TRUE_(same_q<_std::tuple_element_t<2, U_foo>, float>);
-		TRUE_(same_q<_std::tuple_element_t<0, U_foo>, _std::tuple_element_t<0, U_bar>>);
-		TRUE_(same_q<_std::tuple_element_t<1, U_foo>, _std::tuple_element_t<1, U_bar>>);
-		TRUE_(same_q<_std::tuple_element_t<2, U_foo>, _std::tuple_element_t<2, U_bar>>);
+		TRUE_(same_q<std::tuple_element_t<0, U_foo>,  bool>);
+		TRUE_(same_q<std::tuple_element_t<1, U_foo>,   int>);
+		TRUE_(same_q<std::tuple_element_t<2, U_foo>, float>);
+		TRUE_(same_q<std::tuple_element_t<0, U_foo>, std::tuple_element_t<0, U_bar>>);
+		TRUE_(same_q<std::tuple_element_t<1, U_foo>, std::tuple_element_t<1, U_bar>>);
+		TRUE_(same_q<std::tuple_element_t<2, U_foo>, std::tuple_element_t<2, U_bar>>);
 
 	}
 }

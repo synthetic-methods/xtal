@@ -16,6 +16,9 @@ namespace xtal::bond
 /*!
 \brief 	Extracts the underlying `value_type` as `type`,
          exposing an alternate-value-constructor via the `template subtype`.
+
+\todo  	Ensure that `depose` works with the `atom` types,
+         and that the resulting types can be recast.
 */
 template <class ...Ts>
 struct depose
@@ -37,11 +40,11 @@ struct depose<T_<U>> : depose<U>
 
 };
 template <template <class> class T_, vector_q W>
-struct depose<T_<W>> : depose<_xtd::remove_extent_t<W>>
+struct depose<T_<W>> : depose<xtd::remove_extent_t<W>>
 {
 	template <class V>
-	using subtype = T_<V>[_xtd::extent_v<W>];
-	using    type = _xtd::remove_extent_t<W>;
+	using subtype = T_<V>[xtd::extent_v<W>];
+	using    type = xtd::remove_extent_t<W>;
 
 };
 /*!

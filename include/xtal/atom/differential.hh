@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
-#include "./applied.hh"
-#include "./group.hh"
+#include "./qualify.hh"
+#include "./quantity.hh"
 
 
 
@@ -12,7 +12,7 @@ namespace xtal::atom
 /////////////////////////////////////////////////////////////////////////////////
 /*!
 \brief
-Extends `group` with component-wise addition and differential succession.
+Extends `quantity` with component-wise addition and differential succession.
 */
 template <class ...Us>	struct  differential;
 template <class ...Us>	using   differential_t = typename differential<Us...>::type;
@@ -33,8 +33,8 @@ struct differential
 {
 	template <class T>
 	//\
-	using endotype = typename group<applied_s<Us, _std::plus>...>::template homotype<T>;
-	using endotype = typename group<Us...>::template homotype<T>;
+	using endotype = typename quantity<qualify_s<Us, std::plus>...>::template homotype<T>;
+	using endotype = typename quantity<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<differential_t>>;
@@ -50,7 +50,7 @@ struct differential
 		using typename S_::value_type;
 		using typename S_::scale_type;
 
-		template <intercedent_q K, group_multiplication_q U>
+		template <intercedent_q K, quantity_multiplies_q U>
 		XTAL_NEW_(explicit)
 		homotype(U &&u, K)
  		noexcept
@@ -87,13 +87,15 @@ struct differential
 		operator ++ ()
 		noexcept -> T &
 		{
-			[this]<auto ...I> (bond::seek_in_t<I...>)
-			XTAL_0FN {
-				auto  &s = self();
-				using T0 = XTAL_ALL_(get<0>(s));
-				if constexpr (group_multiplication_q<T0>) {return ((get<I>(s) *= get<I + 1>(s)),...);}
-				else                                      {return ((get<I>(s) += get<I + 1>(s)),...);}
-			}	(bond::seek_to_t<(int) size - 1>{});
+			bond::seek_to_e<(int) size - 1>([this]<constant_q I> (I) XTAL_0FN {
+				auto           &s = S_::self();
+				auto constexpr I0 = 0 + I{};
+				auto constexpr I1 = 1 + I{};
+				using          U0 = XTAL_ALL_(get<I0>(s));
+				using          U1 = XTAL_ALL_(get<I1>(s));
+				if constexpr (quantity_multiplies_q<U0, U1>) {get<I0>(s) *= get<I1>(s);}
+				else                                         {get<I0>(s) += get<I1>(s);}
+			});
 			return self();
 		}
 		/*!
@@ -104,13 +106,15 @@ struct differential
 		operator -- ()
 		noexcept -> T &
 		{
-			[this]<auto ...I> (bond::seek_in_t<I...>)
-			XTAL_0FN {
-				auto  &s = self();
-				using T0 = XTAL_ALL_(get<0>(s));
-				if constexpr (group_multiplication_q<T0>) {return ((get<I>(s) /= get<I + 1>(s)),...);}
-				else                                      {return ((get<I>(s) -= get<I + 1>(s)),...);}
-			}	(bond::seek_to_t<1 - (int) size>{});
+			bond::seek_to_e<1 - (int) size>([this]<constant_q I> (I) XTAL_0FN {
+				auto           &s = S_::self();
+				auto constexpr I0 = 0 + I{};
+				auto constexpr I1 = 1 + I{};
+				using          U0 = XTAL_ALL_(get<I0>(s));
+				using          U1 = XTAL_ALL_(get<I1>(s));
+				if constexpr (quantity_multiplies_q<U0, U1>) {get<I0>(s) /= get<I1>(s);}
+				else                                         {get<I0>(s) -= get<I1>(s);}
+			});
 			return self();
 		}
 

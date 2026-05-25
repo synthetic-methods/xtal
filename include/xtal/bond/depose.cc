@@ -11,8 +11,8 @@ namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert(same_q<_std::complex<int   >, compose_s<int, depose<_std::complex<double   >>>>);
-static_assert(same_q<_std::array  <int, 2>, compose_s<int, depose<_std::array  <double, 2>>>>);
+static_assert(same_q<std::complex<int   >, compose_s<int, depose<std::complex<double   >>>>);
+static_assert(same_q<std::array  <int, 2>, compose_s<int, depose<std::array  <double, 2>>>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////

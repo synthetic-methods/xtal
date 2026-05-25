@@ -2,7 +2,7 @@
 #include "./any.c"
 #include "./occur/all.hh"
 #include "./process/any.hh"
-#include "./provision/all.hh"
+#include "./scheme/all.hh"
 
 #include <Eigen/Core>
 
@@ -15,12 +15,12 @@ template <int N>
 void echo_rule_(auto const z)
 {
 	for (int n = -N; n <= -1; ++n) {
-		_std::cout << z;
+		std::cout << z;
 	}
 	for (int n = +1; n <= +N; ++n) {
-		_std::cout << z;
+		std::cout << z;
 	}
-	_std::cout << _std::endl;
+	std::cout << std::endl;
 }
 template <int N>
 void echo_rule_()
@@ -31,8 +31,8 @@ template <int N>
 void echo_plot_(int line, auto item, integral_q auto ...markers)
 {
 	auto uZERO = 0 == line? "\u2504": "\u0020";// ...BOX DRAWINGS LIGHT TRIPLE-DASH HORIZONTAL, or ...SPACE
-	_std::vector<int> m_{markers...};
-	bool marked = _std::find(m_.begin(), m_.end(), line) < m_.end();
+	std::vector<int> m_{markers...};
+	bool marked = std::find(m_.begin(), m_.end(), line) < m_.end();
 	item *= N;
 	item *= 2;
 	item += 0 < item;
@@ -43,35 +43,35 @@ void echo_plot_(int line, auto item, integral_q auto ...markers)
 	for (int n = -N; n <= -1; ++n) {
 		auto const m = n << 1;
 		if (false);
-		else if (m <  w     and n == -1 and marked) _std::cout << "\u22A3";// -| TACK LEFT
-		else if (m <  w - 1 and n != -1 or  u == 0) _std::cout <<   uZERO ;//    ...
-		else if (m == w - 1 and          line == 0) _std::cout << "\u2574";// -  BOX DRAWINGS LIGHT LEFT
-		else if (n <  u)                            _std::cout << "\u0020";//    SPACE
-		else if (u <  n)                            _std::cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
-		else if (w <  m)                            _std::cout << "\u257A";//  = BOX DRAWINGS HEAVY RIGHT
-		else                                        _std::cout << "\u0020";//    SPACE
+		else if (m <  w     and n == -1 and marked) std::cout << "\u22A3";// -| TACK LEFT
+		else if (m <  w - 1 and n != -1 or  u == 0) std::cout <<   uZERO ;//    ...
+		else if (m == w - 1 and          line == 0) std::cout << "\u2574";// -  BOX DRAWINGS LIGHT LEFT
+		else if (n <  u)                             std::cout << "\u0020";//    SPACE
+		else if (u <  n)                             std::cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
+		else if (w <  m)                             std::cout << "\u257A";//  = BOX DRAWINGS HEAVY RIGHT
+		else                                         std::cout << "\u0020";//    SPACE
 	}
 	for (int n = +1; n <= +N; ++n) {
 		auto const m = n << 1;
 		if (false);
-		else if (w <  m     and n == +1 and marked) _std::cout << "\u22A2";// |- TACK RIGHT
-		else if (w <  m - 1 and n != +1 or  u == 0) _std::cout <<   uZERO ;//    ...
-		else if (w == m - 1 and          line == 0) _std::cout << "\u2576";//  - BOX DRAWINGS LIGHT RIGHT
-		else if (u <  n - 0)                        _std::cout << "\u0020";//    SPACE
-		else if (n <  u)                            _std::cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
-		else if (m <  w)                            _std::cout << "\u2578";// =  BOX DRAWINGS HEAVY LEFT
-		else                                        _std::cout << "\u0020";//    SPACE
+		else if (w <  m     and n == +1 and marked) std::cout << "\u22A2";// |- TACK RIGHT
+		else if (w <  m - 1 and n != +1 or  u == 0) std::cout <<   uZERO ;//    ...
+		else if (w == m - 1 and          line == 0) std::cout << "\u2576";//  - BOX DRAWINGS LIGHT RIGHT
+		else if (u <  n - 0)                         std::cout << "\u0020";//    SPACE
+		else if (n <  u)                             std::cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
+		else if (m <  w)                             std::cout << "\u2578";// =  BOX DRAWINGS HEAVY LEFT
+		else                                         std::cout << "\u0020";//    SPACE
 	}
-	_std::cout << "\u0020";//    SPACE
+	std::cout << "\u0020";//    SPACE
 }
 template <int N>
 void echo_plot_(iterated_q auto const list, integral_q auto ...markers)
 {
-	using _std::get;
+	using std::get;
 	using W = XTAL_ALL_(list);
 	using U = iteratee_t<W>;
 	using _fit = bond::fit<decltype(list)>;
-	_std::vector<typename _fit::alpha_type> part;
+	std::vector<typename _fit::alpha_type> part;
 	int line{};
 	for (auto item: list) {
 		using List = XTAL_ALL_(list);
@@ -112,7 +112,7 @@ static_assert(         same_v<0, 0, 0>);
 static_assert(not different_v<0, 0, 0>);
 
 
-//atic_assert(restruct<_std::complex<float>>::rank() < restruct<_std::array<float, 2>>::rank());
+//atic_assert(restruct<std::complex<float>>::rank() < restruct<std::array<float, 2>>::rank());
 static_assert(_retail::assayed<1, 2   >::extents() <= _retail::assayed<1, 2, 3>::extents());
 static_assert(_retail::assayed<1, 2, 3>::extents() <= _retail::assayed<1, 2, 4>::extents());
 static_assert(_retail::assayed<1, 2, 3>::extents() == _retail::assayed<1, 2, 3>::extents());
@@ -125,119 +125,119 @@ static_assert(_retail::assayed<    0, 1, 2, 3, 4, 5>::rank() ==   5);
 static_assert(_retail::assayed<-1, 0, 1, 2, 3, 4, 5>::rank() ==   5);
 
 
-//static_assert(    fixed_valued_q<_std::tuple<float, float>>);
-//static_assert(not fixed_valued_q<_std::tuple<float,   int>>);
+//static_assert(    fixed_valued_q<std::tuple<float, float>>);
+//static_assert(not fixed_valued_q<std::tuple<float,   int>>);
 //
-//static_assert(    fixed_valued_q<_std::tuple<float, float> const &>);
-//static_assert(not fixed_valued_q<_std::tuple<float,   int> const &>);
+//static_assert(    fixed_valued_q<std::tuple<float, float> const &>);
+//static_assert(not fixed_valued_q<std::tuple<float,   int> const &>);
 
-static_assert(fluid_shaped<_std::vector  <float   >>::extent() == -1);
-static_assert(fixed_shaped<_std::array   <float, 1>>::extent() ==  1);
-static_assert(fixed_shaped<_std::complex <float   >>::extent() ==  2);
+static_assert(fluid_shaped<std::vector  <float   >>::extent() == -1);
+static_assert(fixed_shaped<std::array   <float, 1>>::extent() ==  1);
+static_assert(fixed_shaped<std::complex <float   >>::extent() ==  2);
 
 
 static_assert(cardinal_q<typename fluid<cardinal_constant_t<2>>::value_type>);
 static_assert( ordinal_q<typename fluid< ordinal_constant_t<2>>::value_type>);
 
 
-static_assert(_std::same_as<disqualify_s<const float( &)[2]>, const float( &)[2]>);
-static_assert(_std::same_as<disqualify_s<      float( &)[2]>,       float( &)[2]>);
-static_assert(_std::same_as<disqualify_s<const float    [2]>, const float    [2]>);
-static_assert(_std::same_as<disqualify_s<      float    [2]>,       float    [2]>);
+static_assert(std::same_as<disqualify_s<const float( &)[2]>, const float( &)[2]>);
+static_assert(std::same_as<disqualify_s<      float( &)[2]>,       float( &)[2]>);
+static_assert(std::same_as<disqualify_s<const float    [2]>, const float    [2]>);
+static_assert(std::same_as<disqualify_s<      float    [2]>,       float    [2]>);
 //\
-static_assert(_std::same_as<disqualify_s<const float(&&)[2]>,       float    [2]>);
-static_assert(_std::same_as<disqualify_s<const float(&&)[2]>, const float    [2]>);
-static_assert(_std::same_as<disqualify_s<      float(&&)[2]>,       float    [2]>);
+static_assert(std::same_as<disqualify_s<const float(&&)[2]>,       float    [2]>);
+static_assert(std::same_as<disqualify_s<const float(&&)[2]>, const float    [2]>);
+static_assert(std::same_as<disqualify_s<      float(&&)[2]>,       float    [2]>);
 
-static_assert(_std::same_as<const _std::array<float,   2> & , typename destruct<const float(&)[2]>::      type>);
-static_assert(_std::same_as<      _std::array<float,   2> & , typename destruct<      float(&)[2]>::      type>);
-static_assert(_std::same_as<const _std::array<float,   2>   , typename destruct<const float   [2]>::      type>);
-static_assert(_std::same_as<      _std::array<float,   2>   , typename destruct<      float   [2]>::      type>);
-//atic_assert(_std::same_as<const             float(&)[2]   , typename destruct<const float(&)[2]>::array_type>);
-//atic_assert(_std::same_as<                  float(&)[2]   , typename destruct<      float(&)[2]>::array_type>);
-//atic_assert(_std::same_as<const             float   [2]   , typename destruct<const float   [2]>::array_type>);
-//atic_assert(_std::same_as<                  float   [2]   , typename destruct<      float   [2]>::array_type>);
-static_assert(_std::same_as<const             float &       , typename destruct<const float(&)[2]>::value_type>);
-static_assert(_std::same_as<                  float &       , typename destruct<      float(&)[2]>::value_type>);
-static_assert(_std::same_as<const             float         , typename destruct<const float   [2]>::value_type>);
-static_assert(_std::same_as<                  float         , typename destruct<      float   [2]>::value_type>);
+static_assert(std::same_as<const std::array<float,   2> & , typename destruct<const float(&)[2]>::      type>);
+static_assert(std::same_as<       std::array<float,   2> & , typename destruct<      float(&)[2]>::      type>);
+static_assert(std::same_as<const std::array<float,   2>   , typename destruct<const float   [2]>::      type>);
+static_assert(std::same_as<       std::array<float,   2>   , typename destruct<      float   [2]>::      type>);
+//atic_assert(std::same_as<const             float(&)[2]   , typename destruct<const float(&)[2]>::array_type>);
+//atic_assert(std::same_as<                  float(&)[2]   , typename destruct<      float(&)[2]>::array_type>);
+//atic_assert(std::same_as<const             float   [2]   , typename destruct<const float   [2]>::array_type>);
+//atic_assert(std::same_as<                  float   [2]   , typename destruct<      float   [2]>::array_type>);
+static_assert(std::same_as<const             float &       , typename destruct<const float(&)[2]>::value_type>);
+static_assert(std::same_as<                  float &       , typename destruct<      float(&)[2]>::value_type>);
+static_assert(std::same_as<const             float         , typename destruct<const float   [2]>::value_type>);
+static_assert(std::same_as<                  float         , typename destruct<      float   [2]>::value_type>);
 
-static_assert(_std::same_as<const _std::array<float,   2> & , typename destruct<const _std::complex<float> &>::type>);
-static_assert(_std::same_as<      _std::array<float,   2> & , typename destruct<      _std::complex<float> &>::type>);
-static_assert(_std::same_as<const _std::array<float,   2>   , typename destruct<const _std::complex<float>  >::type>);
-static_assert(_std::same_as<      _std::array<float,   2>   , typename destruct<      _std::complex<float>  >::type>);
-//atic_assert(_std::same_as<const             float(&)[2]   , typename destruct<const _std::complex<float> &>::array_type>);
-//atic_assert(_std::same_as<                  float(&)[2]   , typename destruct<      _std::complex<float> &>::array_type>);
-//atic_assert(_std::same_as<const             float   [2]   , typename destruct<const _std::complex<float>  >::array_type>);
-//atic_assert(_std::same_as<                  float   [2]   , typename destruct<      _std::complex<float>  >::array_type>);
-static_assert(_std::same_as<const             float &       , typename destruct<const _std::complex<float> &>::value_type>);
-static_assert(_std::same_as<                  float &       , typename destruct<      _std::complex<float> &>::value_type>);
-static_assert(_std::same_as<const             float         , typename destruct<const _std::complex<float>  >::value_type>);
-static_assert(_std::same_as<                  float         , typename destruct<      _std::complex<float>  >::value_type>);
+static_assert(std::same_as<const std::array<float,   2> & , typename destruct<const std::complex<float> &>::type>);
+static_assert(std::same_as<       std::array<float,   2> & , typename destruct<       std::complex<float> &>::type>);
+static_assert(std::same_as<const std::array<float,   2>   , typename destruct<const std::complex<float>  >::type>);
+static_assert(std::same_as<       std::array<float,   2>   , typename destruct<       std::complex<float>  >::type>);
+//atic_assert(std::same_as<const             float(&)[2]   , typename destruct<const std::complex<float> &>::array_type>);
+//atic_assert(std::same_as<                  float(&)[2]   , typename destruct<       std::complex<float> &>::array_type>);
+//atic_assert(std::same_as<const             float   [2]   , typename destruct<const std::complex<float>  >::array_type>);
+//atic_assert(std::same_as<                  float   [2]   , typename destruct<       std::complex<float>  >::array_type>);
+static_assert(std::same_as<const             float &       , typename destruct<const std::complex<float> &>::value_type>);
+static_assert(std::same_as<                  float &       , typename destruct<       std::complex<float> &>::value_type>);
+static_assert(std::same_as<const             float         , typename destruct<const std::complex<float>  >::value_type>);
+static_assert(std::same_as<                  float         , typename destruct<       std::complex<float>  >::value_type>);
 
-static_assert(_std::same_as<const             float(&)[2][2], typename restruct<const _std::complex<float>(&)[2]>::array_type>);
-static_assert(_std::same_as<                  float(&)[2][2], typename restruct<      _std::complex<float>(&)[2]>::array_type>);
-static_assert(_std::same_as<const             float   [2][2], typename restruct<const _std::complex<float>   [2]>::array_type>);
-static_assert(_std::same_as<                  float   [2][2], typename restruct<      _std::complex<float>   [2]>::array_type>);
+static_assert(std::same_as<const             float(&)[2][2], typename restruct<const std::complex<float>(&)[2]>::array_type>);
+static_assert(std::same_as<                  float(&)[2][2], typename restruct<       std::complex<float>(&)[2]>::array_type>);
+static_assert(std::same_as<const             float   [2][2], typename restruct<const std::complex<float>   [2]>::array_type>);
+static_assert(std::same_as<                  float   [2][2], typename restruct<       std::complex<float>   [2]>::array_type>);
 
-static_assert(_std::same_as<const             float &       , typename restruct<const _std::complex<float>(&)[2]>::value_type>);
-static_assert(_std::same_as<                  float &       , typename restruct<      _std::complex<float>(&)[2]>::value_type>);
-static_assert(_std::same_as<const             float         , typename restruct<const _std::complex<float>   [2]>::value_type>);
-static_assert(_std::same_as<                  float         , typename restruct<      _std::complex<float>   [2]>::value_type>);
+static_assert(std::same_as<const             float &       , typename restruct<const std::complex<float>(&)[2]>::value_type>);
+static_assert(std::same_as<                  float &       , typename restruct<       std::complex<float>(&)[2]>::value_type>);
+static_assert(std::same_as<const             float         , typename restruct<const std::complex<float>   [2]>::value_type>);
+static_assert(std::same_as<                  float         , typename restruct<       std::complex<float>   [2]>::value_type>);
 
 /*/
-static_assert(_std::same_as<      int( &)[2]   , decltype(destruct_f(XTAL_ANY_(      _std::complex<int>  &   )))>);
-static_assert(_std::same_as<const int( &)[2]   , decltype(destruct_f(XTAL_ANY_(const _std::complex<int>  &   )))>);
-static_assert(_std::same_as<      int(&&)[2]   , decltype(destruct_f(XTAL_ANY_(      _std::complex<int> &&   )))>);
-static_assert(_std::same_as<const int(&&)[2]   , decltype(destruct_f(XTAL_ANY_(const _std::complex<int> &&   )))>);
+static_assert(std::same_as<      int( &)[2]   , decltype(destruct_f(XTAL_ANY_(       std::complex<int>  &   )))>);
+static_assert(std::same_as<const int( &)[2]   , decltype(destruct_f(XTAL_ANY_(const std::complex<int>  &   )))>);
+static_assert(std::same_as<      int(&&)[2]   , decltype(destruct_f(XTAL_ANY_(       std::complex<int> &&   )))>);
+static_assert(std::same_as<const int(&&)[2]   , decltype(destruct_f(XTAL_ANY_(const std::complex<int> &&   )))>);
 /***/
-static_assert(_std::same_as<      int( &)[2][2], decltype(restruct_f(XTAL_ANY_(      _std::complex<int>(&)[2])))>);
-static_assert(_std::same_as<const int( &)[2][2], decltype(restruct_f(XTAL_ANY_(const _std::complex<int>(&)[2])))>);
-static_assert(_std::same_as<      int(&&)[2][2], decltype(restruct_f(XTAL_ANY_(      _std::complex<int>   [2])))>);
-static_assert(_std::same_as<const int(&&)[2][2], decltype(restruct_f(XTAL_ANY_(const _std::complex<int>   [2])))>);
+static_assert(std::same_as<      int( &)[2][2], decltype(restruct_f(XTAL_ANY_(       std::complex<int>(&)[2])))>);
+static_assert(std::same_as<const int( &)[2][2], decltype(restruct_f(XTAL_ANY_(const std::complex<int>(&)[2])))>);
+static_assert(std::same_as<      int(&&)[2][2], decltype(restruct_f(XTAL_ANY_(       std::complex<int>   [2])))>);
+static_assert(std::same_as<const int(&&)[2][2], decltype(restruct_f(XTAL_ANY_(const std::complex<int>   [2])))>);
 
 
-static_assert(array_valued_q<const _std::complex<float>(&)[2]>);
-static_assert(fixed_valued_q<const _std::complex<float>(&)[2]>);
-static_assert(fixed_shaped_q<const _std::complex<float>(&)[2]>);
-static_assert(       fixed_q<const _std::complex<float>(&)[2]>);
+static_assert(array_valued_q<const std::complex<float>(&)[2]>);
+static_assert(fixed_valued_q<const std::complex<float>(&)[2]>);
+static_assert(fixed_shaped_q<const std::complex<float>(&)[2]>);
+static_assert(       fixed_q<const std::complex<float>(&)[2]>);
 
 static_assert(            contiguous_field_q<float>);
 static_assert(               simplex_field_q<float>);
 static_assert(          not  complex_field_q<float>);
 static_assert(          not quotient_group_q<float>);
 static_assert(              quotient_group_q<  int>);
-static_assert(complex_field_q<_std::complex<float>>);
+static_assert(complex_field_q<std::complex<float>>);
 
 
 //NOTE: Commented lines are for MSVC, but support for zero-length arrays is not critical...
 
-//atic_assert(_xtd::extent_v<int[0][2][3]> == 0);
-static_assert(_xtd::extent_v<int[1][2][3]> == 1);
+//atic_assert(xtd::extent_v<int[0][2][3]> == 0);
+static_assert(xtd::extent_v<int[1][2][3]> == 1);
 
-//atic_assert(_xtd::extent_v<const int   [0][2][3]> == 0);
-static_assert(_xtd::extent_v<const int   [1][2][3]> == 1);
-//atic_assert(_xtd::extent_v<const int(&)[0][2][3]> == 0);
-static_assert(_xtd::extent_v<const int(&)[1][2][3]> == 1);
+//atic_assert(xtd::extent_v<const int   [0][2][3]> == 0);
+static_assert(xtd::extent_v<const int   [1][2][3]> == 1);
+//atic_assert(xtd::extent_v<const int(&)[0][2][3]> == 0);
+static_assert(xtd::extent_v<const int(&)[1][2][3]> == 1);
 
-static_assert(_xtd::extent_v<const int(&)[1][2][3], 0> == 1);
-static_assert(_xtd::extent_v<const int(&)[1][2][3], 1> == 2);
-static_assert(_xtd::extent_v<const int(&)[1][2][3], 2> == 3);
+static_assert(xtd::extent_v<const int(&)[1][2][3], 0> == 1);
+static_assert(xtd::extent_v<const int(&)[1][2][3], 1> == 2);
+static_assert(xtd::extent_v<const int(&)[1][2][3], 2> == 3);
 
-//atic_assert(same_q<_xtd::remove_extent_t<const int   [0]      >, const int         >);
-static_assert(same_q<_xtd::remove_extent_t<const int   [1]      >, const int         >);
-//atic_assert(same_q<_xtd::remove_extent_t<const int(&)[0]      >, const int &       >);
-static_assert(same_q<_xtd::remove_extent_t<const int(&)[1]      >, const int &       >);
+//atic_assert(same_q<xtd::remove_extent_t<const int   [0]      >, const int         >);
+static_assert(same_q<xtd::remove_extent_t<const int   [1]      >, const int         >);
+//atic_assert(same_q<xtd::remove_extent_t<const int(&)[0]      >, const int &       >);
+static_assert(same_q<xtd::remove_extent_t<const int(&)[1]      >, const int &       >);
 
-//atic_assert(same_q<_xtd::remove_extent_t<const int   [0][2][3]>, const int   [2][3]>);
-static_assert(same_q<_xtd::remove_extent_t<const int   [1][2][3]>, const int   [2][3]>);
-//atic_assert(same_q<_xtd::remove_extent_t<const int(&)[0][2][3]>, const int(&)[2][3]>);
-static_assert(same_q<_xtd::remove_extent_t<const int(&)[1][2][3]>, const int(&)[2][3]>);
+//atic_assert(same_q<xtd::remove_extent_t<const int   [0][2][3]>, const int   [2][3]>);
+static_assert(same_q<xtd::remove_extent_t<const int   [1][2][3]>, const int   [2][3]>);
+//atic_assert(same_q<xtd::remove_extent_t<const int(&)[0][2][3]>, const int(&)[2][3]>);
+static_assert(same_q<xtd::remove_extent_t<const int(&)[1][2][3]>, const int(&)[2][3]>);
 
-//atic_assert(same_q<_xtd::remove_all_extents_t<const int   [0][2][3]>, const int  >);
-static_assert(same_q<_xtd::remove_all_extents_t<const int   [1][2][3]>, const int  >);
-//atic_assert(same_q<_xtd::remove_all_extents_t<const int(&)[0][2][3]>, const int &>);
-static_assert(same_q<_xtd::remove_all_extents_t<const int(&)[1][2][3]>, const int &>);
+//atic_assert(same_q<xtd::remove_all_extents_t<const int   [0][2][3]>, const int  >);
+static_assert(same_q<xtd::remove_all_extents_t<const int   [1][2][3]>, const int  >);
+//atic_assert(same_q<xtd::remove_all_extents_t<const int(&)[0][2][3]>, const int &>);
+static_assert(same_q<xtd::remove_all_extents_t<const int(&)[1][2][3]>, const int &>);
 
 
 //atic_assert( array_shaped_q<int[0][2][3]>);
@@ -252,7 +252,7 @@ static_assert(intercedent_q<int[1][2][3]>);
 //atic_assert(same_q<succedent_s<int[0][2][3]>, int[1][2][3]>);
 
 
-static_assert(fixed_shaped_q<_std::complex<double> &>);
+static_assert(fixed_shaped_q<std::complex<double> &>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -272,8 +272,8 @@ TAG_("any")
 	};
 	TRY_("destruct")
 	{
-		_std::complex<float> foo{1, 1};
-		_std::complex<float> &qux = foo;
+		std::complex<float> foo{1, 1};
+		std::complex<float> &qux = foo;
 		auto &[bar, baz] = destruct_f(qux);
 
 		text_type constexpr  first{"1st"};
@@ -287,7 +287,7 @@ TAG_("any")
 	};
 	TRY_("ordering")
 	{
-		using is = _std::partial_ordering;
+		using is = std::partial_ordering;
 
 		TRUE_(0 == disordering_f(is::equivalent));
 		TRUE_(1 == disordering_f(is::greater));

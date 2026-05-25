@@ -2,7 +2,7 @@
 #include "./any.hh"
 
 #include "../flow/ion.hh"
-#include "../provision/spooled.hh"
+#include "../scheme/spooled.hh"
 
 
 
@@ -17,14 +17,14 @@ namespace xtal::schedule
 template <typename ...As>
 struct slicer
 {
-	using superkind = bond::compose<As..., provision::spooled<extent_constant_t<-1>>>;
+	using superkind = bond::compose<As..., scheme::spooled<extent_constant_t<-1>>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		static_assert(provision::spooled_q<S_>);
+		static_assert(scheme::spooled_q<S_>);
 
 	public:
 		using S_::S_;
@@ -52,7 +52,7 @@ struct slicer
 				using E_spool   = typename S_::template spool_t<E_payload>;
 				
 				E_spool u_spool{bond::seek_in_t<>{}
-				,	_std::numeric_limits<delay_type>::max()
+				,	std::numeric_limits<delay_type>::max()
 				};
 				XTAL_DEF_(return,inline,get)
 				next()

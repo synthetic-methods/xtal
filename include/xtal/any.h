@@ -145,11 +145,18 @@ XTAL_ENV_(push)
 #define XTAL_STD_flt_4            long double
 
 #define XTAL_STD_int(...)              XTAL_STD_int_##__VA_ARGS__
-#define XTAL_STD_int_0          ::std::int8_t
-#define XTAL_STD_int_1          ::std::int16_t
-#define XTAL_STD_int_2          ::std::int32_t
-#define XTAL_STD_int_3          ::std::int64_t
-#define XTAL_STD_int_4       long long int
+#define XTAL_STD_int_0          ::std:: int8_t
+#define XTAL_STD_int_1          ::std:: int16_t
+#define XTAL_STD_int_2          ::std:: int32_t
+#define XTAL_STD_int_3          ::std:: int64_t
+#define XTAL_STD_int_4       long long   signed
+
+#define XTAL_STD_nat(...)              XTAL_STD_nat_##__VA_ARGS__
+#define XTAL_STD_nat_0          ::std::uint8_t
+#define XTAL_STD_nat_1          ::std::uint16_t
+#define XTAL_STD_nat_2          ::std::uint32_t
+#define XTAL_STD_nat_3          ::std::uint64_t
+#define XTAL_STD_nat_4       long long unsigned
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -418,7 +425,7 @@ template <class X         > concept XTAL_NYM_(synthesized) = not ::std::same_as<
 #define XTAL_TRY_to_unless(...)      (not XTAL_TRY_to_if(__VA_ARGS__))                               ///< Check requirements failure.
 #define XTAL_TRY_do_if(...)                 (requires {{(__VA_ARGS__)}                          ;})  ///< Check requirements success.
 #define XTAL_TRY_to_if(...)                 (requires {{(__VA_ARGS__)} -> XTAL_NYM_(synthesized);})  ///< Check requirements success.
-#define XTAL_TRY_do(...)                  XTAL_TRY_do_if(__VA_ARGS__) {       (__VA_ARGS__);}        ///< Check requirements, then invoke as block.
+#define XTAL_TRY_do(...)                  XTAL_TRY_do_if(__VA_ARGS__) {       (__VA_ARGS__);}        ///< Check requirements, then invoke as statement.
 #define XTAL_TRY_to(...)                  XTAL_TRY_to_if(__VA_ARGS__) {return (__VA_ARGS__);}        ///< Check requirements, then return as expression.
 
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../provision/spooled.hh"
+#include "../scheme/spooled.hh"
 
 #include "../atom/differential.hh"
 #include "../flow/cue.hh"
@@ -17,14 +17,14 @@ producing a signal by successive calls to `method`.
 template <typename ...As>
 struct slider
 {
-	using superkind = bond::compose<As..., provision::spooled<extent_constant_t<-1>>>;
+	using superkind = bond::compose<As..., scheme::spooled<extent_constant_t<-1>>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		static_assert(provision::spooled_q<S_>);
+		static_assert(scheme::spooled_q<S_>);
 
 	public:
 		using S_::S_;
@@ -48,10 +48,10 @@ struct slider
 				using typename R_::event_type;
 
 			private:// ACCESS
-				using V_limits = _std::numeric_limits<delay_type>;
+				using V_limits = std::numeric_limits<delay_type>;
 				using U_layout = typename R_::event_type::layout_type;
 				using U_hold = typename fluid<U_layout>::value_type;
-				using U_ramp = atom::differential_t<atom::applied_s<U_layout, _std::plus>>;
+				using U_ramp = atom::differential_t<atom::qualify_s<U_layout, std::plus>>;
 				using E_hold = flow::cue_s<U_hold>;
 				using E_ramp = flow::cue_s<U_ramp>;
 				using E_pipe = typename S_::template spool_t<E_ramp>;
@@ -179,7 +179,7 @@ struct slider
 				{
 					if (t0 < t1) {
 						auto const i0 = E_ramp(t0 + 1);
-						auto const x0 = U_ramp(_std::prev(u_pipe.scan(i0))->tail()) (0);
+						auto const x0 = U_ramp(std::prev(u_pipe.scan(i0))->tail()) (0);
 						auto const x_ = x1 - x0;
 						auto const t_ = t1 - t0;
 						enqueue(t0, x0, x_/XTAL_ALL_(x_){t_});

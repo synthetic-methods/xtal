@@ -49,7 +49,7 @@ struct define_super
 		self_f(auto &&o, auto &&...oo)
 		noexcept -> decltype(auto)
 		{
-			if constexpr (_xtd::mutable_reference<decltype(o)> and some_q<decltype(oo)...>) {
+			if constexpr (xtd::mutable_reference<decltype(o)> and some_q<decltype(oo)...>) {
 				using Y = typename T::template self_s<_s...>;
 				auto &y = static_cast<Y &>(o); auto x = y; y.~ Y();
 				return *new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(x));
@@ -173,7 +173,7 @@ struct refine_tuple
 		unpack_f(bond::pack_q auto const &tuple)
 		noexcept -> T
 		{
-			return _std::apply([] XTAL_1FN_(call) (T), tuple);
+			return std::apply([] XTAL_1FN_(call) (T), tuple);
 		}
 
 		template <size_type N> XTAL_DEF_(inline,met) get(subtype const &&s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (XTAL_MOV_(s).template head<constant_t<N>>())
@@ -231,7 +231,7 @@ struct defer_field
 		\brief  	Constructs `this` using an `initializer_list` if supported.
 		*/
 		XTAL_NEW_(implicit)
-		subtype(_std::initializer_list<U_> o)
+		subtype(std::initializer_list<U_> o)
 		noexcept
 		requires initializer_q<body_type>
 		:	body_part(o)
@@ -357,10 +357,10 @@ struct defer_field<U>
 	};
 };
 template <class I, auto ...Ns>
-struct defer_field<_std::integer_sequence<I, Ns...>>
+struct defer_field<std::integer_sequence<I, Ns...>>
 {
-	static auto constexpr N_revalue = bond::seek_value_t<_xtd::make_signed_f(Ns)...>{};
-	static auto constexpr N_devalue = bond::seek_index_t<_xtd::make_signed_f(Ns)...>{};
+	static auto constexpr N_revalue = bond::seek_value_t<xtd::signed_cast(Ns)...>{};
+	static auto constexpr N_devalue = bond::seek_index_t<xtd::signed_cast(Ns)...>{};
 
 	template <class S>
 	class subtype : public bond::compose_s<S>
@@ -369,7 +369,7 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		using S_ = bond::compose_s<S>;
 
 	public:
-		using head_type = _std::make_signed_t<I>;
+		using head_type = std::make_signed_t<I>;
 		using body_type = size_type;
 
 	public:
@@ -406,7 +406,7 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		ordinality()
 		noexcept -> auto
 		{
-			auto const &[dn_, up_] = _xtd::ranges::minmax_element(N_revalue);
+			auto const &[dn_, up_] = xtd::ranges::minmax_element(N_revalue);
 			head_type const dn = *dn_, dn_sgn = (dn > 0) - (dn < 0), dn_abs = dn*dn_sgn;
 			head_type const up = *up_, up_sgn = (up > 0) - (up < 0), up_abs = up*up_sgn;
 			return bond::fit<>::maximum_f(dn_abs, up_abs) + 1;
@@ -430,7 +430,7 @@ struct defer_field<unit_type[N_width]>
 	static_assert(0 < N_width);
 	using U = unit_type[N_width];
 
-	static unsigned constexpr N_depth = _std::bit_width(N_width - one);
+	static unsigned constexpr N_depth = std::bit_width(N_width - one);
 	static_assert(N_width == one << N_depth);
 
 	using superkind = bond::word<N_width>;
@@ -520,10 +520,10 @@ struct refer_iterators
 		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {u.  end();} {return S::head().  end();}
 		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {u.  end();} {return S::head().  end();}
 		/*/
-		XTAL_DEF_(return,inline,let) begin() const noexcept requires requires (U const &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S::head());}
-		XTAL_DEF_(return,inline,let) begin()       noexcept requires requires (U       &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S::head());}
-		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
-		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
+		XTAL_DEF_(return,inline,let) begin() const noexcept requires requires (U const &u) {xtd::ranges::begin(u);} {return xtd::ranges::begin(S::head());}
+		XTAL_DEF_(return,inline,let) begin()       noexcept requires requires (U       &u) {xtd::ranges::begin(u);} {return xtd::ranges::begin(S::head());}
+		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {xtd::ranges::  end(u);} {return xtd::ranges::  end(S::head());}
+		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {xtd::ranges::  end(u);} {return xtd::ranges::  end(S::head());}
 		/***/
 
 		XTAL_FN2_(do) (template <counter_q V>
@@ -538,7 +538,7 @@ struct refer_iterators
 		subhead(W &&w),
 		noexcept -> auto
 		{
-			using _xtd::ranges::next;
+			using xtd::ranges::next;
 			auto &u  = S::template head<U>();
 			auto  u_ = begin();
 			auto  w0 = w.front(), wN = w.back() + 1;
@@ -592,14 +592,14 @@ struct refer_inequality
 			XTAL_IF0
 			XTAL_0IF (real_variable_q<U>) {
 				auto constexpr o = bond::fit<U>::minilon_f();
-				auto const     x = _xtd::copysign(u, o);
+				auto const     x = xtd::copysign(u, o);
 				return o < x;
 				
 			}
 			XTAL_0IF (complex_variable_q<U> and real_variable_q<typename destruct<U>::value_type>) {
 				auto constexpr o = bond::fit<U>::minilon_f();
-				auto const     x = _xtd::copysign(u.real(), o);
-				auto const     y = _xtd::copysign(u.imag(), o);
+				auto const     x = xtd::copysign(u.real(), o);
+				auto const     y = xtd::copysign(u.imag(), o);
 				return o < x and o < y;
 			}
 			XTAL_0IF_(else) {

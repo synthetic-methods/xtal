@@ -1,0 +1,58 @@
+#pragma once
+#include "./any.hh"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::atom
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/*!
+\brief   Applies the template to the `value_type` of the provided `subtype`.
+*/
+template <template <class> class T_>
+struct qualify;
+
+template <class U, template <class> class T_>
+using qualify_s = bond::compose_s<U, qualify<T_>>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <template <class> class T_>
+struct qualify
+{
+	template <class U>
+	class epitype
+	{
+	public:
+		using type = T_<U>;
+
+	};
+	template <vector_q W>
+	class epitype<W>
+	{
+		XTAL_DEF_(set) N = xtd::        extent_v<W>;
+		XTAL_TYP_(set) U = xtd:: remove_extent_t<W>;
+		XTAL_TYP_(set) V = std:: remove_cvref_t<U>;
+		XTAL_TYP_(set) T = xtd::qualify_cvref_t<W, T_<V>[N]>;
+
+	public:
+		using type = T;
+	
+	};
+
+	template <class W>
+	using subtype = typename epitype<W>::type;
+
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

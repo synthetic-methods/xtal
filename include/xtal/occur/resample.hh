@@ -45,7 +45,7 @@ struct resample
 		XTAL_NEW_(explicit)
 		subtype(number_q auto v, auto &&...oo)
 		noexcept
-		:	subtype{U2{static_cast<U0>(v), _std::in_place}, XTAL_REF_(oo)...}
+		:	subtype{U2{static_cast<U0>(v), std::in_place}, XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(implicit)
 		subtype()

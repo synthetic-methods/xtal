@@ -17,7 +17,7 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 /*!
 \brief
-Utility for constructing `block` from the given template.
+Utility for constructing block from the given template.
 */
 template <template <class ...> class T_>
 struct factory
@@ -31,7 +31,7 @@ struct factory
 	Whether the resulting collection is homogeneous or heterogeneous depends on
 	the commonality of the supplied arguments.
 	*/
-	template <auto f=_std::identity{}, class ...Xs>
+	template <auto f=std::identity{}, class ...Xs>
 	XTAL_DEF_(return,inline,set)
 	make(Xs &&...xs)
 	noexcept -> auto
@@ -40,7 +40,7 @@ struct factory
 		using          X_ = objective_t<Xs...>;
 		auto constexpr N  = sizeof...(xs);
 		XTAL_IF0
-		XTAL_0IF (same_q<_std::identity, F>)        {return make<[] XTAL_1FN_(call) (objective_f)>(XTAL_REF_(xs) ...);}
+		XTAL_0IF (same_q<std::identity, F>)        {return make<[] XTAL_1FN_(call) (objective_f)>(XTAL_REF_(xs) ...);}
 		XTAL_0IF (in_v<automorphism_p<F, X_>> and      same_q<Xs...>) {return T_<return_t<F, X_>[N]>{ (XTAL_REF_(xs))...};}
 		XTAL_0IF (un_v<automorphism_p<F, X_>> and      same_q<Xs...>) {return T_<return_t<F, X_>[N]>{f(XTAL_REF_(xs))...};}
 		XTAL_0IF (in_v<automorphism_p<F, X_>> and different_q<Xs...>) {return T_<return_t<F, Xs>...>{ (XTAL_REF_(xs))...};}
@@ -87,7 +87,7 @@ struct aligned<T>
 	\brief  	Provides the aligned storage-type for `T`, via the member-value `bytes`.
 	\brief  	Replaces the C++23-deprecated `std::aligned_storage`.
 	*/
-	class type {alignas(alignof(T)) _std::byte bytes[sizeof(T)];};
+	class type {alignas(alignof(T)) std::byte bytes[sizeof(T)];};
 
 	/*!
 	\brief  	Provides the aligned storage-size of `T`.

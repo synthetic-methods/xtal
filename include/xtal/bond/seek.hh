@@ -14,9 +14,9 @@ namespace xtal::bond
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T             >	XTAL_TYP_(new) seek_is                                         : logical_constant_t<0> {};
-template <class U, auto  ...Ns>	XTAL_TYP_(new) seek_is    <_std::integer_sequence<U  , Ns...>> : logical_constant_t<1> {};
+template <class U, auto  ...Ns>	XTAL_TYP_(new) seek_is    <std::integer_sequence<U  , Ns...>> : logical_constant_t<1> {};
 template <         class ...Ts>	XTAL_TYP_(ask) seek_q =             (...and seek_is<Ts>{}());///<\brief Determines whether `Ts...` are `std::integer_sequence`s.
-template <         int   ...Ns>	XTAL_TYP_(let) seek_in_t = _std::integer_sequence<int, Ns...>  ;///<\brief Defines                        `std::integer_sequence<int, Ns...>`.
+template <         int   ...Ns>	XTAL_TYP_(let) seek_in_t = std::integer_sequence<int, Ns...>  ;///<\brief Defines                        `std::integer_sequence<int, Ns...>`.
 
 
 XTAL_DEF_(let) forward_seek_f = []<int ...Ns> (seek_in_t<Ns...>)
@@ -38,11 +38,11 @@ XTAL_0FN_(to) (reverse_seek_f(seek_in_t<(Ns{})...>{}));
 
 
 XTAL_DEF_(let) forward_seek_to_f = []<constant_q N_count> (N_count)
-XTAL_0FN_(to) (forward_seek_f(_std::make_integer_sequence<int, N_count{}>{}));
+XTAL_0FN_(to) (forward_seek_f(std::make_integer_sequence<int, N_count{}>{}));
 ///<\brief   Generates `std::make_integer_sequence<int, N_count>` from lowest-to-highest.
 
 XTAL_DEF_(let) reverse_seek_to_f = []<constant_q N_count> (N_count)
-XTAL_0FN_(to) (reverse_seek_f(_std::make_integer_sequence<int, N_count{}>{}));
+XTAL_0FN_(to) (reverse_seek_f(std::make_integer_sequence<int, N_count{}>{}));
 ///<\brief   Generates `std::make_integer_sequence<int, N_count>` from highest-to-lowest.
 
 XTAL_DEF_(let) seek_to_f = []<constant_q N_counter> (N_counter)
@@ -68,7 +68,7 @@ template <         class ...Ts>  XTAL_TYP_(let) seek_front_t = typename seek_fro
 template <         auto  ...Ns>  XTAL_DEF_(let) seek_front_v =          seek_front_t<constant_t<Ns>...>{}();   ///<\brief Produces the first value within `Ns...`.
 
 XTAL_DEF_(let) seek_front_f = []<class ...Ts> (Ts &&...ts)
-XTAL_0FN_(to) (get<0>(_std::tuple<Ts...>{XTAL_REF_(ts)...}));
+XTAL_0FN_(to) (get<0>(std::tuple<Ts...>{XTAL_REF_(ts)...}));
 ///<\brief   Produces the first argument of `ts...`.
 
 #ifndef XTAL_DOC
@@ -80,7 +80,7 @@ template <         class ...Ts>  XTAL_TYP_(let) seek_back_t = typename seek_back
 template <         auto  ...Ns>  XTAL_DEF_(let) seek_back_v =          seek_back_t<constant_t<Ns>...>{}(); ///<\brief Produces the  last value within `Ns...`.
 
 XTAL_DEF_(let) seek_back_f = []<class ...Ts> (Ts &&...ts)
-XTAL_0FN_(to) (get<sizeof...(Ts) - 1>(_std::tuple<Ts...>{XTAL_REF_(ts)...}));
+XTAL_0FN_(to) (get<sizeof...(Ts) - 1>(std::tuple<Ts...>{XTAL_REF_(ts)...}));
 ///<\brief   Produces the  last argument of `ts...`.
 
 
@@ -135,9 +135,9 @@ struct seek_index
 	static unsigned constexpr N_lower = seek_minimum_v<Ns...>;
 	//\
 	static unsigned constexpr N_limit = 1U + N_upper - N_lower;
-	static unsigned constexpr N_limit = 1U << _std::bit_width(N_upper - N_lower);
+	static unsigned constexpr N_limit = 1U << std::bit_width(N_upper - N_lower);
 	
-	using  supertype = _std::array<int, N_limit>;
+	using  supertype = std::array<int, N_limit>;
 	class       type : public supertype
 	{
 	public:// CONSTRUCT
@@ -161,7 +161,7 @@ struct seek_index
 		operator[](I i) const
 		noexcept -> decltype(auto)
 		{
-			auto const j = _xtd::make_signed_f<int>(i) - N_lower;
+			auto const j = xtd::signed_cast<int>(i) - N_lower;
 			auto const k = 0 <= j and j < N_limit; assert(k);
 			return supertype::operator[](k? j: 0);
 		}
@@ -183,9 +183,9 @@ struct seek_value
 {
 	//\
 	static unsigned constexpr N_limit = sizeof...(Ns);
-	static unsigned constexpr N_limit = 1U << _std::bit_width(sizeof...(Ns) - 1);
+	static unsigned constexpr N_limit = 1U << std::bit_width(sizeof...(Ns) - 1);
 	
-	using  supertype = _std::array<int, N_limit>;
+	using  supertype = std::array<int, N_limit>;
 	class       type : public supertype
 	{
 	public:// CONSTRUCT
@@ -221,8 +221,8 @@ seek_expose_f(seek_in_t<Ns...>)
 noexcept -> decltype(auto)
 {
 	XTAL_IF0
-	XTAL_0IF (2 == sizeof...(Ns)) {return _std::tuple<constant_t<Ns>...>{};}
-	XTAL_0IF (2 != sizeof...(Ns)) {return _std::pair <constant_t<Ns>...>{};}
+	XTAL_0IF (2 == sizeof...(Ns)) {return std::tuple<constant_t<Ns>...>{};}
+	XTAL_0IF (2 != sizeof...(Ns)) {return std::pair <constant_t<Ns>...>{};}
 }
 template        <int I= terminal_constant_v<int>, int ...Ns>
 requires different_v<I, terminal_constant_v<int>>

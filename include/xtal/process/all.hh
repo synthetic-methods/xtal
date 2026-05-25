@@ -3,3 +3,4 @@
 #include "./left.hh"
 #include "./lift.hh"
 #include "./link.hh"
+#include "./occurrence.hh"

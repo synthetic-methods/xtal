@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./slicer.hh"// testing...
 
-#include "../provision/all.hh"
+#include "../scheme/all.hh"
 #include "../processor/monomer.hh"
 
 
@@ -16,8 +16,8 @@ namespace xtal::schedule::_test
 template <class Px_mix>
 void slicer_processor_x1()
 {
-	using namespace _xtd::ranges::views;
-	using namespace provision;
+	using namespace xtd::ranges::views;
+	using namespace scheme;
 //	using namespace schedule;
 
 
@@ -57,12 +57,12 @@ void slicer_processor_x1()
 	xhs <<= U0_cue{2}.then(U0_event{300});
 	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
-	TRUE_(equal_f(xhs, _std::vector{100, 211, 322, 333}));
+	TRUE_(equal_f(xhs, std::vector{100, 211, 322, 333}));
 
 	xhs <<= U0_cue{2}.then(U0_event{400});// relative timing!
 	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
-	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));
+	TRUE_(equal_f(xhs, std::vector{344, 355, 466, 477}));
 
 }
 TAG_("slicer", "processor")

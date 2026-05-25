@@ -1,0 +1,330 @@
+#pragma once
+#include "./any.hh"
+#include "./bracket.hh"
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::atom
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/*!
+\brief   Extends `bracket` with component-wise operation.
+\note    Abstract `quantity`.
+*/
+
+template <class ...Us>	struct  quantify;
+template <class ...Us>	using   quantify_t = typename quantify<Us...>::type;
+template <class ...Us>	concept quantify_q = bond::tag_inner_fixed_p<quantify_t, Us...>;
+
+XTAL_DEF_(let) quantify_f = [] XTAL_1FN_(call) (_detail::factory<quantify_t>::make);
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class U, auto  N, auto  ...Ns> struct   quantify<U   [N][Ns]...> : quantify<quantify_t<U[Ns]...>   [N]> {};
+template <class U, auto  N, auto  ...Ns> struct   quantify<U(&)[N][Ns]...> : quantify<quantify_t<U[Ns]...>(&)[N]> {};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <scalar_q ...Us> requires same_q<Us...>
+struct quantify<Us ...>
+:	quantify<common_t<Us...>[sizeof...(Us)]>
+{
+};
+template <class ...Us>
+struct quantify
+{
+	using U_fit = bond::fit<Us...>;
+	using sigma_type = typename U_fit::sigma_type;
+	using delta_type = typename U_fit::delta_type;
+
+	template <class T>
+	using endotype = typename bracket<Us...>::template homotype<T>;
+
+	template <class T>
+	using holotype = bond::compose_s<endotype<T>, bond::tag<quantify_t>>;
+
+	template <class T>
+	class homotype : public holotype<T>
+	{
+		using S_ = holotype<T>;
+		using V_ = typename S_::scale_type;
+		using U_ = typename S_::value_type;
+		using U0 = typename S_::template tuple_element<0>::type;
+
+	public:// CONSTRUCT
+		using S_::S_;
+
+		using typename S_::value_type;
+		using typename S_::scale_type;
+
+	public:// OPERATE
+		using S_::size;
+		using S_::self;
+		using S_::twin;
+
+	protected:
+		template <size_type I> XTAL_DEF_(return,inline,set) zip_get(         auto &&t) noexcept -> decltype(auto) {return                       (XTAL_REF_(t));}
+		template <size_type I> XTAL_DEF_(return,inline,set) zip_got(         auto &&t) noexcept -> decltype(auto) {return             zip_get<I>(XTAL_REF_(t));}
+
+		template <size_type I> XTAL_DEF_(return,inline,set) zip_get(bucket_q auto &&t) noexcept -> decltype(auto) requires XTAL_TRY_(to) (get<I>(XTAL_REF_(t)))
+		template <size_type I> XTAL_DEF_(return,inline,set) zip_got(bucket_q auto &&t) noexcept -> decltype(auto) requires XTAL_TRY_(to) (got<I>(XTAL_REF_(t)))
+
+	public:
+		/*!
+		\brief  	Determines whether the operation `f` can be applied at the value-level.
+		*/
+		template <class U, auto f>
+		XTAL_DEF_(set) zip_value_q = std::conditional_t<same_q<Us...>
+			,	constant_t<un_v<0, requires (U_ u_, U u) {f(u_, u);}   >>
+			,	constant_t<un_v<0, requires (Us u_, U u) {f(u_, u);}...>>
+		>{}();
+
+		/*!
+		\brief  	Evaluates `f` across       `ts[I]...`, returning the result.
+		*/
+		template <auto f, size_type I>
+		XTAL_DEF_(return,inline,set)
+		zip_from(         auto &&...ts)
+		noexcept -> decltype(auto)
+		{
+			return f(                      zip_got<I>(XTAL_REF_(ts))...);
+		}
+		/*!
+		\brief  	Evaluates `f` across `s[I], ts[I]...`.
+		*/
+		template <auto f, size_type I>
+		XTAL_DEF_(mutate,inline,set)
+		zip_into(auto &s, auto &&...ts)
+		noexcept -> decltype(auto)
+		{
+			(void) f(get<I>(XTAL_REF_(s)), zip_get<I>(XTAL_REF_(ts))...);
+			return s;
+		}
+
+		/*!
+		\brief  	Evaluates `f` across       `ts[*]...`, returning the result.
+		*/
+		template <auto f>
+		XTAL_DEF_(return,inline,set)
+		zip_from(         auto &&...ts)
+		noexcept -> decltype(auto)
+		{
+			return [&] <auto ...I>(bond::seek_in_t<I...>)
+				XTAL_0FN_(to) (S_::form(zip_from<f, I>(   ts...)  ...)) (bond::seek_to_t<size> {});
+		}
+		/*!
+		\brief  	Evaluates `f` across `s[*], ts[*]...`.
+		*/
+		template <auto f>
+		XTAL_DEF_(mutate,inline,set)
+		zip_into(auto &s, auto &&...ts)
+		noexcept -> decltype(auto)
+		{
+			return [&] <auto ...I>(bond::seek_in_t<I...>)
+				XTAL_0FN_(to) (         zip_into<f, I>(s, ts...), ... ) (bond::seek_to_t<size> {});
+		}
+		/*!
+		\returns	This after applying the vector operation `f`.
+		*/
+		template <auto f>
+		XTAL_DEF_(mutate,inline,let)
+		zip_with(auto &&...ts)
+		noexcept -> auto &
+		{
+			return zip_into<f>(self(), XTAL_REF_(ts)...);
+		}
+
+		/*!
+		\returns	The reduction of `this` w.r.t. the binary operation `f`.
+		*/
+		template <auto f, int I=size - 1>
+		XTAL_DEF_(return,inline,let)
+		reduce() const
+		{
+			XTAL_IF0
+			XTAL_0IF (0 == I) {return   get<I>(self())                     ;}
+			XTAL_0IF (1 <= I) {return f(get<I>(self()), reduce<f, I - 1>());}
+		}
+
+
+	//	Scalar sum:
+		template <int N_sgn=1>
+		XTAL_DEF_(return,inline,let)
+		sum() const
+		noexcept -> auto
+		{
+			return sum<N_sgn>(scale_type{0});
+		}
+		template <int N_sgn=1>
+		XTAL_DEF_(return,inline,let)
+		sum(auto const &u) const
+		noexcept -> auto
+		{
+			auto &s = self();
+
+			if constexpr (0 < N_sgn) {
+				return [&]<auto ...I> (bond::seek_in_t<I...>)
+					XTAL_0FN_(to) (u +...+ get<I>(s))
+				(bond::seek_to_t<size>{});
+			}
+			else {
+				return [&]<auto ...I> (bond::seek_in_t<I...>)
+					XTAL_0FN_(to) (u +...+ (scale_type{cosign_v<I>}*get<I>(s)))
+				(bond::seek_to_t<size>{});
+			}
+		}
+
+	//	Scalar product:
+		template <int N_sgn=1>
+		XTAL_DEF_(return,inline,let)
+		product() const
+		noexcept -> auto
+		{
+			return product<N_sgn>(scale_type{0});
+		}
+		template <int N_sgn=1>
+		XTAL_DEF_(return,inline,let)
+		product(auto u) const
+		noexcept -> auto
+		requires in_v<requires (value_type v) {v += u;}>
+		{
+			auto &s = self();
+			
+			bond::seek_to_e<size>([&]<constant_q I> (I) XTAL_0FN {
+				sigma_type constexpr  i{I{}};
+				scale_type constexpr _1{cosign_v<i>};
+				auto const &v = get<I>(s);
+				XTAL_IF0
+				XTAL_0IF (0 < N_sgn) {u = xtd::plus_multiplies{}(XTAL_MOV_(u),    v, v);}
+				XTAL_0IF (N_sgn < 0) {u = xtd::plus_multiplies{}(XTAL_MOV_(u), _1*v, v);}
+			});
+
+			return u;
+		}
+		template <int N_sgn=1> requires same_q<Us...>
+		XTAL_DEF_(return,inline,let)
+		product(auto &&t) const
+		noexcept -> auto
+		requires un_v<requires (value_type v) {v += t;}> and fixed_shaped_q<decltype(t), S_>
+		{
+			auto &s = self();
+			value_type u{0};
+			
+			bond::seek_to_e<size>([&, this]<constant_q I> (I) XTAL_0FN {
+				sigma_type constexpr  i{I{}};
+				scale_type constexpr _1{cosign_v<i>};
+				XTAL_IF0
+				XTAL_0IF (0 < N_sgn) {u = xtd::plus_multiplies{}(XTAL_MOV_(u),    get<i>(s), get<i>(t));}
+				XTAL_0IF (N_sgn < 0) {u = xtd::plus_multiplies{}(XTAL_MOV_(u), _1*get<i>(s), get<i>(t));}
+			});
+			
+			return u;
+		}
+
+
+	//	Vector comparison (performed component-wise):
+
+		XTAL_DEF_(return,inline,met)
+		operator <=> (homotype const &s, homotype const &t)
+		noexcept -> auto
+		requires simplex_variable_q<U_>
+		{
+			return ordering_f([&]<auto ...I> (bond::seek_in_t<I...>)
+				XTAL_0FN_(to) (disordering_f()|...|disordering_f(get<I>(s) - get<I>(t)))
+			(bond::seek_to_t<size>{}));
+		}
+
+	//	Vector reflection (performed component-wise):
+
+		template <int N_sgn=1>
+		XTAL_DEF_(inline,let)
+		flip()
+		noexcept -> auto &
+		{
+			XTAL_IF0
+			XTAL_0IF (0 <= N_sgn) {
+				return self();
+			}
+			XTAL_0IF (N_sgn <  0) {
+				return zip_with<[] (auto &x) XTAL_0FN_(to) (x = -XTAL_MOV_(x))>();
+			}
+		}
+		template <int N_sgn=1>
+		XTAL_DEF_(inline,let)
+		flipped()
+		noexcept -> auto
+		{
+			return twin().template flip<N_sgn>();
+		}
+
+		XTAL_DEF_(return,inline,let) operator - () noexcept -> auto requires requires (U_ u) {-u;}{return zip_with<[] (           auto const &u) XTAL_0FN_(to) (-u)>();}
+		XTAL_DEF_(return,inline,let) operator ~ () noexcept -> auto requires requires (U_ u) {~u;}{return zip_with<[] (integral_q auto const &u) XTAL_0FN_(to) (~u)>();}
+
+	//	TODO: Restrict scalar-distribution to multiplicative/conjunctive operations?
+
+	protected:
+		/*!
+		\internal
+		The purpose of the different `operator` implementations is to handle
+		`bucket_revalued_q`s, which have different `initializer_t`s and `value_type`s.
+
+		It's safer to assign the result of the binary operator via `zip_from` (using `got`/`coelement`),
+		than to use apply the assignment directly via `zip_with` (using `get` for both `self()` and the arguments).
+		*/
+		/**/
+		template <class W>
+		XTAL_DEF_(mutate,inline,get)
+		div1_(W const &w)
+		noexcept
+		{
+			if constexpr (real_q<V_>) {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x *=y)>(V_{one}/w);}
+			else                      {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x /=y)>(        w);}
+		}
+		/***/
+		template <class W> XTAL_DEF_(mutate,inline,get)  mul1_(W const &w)       noexcept requires bucket_revalued_q<T> {auto &s = self(); s = mul2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  div1_(W const &w)       noexcept requires bucket_revalued_q<T> {auto &s = self(); s = div2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  add1_(W const &w)       noexcept requires bucket_revalued_q<T> {auto &s = self(); s = add2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  sub1_(W const &w)       noexcept requires bucket_revalued_q<T> {auto &s = self(); s = sub2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  mul1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x *=y)>(w);}
+	//	template <class W> XTAL_DEF_(mutate,inline,get)  div1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x /=y)>(w);}
+		template <class W> XTAL_DEF_(mutate,inline,get)  add1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x +=y)>(w);}
+		template <class W> XTAL_DEF_(mutate,inline,get)  sub1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x -=y)>(w);}
+		template <class W> XTAL_DEF_(return,inline,let) _mul2 (W const &w) const noexcept {return zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x * y)>(w, self());}
+		template <class W> XTAL_DEF_(return,inline,let) _div2 (W const &w) const noexcept {return zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x / y)>(w, self());}
+		template <class W> XTAL_DEF_(return,inline,let) _add2 (W const &w) const noexcept {return zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x + y)>(w, self());}
+		template <class W> XTAL_DEF_(return,inline,let) _sub2 (W const &w) const noexcept {return zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x - y)>(w, self());}
+		template <class W> XTAL_DEF_(return,inline,let)  mul2_(W const &w) const noexcept {return zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x * y)>(self(), w);}
+		template <class W> XTAL_DEF_(return,inline,let)  div2_(W const &w) const noexcept {return zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x / y)>(self(), w);}
+		template <class W> XTAL_DEF_(return,inline,let)  add2_(W const &w) const noexcept {return zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x + y)>(self(), w);}
+		template <class W> XTAL_DEF_(return,inline,let)  sub2_(W const &w) const noexcept {return zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x - y)>(self(), w);}
+
+	public:
+		template <class U> XTAL_DEF_(return,inline,met) operator * (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ *= u)>> {return s. mul2_(u);}
+		template <class U> XTAL_DEF_(return,inline,met) operator / (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ /= u)>> {return s._div2 (u);}
+		template <class U> XTAL_DEF_(return,inline,met) operator + (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ += u)>> {return s. add2_(u);}
+		template <class U> XTAL_DEF_(return,inline,met) operator - (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ -= u)>> {return s._sub2 (u);}
+		template <class U> XTAL_DEF_(return,inline,let) operator * (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ *= u)>> {return    mul2_(u);}
+		template <class U> XTAL_DEF_(return,inline,let) operator / (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ /= u)>> {return    div2_(u);}
+		template <class U> XTAL_DEF_(return,inline,let) operator + (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ += u)>> {return    add2_(u);}
+		template <class U> XTAL_DEF_(return,inline,let) operator - (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ -= u)>> {return    sub2_(u);}
+		template <class U> XTAL_DEF_(mutate,inline,get) operator *=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ *= u)>> {return    mul1_(u);}
+		template <class U> XTAL_DEF_(mutate,inline,get) operator /=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ /= u)>> {return    div1_(u);}
+		template <class U> XTAL_DEF_(mutate,inline,get) operator +=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ += u)>> {return    add1_(u);}
+		template <class U> XTAL_DEF_(mutate,inline,get) operator -=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ -= u)>> {return    sub1_(u);}
+
+	};
+	using type = bond::derive_t<homotype>;
+
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

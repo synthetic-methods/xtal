@@ -7,9 +7,10 @@
 
 #include "./fit.hh"// testing...
 XTAL_ENV_(push)
-namespace xtal::bond::_test
+namespace xtal::bond::_test::XTAL_NUM
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+using namespace xtal::bond::_test;
 
 static_assert( 1.0F == fit<float>::minimum_f( 1.0F,  1.5F));
 static_assert( 1.0F == fit<float>::minimum_f( 1.5F,  1.0F));
@@ -29,7 +30,7 @@ TAG_("fit")
 	TRY_("`fit` evaluation")
 	{
 		auto constexpr M_sqrt2 = fit<>::diplo_f(0.5);
-		auto constexpr N_sqrt2 = _std::numbers::sqrt2_v<typename fit<>::alpha_type>;
+		auto constexpr N_sqrt2 = std::numbers::sqrt2_v<typename fit<>::alpha_type>;
 		TRUE_(N_sqrt2/M_sqrt2 - M_sqrt2/N_sqrt2 < fit<>::epsilon_f(8));
 
 		TRUE_(fit<>::negative.depth == fit<>::full.depth);
@@ -49,7 +50,7 @@ TAG_("fit")
 		TRUE_(fit<>::epsilon_f(0) != 0);
 		TRUE_(fit<>::epsilon_f(0) <  fit<>::epsilon_f(1));
 		TRUE_(fit<>::epsilon_f(1) <  fit<>::epsilon_f(2));
-		TRUE_(fit<>::epsilon_f(1) == _std::numeric_limits<double>::epsilon());
+		TRUE_(fit<>::epsilon_f(1) == std::numeric_limits<double>::epsilon());
 		TRUE_(one <  one + fit<>::epsilon_f( 1));
 		TRUE_(one == one + fit<>::epsilon_f( 0));
 		TRUE_(one == one - fit<>::epsilon_f(-1));

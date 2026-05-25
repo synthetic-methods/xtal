@@ -3,7 +3,7 @@
 #include "./monomer.hh"
 #include "../flow/key.hh"
 #include "../process/all.hh"
-#include "../provision/all.hh"
+#include "../scheme/all.hh"
 
 
 XTAL_ENV_(push)
@@ -63,13 +63,13 @@ public:
 		/*/
 		using V_ = monomer_t<U>;
 		/*/
-		using V_ = _std::conditional_t<any_q<U>, U, monomer_t<U>>;
+		using V_ = std::conditional_t<any_q<U>, U, monomer_t<U>>;
 		/***/
 
 	public:
 		using S_::S_;
 
-		template <class ...Xs> requires provision::spooled_q<S_>
+		template <class ...Xs> requires scheme::spooled_q<S_>
 		struct binding
 		{
 		private:
@@ -101,7 +101,7 @@ public:
 				static_assert(any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 				
-				U_ensemble u_ensemble{_std::numeric_limits<V_key>::min(), bond::seek_in_t<>{}};
+				U_ensemble u_ensemble{std::numeric_limits<V_key>::min(), bond::seek_in_t<>{}};
 
 			public:// CONSTRUCT
 			//	using R_::R_;
@@ -116,7 +116,7 @@ public:
 				subtype(same_q<Xs> auto &&...xs)
 				noexcept
 				:	u_ensemble{
-						U_voice(_std::numeric_limits<V_key>::min()
+						U_voice(std::numeric_limits<V_key>::min()
 						,	XTAL_REF_(xs)...
 						)
 					,	bond::seek_in_t<>{}
@@ -132,7 +132,7 @@ public:
 				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) ensemble(integral_q auto i), u_ensemble[i])
 				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) ensemble(occur::stage_q auto &&o)
 				,	u_ensemble
-				|	_xtd::ranges::views::filter([o=XTAL_REF_(o)] (auto &&e)
+				|	xtd::ranges::views::filter([o=XTAL_REF_(o)] (auto &&e)
 						XTAL_0FN_(to) (0 != XTAL_REF_(e).influx(o)))
 				)
 
@@ -208,13 +208,13 @@ public:
 				\brief  	Frees any voices that have reached the final stage `-1`.
 
 				Voices are rendered internally by invoking `flux<-1>` with the cursor only,
-				before being mixed into `rev` if `provision::stored_q<self_type>`.
+				before being mixed into `rev` if `scheme::stored_q<self_type>`.
 
 				Variadic expansion can be achieved by prefixing the render-tuple with `key_s`.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,let)
-				flux(_std::in_place_t, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
+				flux(std::in_place_t, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
 					ensemble().free([] XTAL_1FN_(dot) (influx(occur::stage_f(-1)) == 1));
@@ -229,11 +229,11 @@ public:
 					for (auto &&e: ensemble()) {
 						x &= XTAL_REF_(e).efflux(cur);
 					}
-					if (0 == x and provision::stored_q<S_>) {
+					if (0 == x and scheme::stored_q<S_>) {
 						for (auto &&e: ensemble()) {
 							auto xs = e()|account_f(sN);
 							auto x0 =       point_f(xs);
-							_detail::move_to<_std::plus<void>{}>(y0, x0, sN);
+							_detail::move_to<std::plus<void>{}>(y0, x0, sN);
 						}
 					}
 					return x;
@@ -252,7 +252,7 @@ public:
 				noexcept -> signed
 				{
 					auto x = N_ion < 0? -1: lead().template flux<N_ion>(oo...);
-					return _xtd::ranges::accumulate(ensemble(), x
+					return xtd::ranges::accumulate(ensemble(), x
 					,	[...oo=XTAL_REF_(oo)] (auto x, auto &&e)
 						XTAL_0FN_(to) (x & XTAL_REF_(e).template flux<N_ion>(oo...))
 					);

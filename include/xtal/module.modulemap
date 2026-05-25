@@ -19,8 +19,8 @@ module xtal {
 	exclude header   "./process/_detail.ii"
 	exclude header "./processor/_entail.ii"
 	exclude header "./processor/_detail.ii"
-	exclude header "./provision/_entail.ii"
-	exclude header "./provision/_detail.ii"
+	exclude header "./scheme/_entail.ii"
+	exclude header "./scheme/_detail.ii"
 	exclude header  "./schedule/_entail.ii"
 	exclude header  "./schedule/_detail.ii"
 

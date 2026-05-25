@@ -13,72 +13,72 @@ namespace _detail
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <iterator_q I > XTAL_DEF_(return,inline,let)    move_it(I i) noexcept -> auto {return _xtd::ranges::   make_move_iterator(i);}
-template <iterator_q I > XTAL_DEF_(return,inline,let) reverse_it(I i) noexcept -> auto {return _xtd::ranges::make_reverse_iterator(i);}
+template <iterator_q I > XTAL_DEF_(return,inline,let)    move_it(I i) noexcept -> auto {return xtd::ranges::   make_move_iterator(i);}
+template <iterator_q I > XTAL_DEF_(return,inline,let) reverse_it(I i) noexcept -> auto {return xtd::ranges::make_reverse_iterator(i);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
+template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
 while_copy_to(Y_ y0, X_ x0, X_ xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
 	assert(x0 < xN);
 	XTAL_IF0
-	XTAL_0IF (same_q<_std::identity, decltype(f)>) {while (x0 != xN) {*y0 =   XTAL_REF_(*x0)                 ; y0++; x0++;}}
-	XTAL_0IF (requires  {f(*x0)                ;}) {while (x0 != xN) {*y0 = f(XTAL_REF_(*x0))                ; y0++; x0++;}}
-	XTAL_0IF (requires  {f(*x0, XTAL_MOV_(*y0));}) {while (x0 != xN) {*y0 = f(XTAL_REF_(*x0), XTAL_MOV_(*y0)); y0++; x0++;}}
+	XTAL_0IF (same_q<std::identity, decltype(f)>) {while (x0 != xN) {*y0 =   XTAL_REF_(*x0)                 ; y0++; x0++;}}
+	XTAL_0IF (requires {f(*x0)                ;}) {while (x0 != xN) {*y0 = f(XTAL_REF_(*x0))                ; y0++; x0++;}}
+	XTAL_0IF (requires {f(*x0, XTAL_MOV_(*y0));}) {while (x0 != xN) {*y0 = f(XTAL_REF_(*x0), XTAL_MOV_(*y0)); y0++; x0++;}}
 }
 
-template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
+template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
 while_move_to(Y_ y0, X_ x0, X_ xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
 	assert(x0 < xN);
 	XTAL_IF0
-	XTAL_0IF (same_q<_std::identity, decltype(f)>) {while (x0 != xN) {*y0 =   XTAL_MOV_(*x0)                 ; y0++; x0++;}}
-	XTAL_0IF (requires  {f(*x0)                ;}) {while (x0 != xN) {*y0 = f(XTAL_MOV_(*x0))                ; y0++; x0++;}}
-	XTAL_0IF (requires  {f(*x0, XTAL_MOV_(*y0));}) {while (x0 != xN) {*y0 = f(XTAL_MOV_(*x0), XTAL_MOV_(*y0)); y0++; x0++;}}
+	XTAL_0IF (same_q<std::identity, decltype(f)>) {while (x0 != xN) {*y0 =   XTAL_MOV_(*x0)                 ; y0++; x0++;}}
+	XTAL_0IF (requires {f(*x0)                ;}) {while (x0 != xN) {*y0 = f(XTAL_MOV_(*x0))                ; y0++; x0++;}}
+	XTAL_0IF (requires {f(*x0, XTAL_MOV_(*y0));}) {while (x0 != xN) {*y0 = f(XTAL_MOV_(*x0), XTAL_MOV_(*y0)); y0++; x0++;}}
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
+template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
 while_copy_to(Y_ y0, X_ x0, distance_t<X_> sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
 	XTAL_IF0
-	XTAL_0IF (same_q<_std::identity, decltype(f)>) {while (sN--    ) {*y0 =   XTAL_REF_(*x0)                 ; y0++; x0++;}}
-	XTAL_0IF (requires  {f(*x0)                ;}) {while (sN--    ) {*y0 = f(XTAL_REF_(*x0))                ; y0++; x0++;}}
-	XTAL_0IF (requires  {f(*x0, XTAL_MOV_(*y0));}) {while (sN--    ) {*y0 = f(XTAL_REF_(*x0), XTAL_MOV_(*y0)); y0++; x0++;}}
+	XTAL_0IF (same_q<std::identity, decltype(f)>) {while (sN--) {*y0 =   XTAL_REF_(*x0)                 ; y0++; x0++;}}
+	XTAL_0IF (requires {f(*x0)                ;}) {while (sN--) {*y0 = f(XTAL_REF_(*x0))                ; y0++; x0++;}}
+	XTAL_0IF (requires {f(*x0, XTAL_MOV_(*y0));}) {while (sN--) {*y0 = f(XTAL_REF_(*x0), XTAL_MOV_(*y0)); y0++; x0++;}}
 }
 
-template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
+template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
 while_move_to(Y_ y0, X_ x0, distance_t<X_> sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
 	XTAL_IF0
-	XTAL_0IF (same_q<_std::identity, decltype(f)>) {while (sN--    ) {*y0 =   XTAL_MOV_(*x0)                 ; y0++; x0++;}}
-	XTAL_0IF (requires  {f(*x0)                ;}) {while (sN--    ) {*y0 = f(XTAL_MOV_(*x0))                ; y0++; x0++;}}
-	XTAL_0IF (requires  {f(*x0, XTAL_MOV_(*y0));}) {while (sN--    ) {*y0 = f(XTAL_MOV_(*x0), XTAL_MOV_(*y0)); y0++; x0++;}}
+	XTAL_0IF (same_q<std::identity, decltype(f)>) {while (sN--) {*y0 =   XTAL_MOV_(*x0)                 ; y0++; x0++;}}
+	XTAL_0IF (requires {f(*x0)                ;}) {while (sN--) {*y0 = f(XTAL_MOV_(*x0))                ; y0++; x0++;}}
+	XTAL_0IF (requires {f(*x0, XTAL_MOV_(*y0));}) {while (sN--) {*y0 = f(XTAL_MOV_(*x0), XTAL_MOV_(*y0)); y0++; x0++;}}
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
+template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
 copy_to(Y_ y0, X_ x0, X_ xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
-	using namespace _xtd::ranges;
+	using namespace xtd::ranges;
 	using Y = iteratee_t<Y_>;
 	using X = iteratee_t<X_>;
 	using F = decltype(f);
@@ -86,45 +86,45 @@ noexcept -> void
 	XTAL_0IF_(consteval) {
 		while_move_to<f>(y0, x0, xN, ord);
 	}
-	XTAL_0IF (same_q<_std::identity, F> and different_q<Y, X>) {
+	XTAL_0IF (same_q<std::identity, F> and different_q<Y, X>) {
 		copy_to<[] XTAL_1FN_(call) (Y)>(y0, x0, xN, ord);
 	}
-	XTAL_0IF (same_q<_std::identity, F> and      same_q<Y, X>) {
+	XTAL_0IF (same_q<std::identity, F> and      same_q<Y, X>) {
 		switch (ord) {
 		#if __cpp_lib_execution
-		case  0: _std::copy(_std::execution::par_unseq, x0, xN, y0); break;
-	//	case  1: _std::copy(_std::execution::      seq, x0, xN, y0); break;
+		case  0: std::copy(std::execution::par_unseq, x0, xN, y0); break;
+	//	case  1: std::copy(std::execution::      seq, x0, xN, y0); break;
 		#endif
-		default:       copy(                            x0, xN, y0); break;
+		default:       copy(                          x0, xN, y0); break;
 		}
 	}
 	XTAL_0IF (requires {f(*x0);}) {
 		switch (ord) {
 		#if __cpp_lib_execution
-		case  0: _std::transform(_std::execution::par_unseq, x0, xN, y0, f); break;
-	//	case  1: _std::transform(_std::execution::      seq, x0, xN, y0, f); break;
+		case  0: std::transform(std::execution::par_unseq, x0, xN, y0, f); break;
+	//	case  1: std::transform(std::execution::      seq, x0, xN, y0, f); break;
 		#endif
-		default:       transform(                            x0, xN, y0, f); break;
+		default:       transform(                          x0, xN, y0, f); break;
 		}
 	}
 	XTAL_0IF (requires {f(*x0, XTAL_MOV_(*y0));}) {
 		switch (ord) {
 		#if __cpp_lib_execution
-		case  0: _std::transform(_std::execution::par_unseq, x0, xN, move_it(y0), y0, f); break;
-	//	case  1: _std::transform(_std::execution::      seq, x0, xN, move_it(y0), y0, f); break;
+		case  0: std::transform(std::execution::par_unseq, x0, xN, move_it(y0), y0, f); break;
+	//	case  1: std::transform(std::execution::      seq, x0, xN, move_it(y0), y0, f); break;
 		#endif
-		default: _std::transform(                            x0, xN, move_it(y0), y0, f); break;
+		default: std::transform(                           x0, xN, move_it(y0), y0, f); break;
 		}
 	}
 	XTAL_0IF_(void)
 }
 
-template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
+template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
 move_to(Y_ y0, X_ x0, X_ xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
-	using namespace _xtd::ranges;
+	using namespace xtd::ranges;
 	using Y = iteratee_t<Y_>;
 	using X = iteratee_t<X_>;
 	using F = decltype(f);
@@ -132,8 +132,8 @@ noexcept -> void
 		while_move_to<f>(y0, x0, xN, ord);
 	}
 	#if not __cpp_lib_execution
-	XTAL_0IF (same_q<_std::identity, F>) {
-		_xtd::ranges::move(x0, xN, y0);
+	XTAL_0IF (same_q<std::identity, F>) {
+		xtd::ranges::move(x0, xN, y0);
 	}
 	#endif
 	XTAL_0IF_(else) {
@@ -144,51 +144,57 @@ noexcept -> void
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
+template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
 copy_to(Y_ y0, X_ x0, integral_q auto sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
-	using namespace _xtd::ranges;
+	using namespace xtd::ranges;
 	using Y = iteratee_t<Y_>;
 	using X = iteratee_t<X_>;
 	using F = decltype(f);
 	XTAL_IF0
-	XTAL_0IF (different_q<_std::identity, F>) {
+	XTAL_0IF (different_q<std::identity, F>) {
 		copy_to<f>(y0, x0, next(x0, sN), ord);
 	}
-//	#if XTAL_VER_(LLVM)
-//	XTAL_0IF_(do)   (_std::copy_n(x0, sN,  y0))
-//	#endif
-	XTAL_0IF_(do)   (copy_n (     x0, sN,  y0))
-	XTAL_0IF_(do)   (copy   (span(x0, sN), y0))
-	XTAL_0IF_(else) {while  (sN--) {*y0 = *x0; y0++; x0++;}}
+	XTAL_0IF (submolecular_q<X, Y> and epitropic_q<X_, Y_>) {
+		std::memcpy (y0, x0, sN*sizeof(X));
+	}
+	#if XTAL_VER_(LLVM)
+	XTAL_0IF_(do) (std::copy_n (     x0, sN,  y0))
+	#endif
+	XTAL_0IF_(do)      (copy_n (     x0, sN,  y0))
+	XTAL_0IF_(do)      (copy   (span(x0, sN), y0))
+	XTAL_0IF_(else)    {while  (sN--) {*y0 = *x0; y0++; x0++;}}
 }
 
-template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
+template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
 move_to(Y_ y0, X_ x0, integral_q auto sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
-	using namespace _xtd::ranges;
+	using namespace xtd::ranges;
 	using Y = iteratee_t<Y_>;
 	using X = iteratee_t<X_>;
 	using F = decltype(f);
 	XTAL_IF1_(consteval) {
 		while_move_to<f>(y0, x0, sN, ord);
 	}
-	XTAL_0IF (same_q<_std::identity, F> and submolecular_q<X, Y> and make_p<X_, Y_>) {
-		_std::memmove(y0, x0, sN*sizeof(X));
-	}
-	XTAL_0IF_(else) {
+	XTAL_0IF (different_q<std::identity, F>) {
 		copy_to<f>(y0, move_it(x0), sN, ord);
 	}
+	XTAL_0IF (submolecular_q<X, Y> and epitropic_q<X_, Y_>) {
+		std::memmove(y0, x0, sN*sizeof(X));
+	}
+	XTAL_0IF_(do)      (move   (span(x0, sN), y0))
+	XTAL_0IF_(else)    {while  (sN--) {*y0 = XTAL_MOV_(*x0); y0++; x0++;}}
+//	XTAL_0IF_(else)    {copy_to<f>(y0, move_it(x0), sN, ord);}
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f=_std::identity{}, iterator_q Y_, iterable_q Xs>
+template <auto f=std::identity{}, iterator_q Y_, iterable_q Xs>
 XTAL_DEF_(inline,let)
 copy_to(Y_ y0, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
@@ -196,11 +202,11 @@ noexcept -> void
 	auto const sN = count_f(xs);
 	auto       x0 = point_f(XTAL_REF_(xs));
 	XTAL_IF0
-	XTAL_0IF (_std::is_lvalue_reference_v<decltype(xs)>) {copy_to<f>(y0,         x0 , sN, ord);}
-	XTAL_0IF (_std::is_rvalue_reference_v<decltype(xs)>) {copy_to<f>(y0, move_it(x0), sN, ord);}
+	XTAL_0IF (std::is_lvalue_reference_v<decltype(xs)>) {copy_to<f>(y0,         x0 , sN, ord);}
+	XTAL_0IF (std::is_rvalue_reference_v<decltype(xs)>) {copy_to<f>(y0, move_it(x0), sN, ord);}
 }
 
-template <auto f=_std::identity{}, iterator_q Y_, iterable_q Xs>
+template <auto f=std::identity{}, iterator_q Y_, iterable_q Xs>
 XTAL_DEF_(inline,let)
 move_to(Y_  y0, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
@@ -210,7 +216,7 @@ noexcept -> void
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f=_std::identity{}, iterable_q Ys, iterable_q Xs>
+template <auto f=std::identity{}, iterable_q Ys, iterable_q Xs>
 XTAL_DEF_(inline,let)
 copy_to(Ys &ys, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
@@ -218,7 +224,7 @@ noexcept -> void
 	copy_to<f>(point_f(ys), XTAL_REF_(xs), ord);
 }
 
-template <auto f=_std::identity{}, iterable_q Ys, iterable_q Xs>
+template <auto f=std::identity{}, iterable_q Ys, iterable_q Xs>
 XTAL_DEF_(inline,let)
 move_to(Ys &ys, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
@@ -235,13 +241,13 @@ XTAL_DEF_(inline,let)
 swap_to(Y_ y0, Y_ const yM, Y_ const yN, signed const ord=sequential_q<Y_>)
 noexcept -> void
 {
-	using namespace _xtd::ranges;
+	using namespace xtd::ranges;
 	switch (ord) {
 	#if __cpp_lib_execution
-	case  0: _std::rotate(_std::execution::par_unseq, y0, yM, yN); break;
-//	case  1: _std::rotate(_std::execution::      seq, y0, yM, yN); break;
+	case  0: std::rotate(std::execution::par_unseq, y0, yM, yN); break;
+//	case  1: std::rotate(std::execution::      seq, y0, yM, yN); break;
 	#endif
-	default:       rotate(                            y0, yM, yN); break;
+	default:       rotate(                          y0, yM, yN); break;
 	}
 }
 
@@ -251,13 +257,13 @@ XTAL_DEF_(inline,let)
 swap_with(Y_ y0, X_ const x0, X_ const xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
-	using namespace _xtd::ranges;
+	using namespace xtd::ranges;
 	switch (ord) {
 	#if __cpp_lib_execution
-	case  0: _std::swap_ranges(_std::execution::par_unseq, x0, xN, y0); break;
-//	case  1: _std::swap_ranges(_std::execution::      seq, x0, xN, y0); break;
+	case  0: std::swap_ranges(std::execution::par_unseq, x0, xN, y0); break;
+//	case  1: std::swap_ranges(std::execution::      seq, x0, xN, y0); break;
 	#endif
-	default:       swap_ranges(                            x0, xN, y0); break;
+	default:       swap_ranges(                          x0, xN, y0); break;
 	}
 }
 template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
@@ -290,16 +296,16 @@ XTAL_DEF_(inline,let)
 fill_with(Y_ y0, distance_t<Y_> sN, deiteratee_t<Y_> const &y, signed const ord=sequential_q<Y_>)
 noexcept -> void
 {
-	if constexpr (requires {_std::              fill_n(y0, sN, y);}) {
+	if constexpr (requires {std::              fill_n(y0, sN, y);}) {
 		XTAL_IF1_(eval) {
 			switch (ord) {
 			#if __cpp_lib_execution
-			case  0: _std::              fill_n(_std::execution::par_unseq, y0, sN, y); break;
-		//	case  1: _std::              fill_n(_std::execution::      seq, y0, sN, y); break;
+			case  0: std::              fill_n(std::execution::par_unseq, y0, sN, y); break;
+		//	case  1: std::              fill_n(std::execution::      seq, y0, sN, y); break;
 			#endif
 			//\
-			default: _std::              fill_n(                            y0, sN, y); break;
-			default: _std::              fill_n(                            y0, sN, y); break;
+			default: std::              fill_n(                           y0, sN, y); break;
+			default: std::              fill_n(                           y0, sN, y); break;
 			}
 			return;
 		}
@@ -311,14 +317,14 @@ XTAL_DEF_(inline,let)
 initialize_with(Y_ y0, distance_t<Y_> sN, deiteratee_t<Y_> const &y, signed const ord=sequential_q<Y_>)
 noexcept -> void
 {
-	if constexpr (requires {_std::uninitialized_fill_n(y0, sN, y);}) {
+	if constexpr (requires {std::uninitialized_fill_n(y0, sN, y);}) {
 		XTAL_IF1_(eval) {
 			switch (ord) {
 			#if __cpp_lib_execution
-			case  0: _std::uninitialized_fill_n(_std::execution::par_unseq, y0, sN, y); break;
-		//	case  1: _std::uninitialized_fill_n(_std::execution::      seq, y0, sN, y); break;
+			case  0: std::uninitialized_fill_n(std::execution::par_unseq, y0, sN, y); break;
+		//	case  1: std::uninitialized_fill_n(std::execution::      seq, y0, sN, y); break;
 			#endif
-			default: _std::uninitialized_fill_n(                            y0, sN, y); break;
+			default: std::uninitialized_fill_n(                           y0, sN, y); break;
 			}
 			return;
 		}

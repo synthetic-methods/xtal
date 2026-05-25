@@ -59,7 +59,7 @@ struct beheader
 		XTAL_DEF_(return,inline,let)
 		operator == (subtype const &t) const
 		noexcept -> bool
-		requires complete_q<_std::variant_size<typename L_::head_type>>
+		requires complete_q<std::variant_size<typename L_::head_type>>
 		{
 			auto const &s = S_::self();
 			return s.operator==(t) and x_(s).index() == x_(t).index();

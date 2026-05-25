@@ -30,10 +30,10 @@ template <class U>	concept         processed_q =    processed_value_q<U> or   pr
 template <class T>
 struct repetitive
 {
-	using type = _xtd::ranges::repeat_view<based_t<T>>;
+	using type = xtd::ranges::repeat_view<based_t<T>>;
 
 };
-template <iterable_q T> requires un_v<_xtd::ranges::sized_range<based_t<T>>>
+template <iterable_q T> requires un_v<xtd::ranges::sized_range<based_t<T>>>
 struct repetitive<T>
 {
 	using type = based_t<T>;
@@ -43,7 +43,7 @@ struct repetitive<T>
 template <applicable_q T>
 struct repetitive<T>
 {
-	using type = _xtd::ranges::generate_view<based_t<T>>;
+	using type = xtd::ranges::generate_view<based_t<T>>;
 
 };
 /***/
@@ -87,7 +87,7 @@ concept collection_p = any_q<T> and requires (T t)
 	{t.store()} -> isomorphic_q<Y>;
 };
 template <class T, class Y>
-concept recollection_p = collection_p<T, Y> and _std::is_rvalue_reference_v<T>;
+concept recollection_p = collection_p<T, Y> and std::is_rvalue_reference_v<T>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -252,8 +252,8 @@ public:
 		operator *=(V_step i)
 		noexcept -> auto &
 		{
-			using _xtd::ranges::distance;
-			using _xtd::ranges::next;
+			using xtd::ranges::distance;
+			using xtd::ranges::next;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const nm = i*distance(i0, iM);
 			(void) S_::view(*next(i0, nm), *next(iM, nm));
@@ -266,8 +266,8 @@ public:
 		operator /=(V_step i)
 		noexcept -> auto &
 		{
-			using _xtd::ranges::distance;
-			using _xtd::ranges::prev;
+			using xtd::ranges::distance;
+			using xtd::ranges::prev;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const nm = i*distance(i0, iM);
 			(void) S_::view(*prev(i0, nm), *prev(iM, nm));
@@ -280,7 +280,7 @@ public:
 		operator +=(V_size n)
 		noexcept -> auto &
 		{
-			using _xtd::ranges::next;
+			using xtd::ranges::next;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const j0 = iM, jN = next(j0, n);
 			S_::step() += i0 != iM;
@@ -293,7 +293,7 @@ public:
 		operator -=(V_size n)
 		noexcept -> auto &
 		{
-			using _xtd::ranges::prev;
+			using xtd::ranges::prev;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const jN = i0, j0 = prev(jN, n);
 			S_::step() -= n != 0;

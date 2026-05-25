@@ -21,7 +21,7 @@ TAG_("buffer")
 		using U_alpha = typename bond::fit<>::alpha_type;
 
 		using U_buffer = buffer_t<U_alpha[128]>;
-		using U_vector = _std::vector<U_alpha>;
+		using U_vector = std::vector<U_alpha>;
 
 		auto const zhs = U_buffer{7, 8, 9};
 		auto       yhs = U_buffer{4, 5, 6};
@@ -44,21 +44,21 @@ TAG_("buffer")
 		using U_alpha = typename bond::fit<>::alpha_type;
 
 		using U_buffer = buffer_t<U_alpha[128]>;
-		using U_vector = _std::vector<U_alpha>;
+		using U_vector = std::vector<U_alpha>;
 
 		auto xs = U_buffer{0, 1, 2, 3, 4};
 		auto x_ = xs.begin();
 
-		xs.erase(_std::next(x_, 2));
+		xs.erase(std::next(x_, 2));
 		TRUE_(equal_f(xs, U_vector{0, 1, 3, 4}));
 
-		xs.erase(_std::next(x_, 1), _std::next(x_, 3));
+		xs.erase(std::next(x_, 1), std::next(x_, 3));
 		TRUE_(equal_f(xs, U_vector{0, 4}));
 
-		xs.insert(_std::next(x_, 1), {1, 2, 3});
+		xs.insert(std::next(x_, 1), {1, 2, 3});
 		TRUE_(equal_f(xs, U_vector{0, 1, 2, 3, 4}));
 
-		xs.insert(_std::next(x_, 4), _std::next(x_, 1), _std::next(x_, 4));
+		xs.insert(std::next(x_, 4), std::next(x_, 1), std::next(x_, 4));
 		TRUE_(equal_f(xs, U_vector{0, 1, 2, 3, 1, 2, 3, 4}));
 
 	}
@@ -66,11 +66,11 @@ TAG_("buffer")
 	{
 		using U_sigma = typename bond::fit<>::sigma_type;
 		using U_alpha = typename bond::fit<>::alpha_type;
-		using W_alpha = _std::array<U_alpha, 3>;
+		using W_alpha = std::array<U_alpha, 3>;
 
-		using W_vector = _std::vector<W_alpha>;
+		using W_vector = std::vector<W_alpha>;
 		using W_buffer = buffer_t<W_alpha[3]>;
-		using M_buffer =  block_t<W_alpha[3]>;
+		using M_buffer =  bucket_t<W_alpha[3]>;
 
 		auto  xs = W_buffer{{0x0, 0x1, 0x2}, {0x3, 0x4, 0x5}, {0x5, 0x6, 0x7}};// `capacity() < 4`
 		auto &ys = reinterpret_cast<M_buffer &>(xs);

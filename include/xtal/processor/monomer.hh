@@ -16,9 +16,9 @@ namespace xtal::processor
 \brief   Provides both stateful and stateless rendering for the captured `processor`.
 
 The provided configuration `As...` must include a `defer`red `process(?:or)?`,
-and extends on the default configuration including `provision::stated<>`.
+and extends on the default configuration including `scheme::stated<>`.
 
-If `As...` includes `provision::stored`,
+If `As...` includes `scheme::stored`,
 the inner `binding` will maintain local storage,
 used when rendering internally e.g. when supplying one-to-many relationships.
 */
@@ -48,7 +48,7 @@ struct monomer<_, As...>
 template <  complete_q U, typename ...As>
 struct monomer<U, As...>
 {
-	using superkind = confer<U, As..., provision::stated<>>;
+	using superkind = confer<U, As..., scheme::stated<>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -162,7 +162,7 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires provision::stated_q<S_> and provision::stored_q<S_>
+		template <class ...Xs> requires scheme::stated_q<S_> and scheme::stored_q<S_>
 		struct binding<Xs...>
 		{
 		private:
@@ -174,7 +174,7 @@ struct monomer<U, As...>
 		
 			static constexpr int N_share = bond::seek_truth_v<_detail::recollection_p<Xs, U_state>...>;
 			
-			using superkind = bond::compose<provision::stowed<U_state, U_store>, F_<Xs...>>;
+			using superkind = bond::compose<scheme::stowed<U_state, U_store>, F_<Xs...>>;
 
 		public:
 			template <class R>

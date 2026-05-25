@@ -20,7 +20,7 @@ static_assert(complete_q<couple_t<float, double>>);
 
 //atic_assert(atomic_q<couple_t<float[2]>>);
 
-static_assert(fungible_q<_std::array<float, 2>,
+static_assert(fungible_q<std::array<float, 2>,
 	XTAL_ALL_(XTAL_ANY_(couple_t<float(&)[2]>)*XTAL_ANY_(couple_t<float(&)[2]>))>
 );
 
@@ -43,14 +43,14 @@ TAG_("couple")
 		using U = unsigned;
 		using V =   signed;
 
-		using U0 = couple_t<U[0] >; using _U0 = brace_t<U[0] >;
-		using V0 = couple_t<V[0] >; using _V0 = brace_t<V[0] >;
-		using U1 = couple_t<U[1] >; using _U1 = brace_t<U[1] >;
-		using V1 = couple_t<V[1] >; using _V1 = brace_t<V[1] >;
-		using U2 = couple_t<U[2] >; using _U2 = brace_t<U[2] >;
-		using V2 = couple_t<V[2] >; using _V2 = brace_t<V[2] >;
-		using UV = couple_t<U, V>; using _UV = brace_t<U, V>;
-		using VU = couple_t<V, U>; using _VU = brace_t<V, U>;
+		using U0 = couple_t<U[0] >; using _U0 = bracket_t<U[0] >;
+		using V0 = couple_t<V[0] >; using _V0 = bracket_t<V[0] >;
+		using U1 = couple_t<U[1] >; using _U1 = bracket_t<U[1] >;
+		using V1 = couple_t<V[1] >; using _V1 = bracket_t<V[1] >;
+		using U2 = couple_t<U[2] >; using _U2 = bracket_t<U[2] >;
+		using V2 = couple_t<V[2] >; using _V2 = bracket_t<V[2] >;
+		using UV = couple_t<U, V>; using _UV = bracket_t<U, V>;
+		using VU = couple_t<V, U>; using _VU = bracket_t<V, U>;
 
 		static_assert(    bond::tab_comparable_q< V1,  V1>);// `    ==` (shallow)
 		static_assert(not bond::tab_comparable_q< V1, _V1>);// `not ==` (shallow)
@@ -176,13 +176,13 @@ TAG_("couple")
 		using simplex_val = couple_t<float   [N]>;
 		using simplex_ref = couple_t<float(&)[N]>;
 		
-		using complex_val = _std::complex<simplex_val>;
-		using complex_ref = _std::complex<simplex_ref>;
+		using complex_val = std::complex<simplex_val>;
+		using complex_ref = std::complex<simplex_ref>;
 		
-		simplex_ref bar_re{_std::span(foo[0], 4)};
-		simplex_ref bar_im{_std::span(foo[1], 4)};
+		simplex_ref bar_re{std::span(foo[0], 4)};
+		simplex_ref bar_im{std::span(foo[1], 4)};
 		complex_ref bar{bar_re, bar_im};
-	//	complex_ref bar{_std::span(foo[0], 4), _std::span(foo[1], 4)};// NOPE!
+	//	complex_ref bar{std::span(foo[0], 4), std::span(foo[1], 4)};// NOPE!
 
 		simplex_val &baz_re = reinterpret_cast<simplex_val &>(foo[0]);
 		simplex_val &baz_im = reinterpret_cast<simplex_val &>(foo[1]);

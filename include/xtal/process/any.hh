@@ -1,10 +1,10 @@
 #pragma once
-#include "../bond.hh"
 #include "../flow/any.hh"// `_retail`
 #include "../flow/bundle.hh"
 #include "../occur/all.hh"
-#include "../provision/all.hh"
+#include "../scheme/all.hh"
 #include "../schedule/all.hh"
+
 
 XTAL_ENV_(push)
 namespace xtal::process
@@ -133,7 +133,7 @@ struct define
 				return [this] XTAL_1FN_(call) (self().template operator()<decltype(is){}...>);
 			}
 			else {
-				return _std::bind_front(self().template deify<Xs...>(is...), &self());
+				return std::bind_front(self().template deify<Xs...>(is...), &self());
 			}
 		})
 

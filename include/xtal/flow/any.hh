@@ -1,6 +1,6 @@
 #pragma once
-#include "../bond.hh"
 #include "../cell/any.hh"// `_retail`
+
 
 
 
@@ -108,7 +108,7 @@ struct define
 		XTAL_DEF_(return,inline,let) delay()         noexcept -> auto {return bond::fit<signed>::delta_f(count_f(self()));}
 		XTAL_DEF_(mutate,inline,let) belay()         noexcept -> auto {return        delay();}
 		XTAL_DEF_(mutate,inline,let) relay(auto &&i) noexcept -> auto {return self().delay();}
-	//	XTAL_DEF_(return,inline,let) relay(auto &&i) noexcept -> auto {return _std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
+	//	XTAL_DEF_(return,inline,let) relay(auto &&i) noexcept -> auto {return std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
 		/*!
 		\brief  	Relays all spooled events while invoking the supplied callback for each intermediate segment.
 		\details	The callback parameters are the `counted_t` indicies and the segment index.
@@ -181,7 +181,7 @@ struct refine
 		refuse(bond::tupack_q auto &&o)
 		noexcept -> signed
 		{
-			return _std::apply([this] XTAL_1FN_(call) (flux<N_ion>), XTAL_REF_(o));
+			return std::apply([this] XTAL_1FN_(call) (flux<N_ion>), XTAL_REF_(o));
 		}
 
 		template <signed N_ion>

@@ -28,12 +28,12 @@ noexcept -> decltype(auto)
 ////////////////////////////////////////////////////////////////////////////////
 
 //\
-template <class       W >	concept    member_q = _xtd::nominal_value_reference<W>;
-template <class       W >	concept    member_q = _xtd::nominal_value_reference<W> or iterable_q<W> and _xtd::ranges::borrowed_range<based_t<W>>;
+template <class       W >	concept    member_q = xtd::nominal_value_reference<W>;
+template <class       W >	concept    member_q = xtd::nominal_value_reference<W> or iterable_q<W> and xtd::ranges::borrowed_range<based_t<W>>;
 template <class       W >	concept dismember_q = not member_q<W>;
 
-template <class       W >	struct     member    {using type = typename _xtd::          decay_value<W>::value_type;};
-template <dismember_q W >	struct     member<W> {using type = typename _xtd::decay_value_reference<W>::value_type;};
+template <class       W >	struct     member    {using type = typename xtd::          decay_value<W>::value_type;};
+template <dismember_q W >	struct     member<W> {using type = typename xtd::decay_value_reference<W>::value_type;};
 template <class       W >	using      member_t =              typename member<W>::type;
 /*!
 \brief
@@ -45,11 +45,10 @@ template <dismember_q M >
 XTAL_DEF_(return,inline,let)
 member_f(auto &&w)
 noexcept -> decltype(auto)
-requires _xtd::lvalue_reference<decltype(w)>
+requires xtd::lvalue_reference<decltype(w)>
 {
-	using namespace _std;
 	//\
-	return shared_ptr(addressof(XTAL_REF_(w)));
+	return std::shared_ptr(std::addressof(XTAL_REF_(w)));
 	return &XTAL_REF_(w);
 }
 
@@ -73,7 +72,7 @@ XTAL_DEF_(return,inline,let)
 dismember_f(W &m, W w)
 noexcept -> decltype(auto)
 {
-	return _std::exchange(m, XTAL_MOV_(w));
+	return std::exchange(m, XTAL_MOV_(w));
 }
 template <member_q W>
 XTAL_DEF_(return,inline,let)

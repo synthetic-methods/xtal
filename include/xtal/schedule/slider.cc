@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./slider.hh"// testing...
 
-#include "../provision/all.hh"
+#include "../scheme/all.hh"
 #include "../processor/monomer.hh"
 
 
@@ -23,7 +23,7 @@ TAG_("slider", "process")
 	/**/
 	TRY_("continuous")
 	{
-		using namespace provision;
+		using namespace scheme;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
@@ -37,15 +37,15 @@ TAG_("slider", "process")
 		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
 		using U1_event = flow::cue_s<U0_event>;
 		
-		using W0_event = atom::differential_t<_std::plus<U0_event>[2]>;
+		using W0_event = atom::differential_t<std::plus<U0_event>[2]>;
 		using V_event = flow::cue_s<>;
 		
 		using Z_process = process::confined_t<
 			typename U_slider::template suspend<U1_event>
 		>;
 		using U_processor = processor::monomer_t<Z_process
-		,	provision::stored <null_type[0x100]>
-		,	provision::spooled<null_type[0x100]>
+		,	scheme::stored <null_type[0x100]>
+		,	scheme::spooled<null_type[0x100]>
 		>;
 
 		auto z_cursor = occur::  cursor_t<>(0x020);
@@ -100,7 +100,7 @@ TAG_("slider", "process")
 	/**/
 	TRY_("continuous")
 	{
-		using namespace provision;
+		using namespace scheme;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
@@ -115,7 +115,7 @@ TAG_("slider", "process")
 		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
 		using U1_event = flow::cue_s<U0_event>;
 		
-		using W0_event = atom::differential_t<_std::plus<U0_event>[2]>;
+		using W0_event = atom::differential_t<std::plus<U0_event>[2]>;
 		using V_event  = flow::cue_s<>;
 		
 		using U_suspend = typename U_slider::template suspend<U1_event>;
@@ -170,7 +170,7 @@ TAG_("slider", "process")
 	/**/
 	TRY_("discrete")
 	{
-		using namespace provision;
+		using namespace scheme;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
@@ -226,7 +226,7 @@ TAG_("slider", "process")
 	TRY_("through")
 	{
 
-		using namespace provision;
+		using namespace scheme;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
@@ -264,7 +264,7 @@ void slider_processor()
 	using T_delta = typename _fit::delta_type;
 	using T_alpha = typename _fit::alpha_type;
 
-	using namespace provision;
+	using namespace scheme;
 //	using namespace schedule;
 
 	class L_gate;
@@ -276,7 +276,7 @@ void slider_processor()
 
 	using U_resize = occur::resize_t<>;
 	using U_cursor = occur::cursor_t<>;
-	using U_store = _std::array<T_alpha, N_store>;
+	using U_store = std::array<T_alpha, N_store>;
 	U_store u_store{};
 
 	using V_value  = occur::reinferred_t<L_gate, T_alpha>;
@@ -306,7 +306,7 @@ void slider_processor()
 	fx_gate <<= U_event(7, 77);
 	/***/
 
-	fx_gate >>= U_cursor(N_store)*0; _xtd::ranges::copy(fx_gate, u_store.begin());
+	fx_gate >>= U_cursor(N_store)*0; xtd::ranges::copy(fx_gate, u_store.begin());
 	TRUE_(u_store == U_store {  7,  1,  1, -1,  1, -1, -1, 77});
 
 	/**/
@@ -317,14 +317,14 @@ void slider_processor()
 	fx_gate <<= U_event(4, 11);
 	/***/
 
-	fx_gate >>= U_cursor(N_store)*1; _xtd::ranges::copy(fx_gate, u_store.begin());
+	fx_gate >>= U_cursor(N_store)*1; xtd::ranges::copy(fx_gate, u_store.begin());
 	TRUE_(u_store == U_store { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
 TAG_("slider", "processor")
 {
 	using namespace processor;
-	TRY_("drive actual") {slider_processor<provision::stored<>>();}
+	TRY_("drive actual") {slider_processor<scheme::stored<>>();}
 //	TRY_("drive virtual")  {slider_processor<>();}// TODO?
 
 }

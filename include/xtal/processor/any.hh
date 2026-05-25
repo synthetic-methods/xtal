@@ -1,8 +1,8 @@
 #pragma once
-#include "../bond.hh"
 #include "../process/any.hh"// `_retail`
 #include "../occur/cursor.hh"
 #include "../occur/resize.hh"
+
 
 
 
@@ -97,7 +97,7 @@ struct define
 						return 1;
 					}
 					(void) self().pump([&, this] (counted_q auto scan, counter_q auto step)
-					XTAL_0FN_(to) (self().template flux<N_ion>(_std::in_place
+					XTAL_0FN_(to) (self().template flux<N_ion>(std::in_place
 					,	rev.subview(scan)
 					,	cur.subview(scan).skip(step))));
 					(void) R_::template flux<+1>(constant_t<-1>{}, XTAL_REF_(cur));
@@ -108,7 +108,7 @@ struct define
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,inline,let)
-				flux(_std::in_place_t, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
+				flux(std::in_place_t, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
 					using V_state = XTAL_ALL_(rev.view());
@@ -177,7 +177,7 @@ struct defer<U>
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		using U_ = _std::remove_reference_t<U>;
+		using U_ = std::remove_reference_t<U>;
 
 	public:
 		using S_::S_;

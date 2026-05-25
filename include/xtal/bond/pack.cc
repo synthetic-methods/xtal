@@ -12,11 +12,11 @@ namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert(pack_size_v<_std::tuple<            >> == 0);
-static_assert(pack_size_v<_std::array<null_type, 0>> == 0);
+static_assert(pack_size_v<std::tuple<            >> == 0);
+static_assert(pack_size_v<std::array<null_type, 0>> == 0);
 
-static_assert(pack_size_q<_std::tuple<            >>);
-static_assert(pack_size_q<_std::array<null_type, 0>>);
+static_assert(pack_size_q<std::tuple<            >>);
+static_assert(pack_size_q<std::array<null_type, 0>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,12 +39,12 @@ TAG_("pack")
 	}
 	TRY_("pack_item_f(std::complex{...})")
 	{
-		_std::complex x{0, 1};
+		std::complex x{0, 1};
 		TRUE_(0 == pack_item_f<0>(x));
 		TRUE_(1 == pack_item_f<1>(x));
 
-		TRUE_(0 == pack_item_f<0>(_std::complex{0, 1}));
-		TRUE_(1 == pack_item_f<1>(_std::complex{0, 1}));
+		TRUE_(0 == pack_item_f<0>(std::complex{0, 1}));
+		TRUE_(1 == pack_item_f<1>(std::complex{0, 1}));
 
 	}
 }

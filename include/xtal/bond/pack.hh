@@ -46,9 +46,9 @@ template <class T, size_type I, size_type ...Is>
 struct   pack_item<T, I, Is...> : pack_item<pack_item_t<T, I>, Is...> {};
 
 template <fixed_valued_q T, size_type I> requires un_v<tuple_shaped_q<T>> struct pack_item<T        , I> {using supertype = T; using type =                typename fixed<T>::value_type;};
-template <tuple_shaped_q T, size_type I>                                  struct pack_item<T        , I> {using supertype = T; using type = _std::tuple_element_t<I, based_t<T>>        ;};
-template <tuple_shaped_q T, size_type I>                                  struct pack_item<T       &, I> {using supertype = T; using type = _std::tuple_element_t<I, based_t<T>>       &;};
-template <tuple_shaped_q T, size_type I>                                  struct pack_item<T const &, I> {using supertype = T; using type = _std::tuple_element_t<I, based_t<T>> const &;};
+template <tuple_shaped_q T, size_type I>                                  struct pack_item<T        , I> {using supertype = T; using type = std::tuple_element_t<I, based_t<T>>        ;};
+template <tuple_shaped_q T, size_type I>                                  struct pack_item<T       &, I> {using supertype = T; using type = std::tuple_element_t<I, based_t<T>>       &;};
+template <tuple_shaped_q T, size_type I>                                  struct pack_item<T const &, I> {using supertype = T; using type = std::tuple_element_t<I, based_t<T>> const &;};
 
 /*!
 \brief  	Determines the element-value indexed by `Is...` nested within and across the concatenated `t, ts...`.
@@ -66,12 +66,12 @@ noexcept -> decltype(auto)
 {
 	using T_ref =  decltype(t);
 	using T_val = XTAL_ALL_(t);
-	using _std::get;
+	using std::get;
 	auto constexpr N = pack_size_v<T_ref>;
 	auto constexpr K = modulo_v<N, I>;
 	XTAL_IF0
-	XTAL_0IF (_xtd::rvalue_reference<T_ref &&>) {return XTAL_VAL_(get<K>(destruct_f(XTAL_REF_(t))));}
-	XTAL_0IF (_xtd::lvalue_reference<T_ref &&>) {return          (get<K>(destruct_f(XTAL_REF_(t))));}
+	XTAL_0IF (xtd::rvalue_reference<T_ref &&>) {return XTAL_VAL_(get<K>(destruct_f(XTAL_REF_(t))));}
+	XTAL_0IF (xtd::lvalue_reference<T_ref &&>) {return          (get<K>(destruct_f(XTAL_REF_(t))));}
 }
 template <auto I, auto ...Is>// requires some_v<Is...>
 XTAL_DEF_(return,inline,let)
@@ -118,8 +118,8 @@ template <auto I,          class  ...Ts>                              using    i
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class        ...Us> struct   pack         {using type = _std::tuple<pack_item_t<Us>...>;};
-template <class U0, class U1> struct   pack<U0, U1> {using type = _std::pair <pack_item_t<U0>, pack_item_t<U1>>;};
+template <class        ...Us> struct   pack         {using type = std::tuple<pack_item_t<Us>...>;};
+template <class U0, class U1> struct   pack<U0, U1> {using type = std::pair <pack_item_t<U0>, pack_item_t<U1>>;};
 template <class        ...Us> using    pack_t   = typename pack<Us...>::type;
 
 /*!
@@ -179,7 +179,7 @@ transpack_f(size_type index, size_type limit, indexed_q auto &&table)
 noexcept -> auto
 requires requires {{**table} ->      same_q<U>;}
 {
-	return _std::span(point_f(XTAL_REF_(table)[index]), limit);
+	return std::span(point_f(XTAL_REF_(table)[index]), limit);
 }
 template <class U>
 XTAL_DEF_(return,inline,let)
@@ -188,7 +188,7 @@ noexcept -> auto
 requires requires {{**table} -> different_q<U>;}
 {
 	return [&]<auto ...I> (bond::seek_in_t<I...>)
-	XTAL_0FN_(to) (iterative_f<U>(_std::span(point_f(XTAL_REF_(table)[I], index), limit)...))
+	XTAL_0FN_(to) (iterative_f<U>(std::span(point_f(XTAL_REF_(table)[I], index), limit)...))
 		(bond::seek_to_t<fluid_shaped<U>::extent()>{});
 }
 template <class U>

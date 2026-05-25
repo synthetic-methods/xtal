@@ -3,4 +3,5 @@
 #include "./left.cc"
 #include "./lift.cc"
 #include "./link.cc"
+#include "./occurrence.cc"
 

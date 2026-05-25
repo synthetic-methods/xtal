@@ -11,11 +11,9 @@ namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _std = ::std;
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "./_xtd.ii"
+#include "./xtd.ii"
 #include "./_retail.ii"
 #include "./_entail.ii"
 #include "./_detail.ii"
@@ -52,8 +50,8 @@ template <class ...Xs>
 concept subjective_q = not objective_q<Xs...>;
 
 template <class ...Ts> auto   surjective_f(            Ts... ) -> objective_t<typename fluid<Ts>::value_type...>;
-template <class ...Ts> auto   surjective_f(_std::tuple<Ts...>) -> objective_t<Ts...>;
-template <class ...Ts> auto   surjective_f(_std::pair <Ts...>) -> objective_t<Ts...>;
+template <class ...Ts> auto   surjective_f(std::tuple<Ts...>) -> objective_t<Ts...>;
+template <class ...Ts> auto   surjective_f(std::pair <Ts...>) -> objective_t<Ts...>;
 template <class ...Ts> using  surjective_t = common_t<XTAL_ALL_(surjective_f(XTAL_ANY_(Ts)))...>;
 ///< Obtains the common objective `value_type` for `Xs...`.
 ///<\todo Generalize `surjective_f` using `bond::pack`?
@@ -92,14 +90,14 @@ XTAL_DEF_(return,inline,let)
 complexion_f(Xs &&...xs)
 noexcept -> auto
 {
-	return construxion_f<_std::complex>(XTAL_REF_(xs)...);
+	return construxion_f<std::complex>(XTAL_REF_(xs)...);
 }
 template <class X>
 XTAL_DEF_(return,inline,let)
 complexion_f(X &&x)
 noexcept -> auto
 {
-	return construxion_f<_std::complex>(XTAL_REF_(x), objective_t<XTAL_ALL_(x)>{});
+	return construxion_f<std::complex>(XTAL_REF_(x), objective_t<XTAL_ALL_(x)>{});
 }
 
 
@@ -127,7 +125,7 @@ class
 	}
 	auto put(auto &&x) const noexcept -> decltype(auto) {
 		using X = XTAL_ALL_(x);
-		if constexpr (_xtd::ranges::range<X> and requires {::std::is_arithmetic_v<typename X::value_type>;}) {
+		if constexpr (xtd::ranges::range<X> and requires {::std::is_arithmetic_v<typename X::value_type>;}) {
 			print_list(x);
 		}
 		else {

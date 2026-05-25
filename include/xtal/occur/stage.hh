@@ -67,7 +67,7 @@ struct stage
 				XTAL_DEF_(set) K_fill = K_size >> 1;
 
 				using U_value =  U;
-				using U_table = _std::array<U, K_size>;
+				using U_table = std::array<U, K_size>;
 				U_table u_table{};
 				
 			public:// CONSTRUCT

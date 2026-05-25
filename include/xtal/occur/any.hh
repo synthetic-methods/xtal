@@ -1,8 +1,8 @@
 #pragma once
-#include "../bond.hh"
 #include "../flow/any.hh"// `_retail`
 #include "../flow/tag.hh"
 #include "../flow/mask.hh"
+
 
 
 
@@ -215,17 +215,17 @@ struct define
 				}
 				template <class A>
 				XTAL_DEF_(return,inline,let)
-				deify(_std::array<A, A_size> const &point) const
+				deify(std::array<A, A_size> const &point) const
 				noexcept -> decltype(auto)
 				{
 					//\
 					auto i = static_cast<size_type>(head());
 					auto i = static_cast<size_type>(R_::body_part);
 					XTAL_IF0
-					XTAL_0IF (1 == _std::popcount(A_size)) {
+					XTAL_0IF (1 == std::popcount(A_size)) {
 						i &= A_mask;
 					}
-					XTAL_0IF (1 != _std::popcount(A_size)) {
+					XTAL_0IF (1 != std::popcount(A_size)) {
 						i %= A_size;
 						i += A_size;
 						i %= A_size;
@@ -253,7 +253,7 @@ struct define
 						static auto constexpr expand_f(bond::seek_in_t<Js...>)
 						noexcept -> auto
 						{
-							return _std::array{extend_v<Js>...};
+							return std::array{extend_v<Js>...};
 						}
 					
 					public:

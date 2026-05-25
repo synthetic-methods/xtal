@@ -34,7 +34,7 @@ then a fixed-capacity implementation is provided.
 template <scalar_q U_data>
 struct buffer<U_data *>
 {
-	using type = bond::compose_s<_std::vector<U_data>, bond::tag<buffer_t>>;
+	using type = bond::compose_s<std::vector<U_data>, bond::tag<buffer_t>>;
 
 };
 template <vector_q A_data> requires _detail::  elastic_fixed_q<A_data>
@@ -42,7 +42,7 @@ struct buffer<A_data>
 {
 	using U_data = typename fixed<A_data>::value_type;
 
-	using type = bond::compose_s<_std::vector<U_data>, bond::tag<buffer_t>>;
+	using type = bond::compose_s<std::vector<U_data>, bond::tag<buffer_t>>;
 
 };
 template <vector_q A_data> requires _detail::inelastic_fixed_q<A_data>
@@ -53,7 +53,7 @@ struct buffer<A_data>
 	static auto constexpr N_data = fixed<A_data>::extent();
 
 	template <class T>
-	using holotype = bond::compose_s<_xtd::ranges::view_interface<T>, bond::tag<buffer_t>>;
+	using holotype = bond::compose_s<xtd::ranges::view_interface<T>, bond::tag<buffer_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -75,8 +75,8 @@ struct buffer<A_data>
 
 		using                   iterator  =        U_data *;
 		using             const_iterator  =  const U_data *;
-		using           reverse_iterator  = _std::reverse_iterator<      iterator >;
-		using     const_reverse_iterator  = _std::reverse_iterator<const_iterator >;
+		using           reverse_iterator  = std::reverse_iterator<      iterator >;
+		using     const_reverse_iterator  = std::reverse_iterator<const_iterator >;
 	
 	private:
 		static auto constexpr value_size_ = _detail::aligned<value_type>::size;
@@ -84,14 +84,14 @@ struct buffer<A_data>
 
 		using                   iterator_ =        T_data *;
 		using             const_iterator_ =  const T_data *;
-		using           reverse_iterator_ = _std::reverse_iterator<      iterator_>;
-		using     const_reverse_iterator_ = _std::reverse_iterator<const_iterator_>;
+		using           reverse_iterator_ = std::reverse_iterator<      iterator_>;
+		using     const_reverse_iterator_ = std::reverse_iterator<const_iterator_>;
 
 		value_type_ m_data[N_data]{};
 		difference_type n_data{};
 
 
-		XTAL_DEF_(return,inline,set) offence_f(iterable_q auto const & t) noexcept -> auto {return _std::span(offence_f(t.begin()), offence_f(t.end()));}
+		XTAL_DEF_(return,inline,set) offence_f(iterable_q auto const & t) noexcept -> auto {return std::span(offence_f(t.begin()), offence_f(t.end()));}
 		XTAL_DEF_(return,inline,set) offence_f(              iterator  i) noexcept -> auto {return reinterpret_cast<              iterator_>(i);}
 		XTAL_DEF_(return,inline,set) offence_f(              iterator_ i) noexcept -> auto {return reinterpret_cast<              iterator >(i);}
 		XTAL_DEF_(return,inline,set) offence_f(        const_iterator  i) noexcept -> auto {return reinterpret_cast<        const_iterator_>(i);}
@@ -101,25 +101,25 @@ struct buffer<A_data>
 		XTAL_DEF_(return,inline,set) offence_f(const_reverse_iterator  i) noexcept -> auto {return reinterpret_cast<const_reverse_iterator_>(i);}
 		XTAL_DEF_(return,inline,set) offence_f(const_reverse_iterator_ i) noexcept -> auto {return reinterpret_cast<const_reverse_iterator >(i);}
 
-		XTAL_DEF_(return,inline,set) defence_f(iterable_q auto const & t) noexcept -> auto {return _std::span(defence_f(t.begin()), defence_f(t.end()));}
-		XTAL_DEF_(return,inline,set) defence_f(iterator_q auto         i) noexcept -> auto {return _std::launder(offence_f(XTAL_REF_(i)));}
+		XTAL_DEF_(return,inline,set) defence_f(iterable_q auto const & t) noexcept -> auto {return std::span(defence_f(t.begin()), defence_f(t.end()));}
+		XTAL_DEF_(return,inline,set) defence_f(iterator_q auto         i) noexcept -> auto {return std::launder(offence_f(XTAL_REF_(i)));}
 
 		XTAL_DEF_(return,inline,let)  modify_f(                  auto  i) noexcept -> auto {return i;}//NOTE: Assumed non-const...
-		XTAL_DEF_(return,inline,let)  modify_f(        const_iterator  i) noexcept -> auto {return _std::next( begin(), _std::distance( cbegin(), i));}
-		XTAL_DEF_(return,inline,let)  modify_f(const_reverse_iterator  i) noexcept -> auto {return _std::next(rbegin(), _std::distance(crbegin(), i));}
+		XTAL_DEF_(return,inline,let)  modify_f(        const_iterator  i) noexcept -> auto {return std::next( begin(), std::distance( cbegin(), i));}
+		XTAL_DEF_(return,inline,let)  modify_f(const_reverse_iterator  i) noexcept -> auto {return std::next(rbegin(), std::distance(crbegin(), i));}
 
 
 	public:// ACCESS
-		XTAL_DEF_(return,inline,let)     end()       noexcept -> auto {return _std::next(  begin(), n_data);}
-		XTAL_DEF_(return,inline,let)     end() const noexcept -> auto {return _std::next(  begin(), n_data);}
-		XTAL_DEF_(return,inline,let)    cend() const noexcept -> auto {return _std::next( cbegin(), n_data);}
-		XTAL_DEF_(return,inline,let)    rend() const noexcept -> auto {return _std::next( rbegin(), n_data);}
-		XTAL_DEF_(return,inline,let)   crend() const noexcept -> auto {return _std::next(crbegin(), n_data);}
+		XTAL_DEF_(return,inline,let)     end()       noexcept -> auto {return std::next(  begin(), n_data);}
+		XTAL_DEF_(return,inline,let)     end() const noexcept -> auto {return std::next(  begin(), n_data);}
+		XTAL_DEF_(return,inline,let)    cend() const noexcept -> auto {return std::next( cbegin(), n_data);}
+		XTAL_DEF_(return,inline,let)    rend() const noexcept -> auto {return std::next( rbegin(), n_data);}
+		XTAL_DEF_(return,inline,let)   crend() const noexcept -> auto {return std::next(crbegin(), n_data);}
 		XTAL_DEF_(return,inline,let)   begin()       noexcept -> auto {return defence_f(reinterpret_cast<      iterator_>(m_data));}
 		XTAL_DEF_(return,inline,let)   begin() const noexcept -> auto {return defence_f(reinterpret_cast<const_iterator_>(m_data));}
 		XTAL_DEF_(return,inline,let)  cbegin() const noexcept -> auto {return defence_f(reinterpret_cast<const_iterator_>(m_data));}
-		XTAL_DEF_(return,inline,let)  rbegin() const noexcept -> auto {return _std::make_reverse_iterator( begin());}
-		XTAL_DEF_(return,inline,let) crbegin() const noexcept -> auto {return _std::make_reverse_iterator(cbegin());}
+		XTAL_DEF_(return,inline,let)  rbegin() const noexcept -> auto {return std::make_reverse_iterator( begin());}
+		XTAL_DEF_(return,inline,let) crbegin() const noexcept -> auto {return std::make_reverse_iterator(cbegin());}
 
 
 	public:// SIZE
@@ -162,7 +162,7 @@ struct buffer<A_data>
 		noexcept(false) -> void
 		{
 			if (N_data < sN) [[unlikely]] {
-				throw _std::bad_alloc{};
+				throw std::bad_alloc{};
 			}
 		}
 	
@@ -191,20 +191,20 @@ struct buffer<A_data>
 		noexcept(false) -> void
 		{
 			deserve(sN);
-			auto iN  = _std::next(i0, sN);
+			auto iN  = std::next(i0, sN);
 
 			auto i0_ = offence_f(i0);
 			auto iN_ = offence_f(iN);
 			auto iZ_ = offence_f(end());
 
-			auto sZ  = _std::distance(i0_, iZ_);
+			auto sZ  = std::distance(i0_, iZ_);
 			if  (sZ) {
 				XTAL_IF0
 				//\
 				XTAL_0IF_(do) (_detail::move_to(iN_, i0_,             sZ))
-				XTAL_0IF_(do) (_std::memmove   (iN_, i0_, value_size_*sZ))
+				XTAL_0IF_(do) (std::memmove   (iN_, i0_, value_size_*sZ))
 				XTAL_0IF_(else) {
-					_detail::swap_to(i0_, iZ_, _std::next(iZ_, sN));
+					_detail::swap_to(i0_, iZ_, std::next(iZ_, sN));
 				}
 			}
 			n_data += sN;
@@ -217,20 +217,20 @@ struct buffer<A_data>
 	//	XTAL_NEW_(delete) (homotype, noexcept=default)
 		XTAL_NEW_(create) (homotype, noexcept=default)
 	
-		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(_std::is_nothrow_copy_constructible_v<value_type>) requires _std::copy_constructible<value_type> and in_v<_xtd::trivially_copyable<value_type>> = default;
-		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(_std::is_nothrow_move_constructible_v<value_type>) requires _std::move_constructible<value_type> and in_v<_xtd::trivially_movable <value_type>> = default;
+		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(std::is_nothrow_copy_constructible_v<value_type>) requires std::copy_constructible<value_type> and in_v<xtd::trivially_copyable<value_type>> = default;
+		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(std::is_nothrow_move_constructible_v<value_type>) requires std::move_constructible<value_type> and in_v<xtd::trivially_movable <value_type>> = default;
 
-		XTAL_NEW_(implicit)    homotype(_std::initializer_list<value_type> t) noexcept(_std::is_nothrow_copy_constructible_v<value_type>)                                                                                              : homotype(                 t.begin() ,                  t.end() ) {}
-		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(_std::is_nothrow_copy_constructible_v<value_type>) requires _std::copy_constructible<value_type> and un_v<_xtd::trivially_copyable<value_type>> : homotype(                 t.begin() ,                  t.end() ) {}
-		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(_std::is_nothrow_move_constructible_v<value_type>) requires _std::move_constructible<value_type> and un_v<_xtd::trivially_movable <value_type>> : homotype(_detail::move_it(t.begin()), _detail::move_it(t.end())) {}
+		XTAL_NEW_(implicit)    homotype(std::initializer_list<value_type> t) noexcept(std::is_nothrow_copy_constructible_v<value_type>)                                                                                              : homotype(                 t.begin() ,                  t.end() ) {}
+		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(std::is_nothrow_copy_constructible_v<value_type>) requires std::copy_constructible<value_type> and un_v<xtd::trivially_copyable<value_type>> : homotype(                 t.begin() ,                  t.end() ) {}
+		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(std::is_nothrow_move_constructible_v<value_type>) requires std::move_constructible<value_type> and un_v<xtd::trivially_movable <value_type>> : homotype(_detail::move_it(t.begin()), _detail::move_it(t.end())) {}
 
-		XTAL_DEF_(inline,let)    assign(_std::initializer_list<value_type> t) noexcept(_std::is_nothrow_copy_assignable_v   <value_type>) -> void {assign(                 t.begin() ,                  t.end() );}
-		XTAL_DEF_(inline,let)    assign(homotype                   const  &t) noexcept(_std::is_nothrow_copy_assignable_v   <value_type>) -> void {assign(                 t.begin() ,                  t.end() );}
-		XTAL_DEF_(inline,let)    assign(homotype                         &&t) noexcept(_std::is_nothrow_move_assignable_v   <value_type>) -> void {assign(_detail::move_it(t.begin()), _detail::move_it(t.end()));}
+		XTAL_DEF_(inline,let)    assign(std::initializer_list<value_type> t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> void {assign(                 t.begin() ,                  t.end() );}
+		XTAL_DEF_(inline,let)    assign(homotype                   const  &t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> void {assign(                 t.begin() ,                  t.end() );}
+		XTAL_DEF_(inline,let)    assign(homotype                         &&t) noexcept(std::is_nothrow_move_assignable_v   <value_type>) -> void {assign(_detail::move_it(t.begin()), _detail::move_it(t.end()));}
 
-		XTAL_DEF_(inline,let) operator=(_std::initializer_list<value_type> t) noexcept(_std::is_nothrow_copy_assignable_v   <value_type>) -> homotype & {assign(XTAL_REF_(t)); return *this;}
-		XTAL_DEF_(inline,let) operator=(homotype                   const  &t) noexcept(_std::is_nothrow_copy_assignable_v   <value_type>) -> homotype & {assign(XTAL_REF_(t)); return *this;}
-		XTAL_DEF_(inline,let) operator=(homotype                         &&t) noexcept(_std::is_nothrow_move_assignable_v   <value_type>) -> homotype & {assign(XTAL_MOV_(t)); return *this;}
+		XTAL_DEF_(inline,let) operator=(std::initializer_list<value_type> t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> homotype & {assign(XTAL_REF_(t)); return *this;}
+		XTAL_DEF_(inline,let) operator=(homotype                   const  &t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> homotype & {assign(XTAL_REF_(t)); return *this;}
+		XTAL_DEF_(inline,let) operator=(homotype                         &&t) noexcept(std::is_nothrow_move_assignable_v   <value_type>) -> homotype & {assign(XTAL_MOV_(t)); return *this;}
 
 		template <class J> requires epimorphic_q<iterator, J> XTAL_NEW_(explicit) homotype(J j0, J jN) noexcept         {         push_back(j0, jN);}
 		template <class J> requires epimorphic_q<iterator, J> XTAL_DEF_(inline,let) assign(J j0, J jN) noexcept -> void {clear(); push_back(j0, jN);}
@@ -250,7 +250,7 @@ struct buffer<A_data>
 		XTAL_DEF_(inline,let)
 		swap(homotype &t)
 		noexcept -> void
-		requires _std::swappable<value_type>
+		requires std::swappable<value_type>
 		{
 			_detail::swap_with(offence_f(begin()), offence_f(t));
 		}
@@ -267,7 +267,7 @@ struct buffer<A_data>
 		}
 
 		XTAL_DEF_(inline,let)
-		push_back(_std::initializer_list<value_type> w)
+		push_back(std::initializer_list<value_type> w)
 		noexcept(false) -> void
 		{
 			push_back(w.begin(), w.end());
@@ -277,7 +277,7 @@ struct buffer<A_data>
 		push_back(make_q<U_data> auto &&...vs)
 		noexcept(false) -> void
 		{
-			push_back(_std::initializer_list<value_type>{U_data(XTAL_REF_(vs))...});
+			push_back(std::initializer_list<value_type>{U_data(XTAL_REF_(vs))...});
 		}
 		/*!
 		\brief  	Constructs an element at the end of `this` using the given arguments.
@@ -326,7 +326,7 @@ struct buffer<A_data>
 		insert_(iterator i0, J j0, J jN)
 		noexcept(false) -> iterator
 		{
-			return insert_(i0, j0, _std::distance(j0, jN));
+			return insert_(i0, j0, std::distance(j0, jN));
 		}
 		template <iterator_q J>
 		XTAL_DEF_(inline,let)
@@ -338,9 +338,9 @@ struct buffer<A_data>
 			auto i0_ = offence_f(i0);
 			XTAL_IF0
 			XTAL_0IF (submolecular_q<value_type> and same_q<iterator, J>) {
-				deserve(sN, i0); _std::memcpy(i0_, offence_f(j0), value_size_*sN);
+				deserve(sN, i0); std::memcpy(i0_, offence_f(j0), value_size_*sN);
 			}
-			XTAL_0IF (not _xtd::trivially_constructible<value_type>) {
+			XTAL_0IF (not xtd::trivially_constructible<value_type>) {
 				for (; sN--; ++j0) {
 					emplace_back(*j0);
 				}
@@ -355,7 +355,7 @@ struct buffer<A_data>
 		\brief  	Inserts the values `w` beginning at `i`.
 		*/
 		XTAL_DEF_(inline,let)
-		insert(const_iterator i, _std::initializer_list<value_type> w)
+		insert(const_iterator i, std::initializer_list<value_type> w)
 		noexcept(false) -> iterator
 		{
 			return insert(i, w.begin(), w.end());
@@ -377,7 +377,7 @@ struct buffer<A_data>
 		noexcept(false) -> iterator
 		{
 			deserve(sN, i);
-			_std::uninitialized_fill_n(offence_f(i), sN, XTAL_REF_(u));
+			std::uninitialized_fill_n(offence_f(i), sN, XTAL_REF_(u));
 			return i;
 		}
 		/*!
@@ -394,7 +394,7 @@ struct buffer<A_data>
 		noexcept(false) -> iterator
 		{
 			deserve(sN, i0);
-			_std::uninitialized_value_construct_n(offence_f(i0), sN);
+			std::uninitialized_value_construct_n(offence_f(i0), sN);
 			return i0;
 		}
 		
@@ -439,7 +439,7 @@ struct buffer<A_data>
 		pop_back(size_type sN)
 		noexcept(false) -> void
 		{
-			erase(_std::prev(end(), sN), end(), sN);
+			erase(std::prev(end(), sN), end(), sN);
 		}
 		/*!
 		\brief  	Deletes all elements.
@@ -466,7 +466,7 @@ struct buffer<A_data>
 		erase(const_iterator i0, size_type sN)
 		noexcept -> decltype(auto)
 		{
-			return erase(i0, _std::next(i0, sN), sN);
+			return erase(i0, std::next(i0, sN), sN);
 		}
 		/*!
 		\brief  	Deletes the elements between `i0` and `iN`.
@@ -475,7 +475,7 @@ struct buffer<A_data>
 		erase(const_iterator i0, const_iterator iN)
 		noexcept -> decltype(auto)
 		{
-			return erase(i0, iN, _std::distance(i0, iN));
+			return erase(i0, iN, std::distance(i0, iN));
 		}
 		/*!
 		\brief  	Deletes `sN` elements between `i0` and `iN`.
@@ -496,20 +496,20 @@ struct buffer<A_data>
 		erase_(iterator i0, iterator iN, size_type sN)
 		noexcept -> decltype(auto)
 		{
-			assert(begin() <= i0 and iN <= end() and _std::distance(i0, iN) == sN);
-			if constexpr (_std::destructible<value_type>) {
-				_std::destroy(i0, iN);
+			assert(begin() <= i0 and iN <= end() and std::distance(i0, iN) == sN);
+			if constexpr (std::destructible<value_type>) {
+				std::destroy(i0, iN);
 			}
 			auto iZ = end();
 			if (iN < iZ) {
-				auto sX  = _std::distance(iN, iZ);
+				auto sX  = std::distance(iN, iZ);
 				auto i0_ = offence_f(i0);
 				auto iN_ = offence_f(iN);
 				auto iZ_ = offence_f(iZ);
 				XTAL_IF0
 				//\
 				XTAL_0IF_(do) (_detail::move_to(i0_, iN_,             sX))
-				XTAL_0IF_(do) (_std::memmove   (i0_, iN_, value_size_*sX))
+				XTAL_0IF_(do) (std::memmove   (i0_, iN_, value_size_*sX))
 				XTAL_0IF_(else) {
 					_detail::swap_to(i0_, iN_, iZ_);
 				}

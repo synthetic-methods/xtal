@@ -3,7 +3,7 @@
 #include "./polymer.hh"// testing...
 
 #include "./monomer.hh"
-#include "../provision/all.hh"
+#include "../scheme/all.hh"
 #include "../schedule/all.hh"
 
 XTAL_ENV_(push)
@@ -26,11 +26,11 @@ void polymer_provision_spine__locamotion()
 	using U_cursor = occur::cursor_t<>;
 	using U_stage  = occur::stage_t<>;
 	using U_event  = flow::key_s<U_stage>;
-	using U_slider = schedule::slider_t<provision::spooled<extent_constant_t<0x20>>>;
+	using U_slider = schedule::slider_t<scheme::spooled<extent_constant_t<0x20>>>;
 	using U_cue    = flow::cue_s<>;
 
-	using A_stored  = provision::stored  <extent_constant_t<N_store>>;
-	using A_spooled = provision::spooled <extent_constant_t<N_spool>>;
+	using A_stored  = scheme::stored  <extent_constant_t<N_store>>;
+	using A_spooled = scheme::spooled <extent_constant_t<N_spool>>;
 
 	using A_gate   = bond::compose<typename U_slider::template suspend<Ox_level>, typename U_stage::attach<>>;
 	using U_gate   = process::confined_t<A_gate>;
@@ -78,11 +78,11 @@ TAG_("polymer", "occur", "spine")
 	using U_cursor = occur::cursor_t<>;
 	using U_stage  = occur::stage_t<>;
 	using U_event  = flow::key_s<U_stage>;
-	using U_slider = schedule::slider_t<provision::spooled<extent_constant_t<0x20>>>;
+	using U_slider = schedule::slider_t<scheme::spooled<extent_constant_t<0x20>>>;
 	using U_cue    = flow::cue_s<>;
 
-	using A_stored  = provision::stored  <extent_constant_t<-1>>;
-	using A_spooled = provision::spooled <extent_constant_t<64>>;
+	using A_stored  = scheme::stored  <extent_constant_t<-1>>;
+	using A_spooled = scheme::spooled <extent_constant_t<64>>;
 
 	using U_gate   = process::confined_t<void
 	,	typename U_slider::template suspend<Ox_level>
@@ -148,8 +148,8 @@ void polymer_provision_spool__combined()
 	,	typename Ox_level::poll<>
 	>;
 	using Z_processor = polymer_t<Z_process
-	,	provision::stored <extent_constant_t<N_store>>
-	,	provision::spooled<extent_constant_t<N_spool>>
+	,	scheme::stored <extent_constant_t<N_store>>
+	,	scheme::spooled<extent_constant_t<N_spool>>
 	>;
 	using Y_processor = typename Z_processor::template bind_t<>;
 	Y_processor u_vox{};
@@ -193,8 +193,8 @@ void polymer_provision_spool_composited()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	provision::stored <extent_constant_t<N_store>>
-	,	provision::spooled<extent_constant_t<N_spool>>
+	,	scheme::stored <extent_constant_t<N_store>>
+	,	scheme::spooled<extent_constant_t<N_spool>>
 	>;
 	auto u_vox = U_vox::bind_f();
 

@@ -13,8 +13,8 @@ namespace _retail
 //\
 Standard...
 
-using  extent_type = _std::  make_signed_t<XTAL_STD_(size_type)>;
-using    size_type = _std::make_unsigned_t<XTAL_STD_(size_type)>;
+using  extent_type =  xtd::  signed_case_t<XTAL_STD_(size_type)>;
+using    size_type =  xtd::unsigned_case_t<XTAL_STD_(size_type)>;
 using    sign_type =        XTAL_ALL_(false - true);
 class    void_type ;
 using    null_type =        XTAL_STD_(null_type);
@@ -30,30 +30,30 @@ template <auto N>
 struct   text_type
 {
 	char           value[N];
-	XTAL_DEF_(set) value_size = _std::integral_constant<_std::size_t, N>{};
+	XTAL_DEF_(set) value_size =  std::integral_constant<std::size_t, N>{};
 	XTAL_TYP_(let) value_type = decltype(value);
 	XTAL_TYP_(let)       type = text_type;
 
-	XTAL_DEF_(let)      operator()           () const {return  value ;}
-	XTAL_DEF_(implicit) operator _std::string() const {return {value};}
+	XTAL_DEF_(let)      operator()          () const {return  value ;}
+	XTAL_DEF_(implicit) operator std::string() const {return {value};}
 	XTAL_NEW_(implicit)
-	text_type(const char(&str)[N]) {_std::copy_n(str, N, value);}
+	text_type(const char(&str)[N]) {std::copy_n(str, N, value);}
 
 	template <auto M>
 	XTAL_DEF_(return,inline,met) operator  == (text_type const &s, text_type<M> const &t) noexcept -> bool requires (M != N) and XTAL_TRY_(to) (false)
-	XTAL_DEF_(return,inline,met) operator  == (text_type const &s, text_type    const &t) noexcept -> bool requires              XTAL_TRY_(to) ((_std::string) s == (_std::string) t)
+	XTAL_DEF_(return,inline,met) operator  == (text_type const &s, text_type    const &t) noexcept -> bool requires              XTAL_TRY_(to) ((std::string) s == (std::string) t)
 
 };
 
-template <auto  N>	using extent_constant_t	= _std::integral_constant<extent_type, static_cast<extent_type>(N)>;
-template <auto  N>	using   size_constant_t	= _std::integral_constant<  size_type, static_cast<  size_type>(N)>;
-template <auto  N>	using   sign_constant_t	= _std::integral_constant<  sign_type, static_cast<  sign_type>(N)>;
+template <auto  N>	using extent_constant_t	=  std::integral_constant<extent_type, static_cast<extent_type>(N)>;
+template <auto  N>	using   size_constant_t	=  std::integral_constant<  size_type, static_cast<  size_type>(N)>;
+template <auto  N>	using   sign_constant_t	=  std::integral_constant<  sign_type, static_cast<  sign_type>(N)>;
 
-template <class T>	struct   metaconstant                         {using type = _std::type_identity<T>; using value_type = T;};
-template <class T>	struct   metaconstant<_std::type_identity<T>> {using type = _std::type_identity<T>; using value_type = T;};
+template <class T>	struct   metaconstant                         {using type =  std::type_identity<T>; using value_type = T;};
+template <class T>	struct   metaconstant<std::type_identity<T>> {using type =  std::type_identity<T>; using value_type = T;};
 
 template <class T>	using    metaconstant_t	=      typename metaconstant  <T>::type;
-template <class T>	concept  metaconstant_q	= _std::same_as<metaconstant_t<T>, T>;
+template <class T>	concept  metaconstant_q	=  std::same_as<metaconstant_t<T>, T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,19 +62,19 @@ template <class T>	concept  metaconstant_q	= _std::same_as<metaconstant_t<T>, T>
 Structural...
 
 template <class T             >	using           based_t	=                     XTAL_NOM_(T) ;
-template <class T             >	concept         based_q	=      _std::same_as<T, based_t<T>>;
-template <class T             >	concept       unbased_q	=  not _std::same_as<T, based_t<T>>;
+template <class T             >	concept         based_q	=       std::same_as<T, based_t<T>>;
+template <class T             >	concept       unbased_q	=  not std::same_as<T, based_t<T>>;
 
-template <         class ...Ts>	struct       fungible              : _std::false_type                                                    {};
-template <class T, class ...Ts>	struct       fungible<T, Ts...>    : _std::conjunction<fungible<T, Ts>...>                               {};
-template <class T, class    T1>	struct       fungible<T, T1   >    : _std::disjunction<_std::is_base_of<T, T1>, _std::is_base_of<T1, T>> {};
+template <         class ...Ts>	struct       fungible              : std::false_type                                                    {};
+template <class T, class ...Ts>	struct       fungible<T, Ts...>    : std::conjunction<fungible<T, Ts>...>                               {};
+template <class T, class    T1>	struct       fungible<T, T1   >    : std::disjunction<std::is_base_of<T, T1>, std::is_base_of<T1, T>> {};
 template <         class ...Ts>	concept      fungible_q	=      fungible<based_t<Ts>...>{}();
 template <         class ...Ts>	concept    infungible_q	=  not fungible<based_t<Ts>...>{}();
 
 template <         class ...Ts>	struct      isotropic ;
 template <         class ...Ts>	struct      epitropic ;
-template <class T, class ...Ts>	struct      isotropic<T, Ts...> : _std::conjunction<_std::is_same<         based_t<Ts>, based_t<T>>...> {};
-template <class T, class ...Ts>	struct      epitropic<T, Ts...> : _std::conjunction<_std::is_constructible<based_t<Ts>,         T >...> {};
+template <class T, class ...Ts>	struct      isotropic<T, Ts...> : std::conjunction<std::is_same<         based_t<Ts>, based_t<T>>...> {};
+template <class T, class ...Ts>	struct      epitropic<T, Ts...> : std::conjunction<std::is_constructible<based_t<Ts>,         T >...> {};
 template <         class ...Ts>	concept     isotropic_q	=   isotropic<   Ts...>{}();
 template <         class ...Ts>	concept     epitropic_q	=   epitropic<   Ts...>{}();
 
@@ -90,16 +90,16 @@ template <         class ...Ts>	using       epitropic_t	=   epitropic<   Ts...>;
 template <         class ...Ts>	using      isomorphic_t	=  isomorphic<   Ts...>;
 template <         class ...Ts>	using      epimorphic_t	=  epimorphic<   Ts...>;
 
-template <class T, class ...Us>	concept          make_p	= _std::constructible_from<based_t<T>, Us...>;
+template <class T, class ...Us>	concept          make_p	=  std::constructible_from<based_t<T>, Us...>;
 template <         class ...Ts>	concept          make_q	=       epitropic<Ts...>{}();
 template <         class ...Ts>	concept          same_q	=       isotropic<Ts...>{}();
 template <         class ...Ts>	concept     different_q	=  not  isotropic<Ts...>{}();
 
 template <         auto  ...Ns>	struct           same           	;
 template <         auto  ...Ns>	concept          same_v         	= same<Ns...>::value;
-template <                    >	struct           same<         >	: _std::integral_constant<bool, false> {};
-template <auto  N             >	struct           same<N        >	: _std::integral_constant<bool,  true> {};
-template <auto  N, auto  ...Ns>	struct           same<N, Ns... >	: _std::integral_constant<bool, (...and (N == Ns))> {};
+template <                    >	struct           same<         >	: std::integral_constant<bool, false> {};
+template <auto  N             >	struct           same<N        >	: std::integral_constant<bool,  true> {};
+template <auto  N, auto  ...Ns>	struct           same<N, Ns... >	: std::integral_constant<bool, (...and (N == Ns))> {};
 template <         auto  ...Ns>	concept     different_v	= not same_v<Ns...>;
 
 template <         class ...Ts>	concept      multiple_q	=  2 <= sizeof...(Ts);
@@ -113,7 +113,7 @@ template <         auto  ...Ns>	concept          none_v	=  0 == sizeof...(Ns);
 
 template <auto  N             >	concept    incomplete_v	=  N == 0;
 template <auto  N             >	concept      complete_v	=  N != 0;
-template <class T             >	concept    incomplete_q	=  not requires {typename T; typename _std::void_t<decltype(sizeof(T))>;};
+template <class T             >	concept    incomplete_q	=  not requires {typename T; typename std::void_t<decltype(sizeof(T))>;};
 template <class T             >	concept      complete_q	=  not incomplete_q<T>;
 template <         class ...Ts>	struct       complete	;
 template <         class ...Ts>	using        complete_t	=  typename complete<Ts...>::type;
@@ -128,23 +128,23 @@ template <auto  N, auto  ...Ns>	concept            un_v	=  not in_v<N, Ns...>;
 template <class T, class ...Ts>	concept            un_q	=  not in_q<T, Ts...>;
 
 
-template <         class ...Ts>	concept        common_q	=  some_q<Ts...> and requires {typename _std::common_type<Ts...>::type;};
-template <         class ...Ts>	using          common_t	=  _std::conditional_t<common_q<Ts...>, _std::common_type<Ts...>, _std::type_identity<void>>::type;
+template <         class ...Ts>	concept        common_q	=  some_q<Ts...> and requires {typename std::common_type<Ts...>::type;};
+template <         class ...Ts>	using          common_t	=   std::conditional_t<common_q<Ts...>, std::common_type<Ts...>, std::type_identity<void>>::type;
 
-template <         class ...Xs>	using          either_t	= _std::variant<based_t<Xs>...>;
+template <         class ...Xs>	using          either_t	=  std::variant<based_t<Xs>...>;
 template <class T, class ...Xs>	concept        either_q	=  fungible_q<T, either_t<Xs...>>;
 
-template <class T             >  concept        atomic_q =  complete_q<T> and _xtd::trivial<based_t<T>>;
-template <class T             >  concept     molecular_q =  complete_q<T> and _xtd::nominal<based_t<T>>;
-template <class T             >  concept  submolecular_q =  atomic_q<T> or (molecular_q<T> and _std::is_standard_layout_v<based_t<T>>);
+template <class T             >  concept        atomic_q =  complete_q<T> and xtd::trivial<based_t<T>>;
+template <class T             >  concept     molecular_q =  complete_q<T> and xtd::nominal<based_t<T>>;
+template <class T             >  concept  submolecular_q =  atomic_q<T> or (molecular_q<T> and std::is_standard_layout_v<based_t<T>>);
 
-template <class S, class T=S  >	using         qualify_s = _xtd::qualify_cvref_t<                                S , based_t<T>>;
-template <class S, class T=S  >	using      disqualify_s = _xtd::qualify_cvref_t<_xtd::remove_rvalue_reference_t<S>, based_t<T>>;
+template <class S, class T=S  >	using         qualify_s = xtd::qualify_cvref_t<                                S , based_t<T>>;
+template <class S, class T=S  >	using      disqualify_s = xtd::qualify_cvref_t<xtd::remove_rvalue_reference_t<S>, based_t<T>>;
 
 
-template <class F, class ...Xs>	using          return_t	= _std::invoke_result_t<F, Xs...>;
-template <class F, class ...Xs>	concept    applicable_p	= _std::invocable      <F, Xs...>;
-template <class F             >	concept    applicable_q	=      applicable_p<F> or _std::is_pointer_v<XTAL_ALL_(+XTAL_ANY_(F))>;
+template <class F, class ...Xs>	using          return_t	=  std::invoke_result_t<F, Xs...>;
+template <class F, class ...Xs>	concept    applicable_p	=  std::invocable      <F, Xs...>;
+template <class F             >	concept    applicable_q	=      applicable_p<F> or std::is_pointer_v<XTAL_ALL_(+XTAL_ANY_(F))>;
 template <class F, class ...Xs>	concept  inapplicable_p	=  not applicable_p<F, Xs...>;
 template <class F             >	concept  inapplicable_q	=  not applicable_q<F       >;
 
@@ -163,9 +163,9 @@ template <auto  M, auto     N >	auto constexpr   skip_v	= (M < 0)? N: (M <= N) +
 template <auto  M, auto     N >	auto constexpr modulo_v	= ((N%M) + M)%M;
 
 
-template <auto  N=null_type{} >	struct       constant  	: _std::integral_constant<decltype(N), N> {};
+template <auto  N=null_type{} >	struct       constant  	: std::integral_constant<decltype(N), N> {};
 template <auto  N=null_type{} >	using        constant_t	=  constant<N>;
-template <class T             >	concept      constant_q	=  complete_q<T> and _xtd::constant_equivocable<based_t<T>>;
+template <class T             >	concept      constant_q	=  complete_q<T> and xtd::constant_equivocable<based_t<T>>;
 
 template <class T             >	struct       variable;
 template <class T             >	             variable(T) -> variable<T>;
@@ -179,17 +179,17 @@ template <class T             >	struct       variable
 template <constant_q T        >	struct       variable<T> : T{};
 template <class T             >	concept      variable_q	=  not constant_q<T>;
 
-template <auto  N        >	using     integral_constant_t	= _std::integral_constant<decltype(N), (N)>;
+template <auto  N        >	using     integral_constant_t	=  std::integral_constant<decltype(N), (N)>;
 template <auto  N        >	using     cardinal_constant_t	=     size_constant_t<N>;
 template <auto  N        >	using      ordinal_constant_t	=   extent_constant_t<N>;
-template <auto  N        >	using      logical_constant_t	= _std::integral_constant<bool,    bool(N)>;
+template <auto  N        >	using      logical_constant_t	=  std::integral_constant<bool,    bool(N)>;
 
-template <class T        >	concept   integral_variable_q	= _std::              integral<based_t<T>>;
-template <class T        >	concept   cardinal_variable_q	= _std::     unsigned_integral<based_t<T>>;
-template <class T        >	concept    ordinal_variable_q	= _std::       signed_integral<based_t<T>>;
-template <class T        >	concept    logical_variable_q	= _std::       same_as<bool  , based_t<T>>;
-template <class T        >	concept       real_variable_q	= _std::        floating_point<based_t<T>>;
-template <class T        >	concept    complex_variable_q	=  fungible_q<T, _std::complex<XTAL_ALL_(abs(XTAL_ANY_(T)))>>;
+template <class T        >	concept   integral_variable_q	=  std::              integral<based_t<T>>;
+template <class T        >	concept   cardinal_variable_q	=  std::     unsigned_integral<based_t<T>>;
+template <class T        >	concept    ordinal_variable_q	=  std::       signed_integral<based_t<T>>;
+template <class T        >	concept    logical_variable_q	=  std::       same_as<bool  , based_t<T>>;
+template <class T        >	concept       real_variable_q	=  std::        floating_point<based_t<T>>;
+template <class T        >	concept    complex_variable_q	=  fungible_q<T, std::complex<XTAL_ALL_(abs(XTAL_ANY_(T)))>>;
 template <class T        >	concept    simplex_variable_q	=  integral_variable_q<T> or    real_variable_q<T>;
 template <class T        >	concept    numeric_variable_q	=   complex_variable_q<T> or simplex_variable_q<T>;
 
@@ -215,7 +215,7 @@ template <class T        >	concept    numeric_q	=  numeric_variable_q<T> or  num
 template <class T        >	concept    instant_q	= integral_q         <T> or          constant_q<T>;
 
 
-template <class T        >	auto constexpr terminal_constant_v	= _xtd::bit_cast<T>(~_xtd::make_unsigned_t<T>{} >> 1U);
+template <class T        >	auto constexpr terminal_constant_v	= xtd::bit_cast<T>(~xtd::unsigned_case_t<T>{} >> 1U);
 template <class T        >	using          terminal_constant_t	=  constant_t<terminal_constant_v<T>>;
 template <class T        >	concept        terminal_constant_q	=  constant_q<T> and same_q<T, terminal_constant_t<decltype(T{}())>>;
 
@@ -228,10 +228,10 @@ template <class T        >	concept        terminal_constant_q	=  constant_q<T> a
 Valued & Sized...
 
 template <extent_type... Ns>
-struct extense : _std::integer_sequence<extent_type, Ns...>
+struct extense : std::integer_sequence<extent_type, Ns...>
 {
-	using petrotype = _std::array<extent_type, sizeof...(Ns)>;
-	using supertype = _std::integer_sequence<extent_type, Ns...>;
+	using petrotype =  std::array<extent_type, sizeof...(Ns)>;
+	using supertype =  std::integer_sequence<extent_type, Ns...>;
 
 	XTAL_DEF_(return,inline,explicit)
 	operator auto() const noexcept {return petrotype{Ns...};}
@@ -261,7 +261,7 @@ struct   assess
 	static extent_constant_t<(0 +...+ (0 < Ns)) > constexpr    rank{};
 
 };
-template <          auto  ...Ns>                              struct   assayed        : assayed<_xtd::make_signed_f(Ns)...> {};
+template <          auto  ...Ns>                              struct   assayed        : assayed<xtd::signed_cast(Ns)...> {};
 template <ordinal_q auto  ...Ns> requires (...and (0  <= Ns)) struct   assayed<Ns...> : assess <Ns...> {static extent_constant_t<(1 *...* Ns)> constexpr extent{};};
 template <ordinal_q auto  ...Ns> requires (...or  (Ns <  0 )) struct   assayed<Ns...> : assess <Ns...> {static extent_constant_t<-1          > constexpr extent{};};
 template <                     >                              struct   assayed<     > : assess <     > {static extent_constant_t< 0          > constexpr extent{};};
@@ -282,16 +282,18 @@ template <class T             >	concept  fluid_valued_q	=  requires {requires di
 template <class T             >	concept        valued_q	=  requires {requires different_q<T,       valued_t<T>>;};
 
 //\
-template <class T             >	using    array_valued_t	= _xtd::qualify_const_t<T, _xtd::  remove_extent_t<based_t<T>>>;
-template <class T             >	using    array_valued_t	= _xtd::qualify_const_t<T,  XTAL_ALL_(*XTAL_ANY_(T))>;
-template <class T             >	using    under_valued_t	= _xtd::qualify_const_t<T, _std::underlying_type_t<based_t<T>>>;
-template <class T             >	using    inner_valued_t	= _xtd::qualify_const_t<T,  typename based_t<T>:: value_type>;
-template <class T             >	using   scalar_valued_t	= _xtd::qualify_const_t<T,  typename based_t<T>::scalar_type>;
-template <class T             >	using   Scalar_valued_t	= _xtd::qualify_const_t<T,  typename based_t<T>::Scalar     >;
+template <class T             >	using    array_valued_t	= xtd::qualify_const_t<T, xtd::  remove_extent_t<based_t<T>>>;
+template <class T             >	using    array_valued_t	= xtd::qualify_const_t<T,  XTAL_ALL_(*XTAL_ANY_(T))>;
+template <class T             >	using    under_valued_t	= xtd::qualify_const_t<T, std::underlying_type_t<based_t<T>>>;
+template <class T             >	using    inner_valued_t	= xtd::qualify_const_t<T,  typename based_t<T>:: value_type>;
+template <class T             >	using    scale_valued_t	= xtd::qualify_const_t<T,  typename based_t<T>:: scale_type>;
+template <class T             >	using   scalar_valued_t	= xtd::qualify_const_t<T,  typename based_t<T>::scalar_type>;
+template <class T             >	using   Scalar_valued_t	= xtd::qualify_const_t<T,  typename based_t<T>::Scalar     >;
 
-template <class T             >	concept  array_valued_q	=  different_q<T, _std::decay_t<T>> or same_q<array_valued_t<T>[0], T>;//NOTE: `std::is_array_v` doesn't accept `[0]...`.
+template <class T             >	concept  array_valued_q	=  different_q<T, std::decay_t<T>> or same_q<array_valued_t<T>[0], T>;//NOTE: `std::is_array_v` doesn't accept `[0]...`.
 template <class T             >	concept  inner_valued_q	=  requires {requires complete_q< inner_valued_t<T>>;};
 template <class T             >	concept  under_valued_q	=  requires {requires complete_q< under_valued_t<T>>;};
+template <class T             >	concept  scale_valued_q	=  requires {requires complete_q< scale_valued_t<T>>;} and un_v<fixed_valued_q<T>>;
 template <class T             >	concept scalar_valued_q	=  requires {requires complete_q<scalar_valued_t<T>>;} and un_v<fixed_valued_q<T>>;
 template <class T             >	concept Scalar_valued_q	=  requires {requires complete_q<Scalar_valued_t<T>>;} and un_v<fixed_valued_q<T>>;
 
@@ -300,29 +302,30 @@ template <array_valued_q T    >	struct   fixed_valued<T> {using value_type =  ar
 template <inner_valued_q T    >	struct   fixed_valued<T> {using value_type =  inner_valued_t<T>;};
 template <under_valued_q T    >	struct   fixed_valued<T> {using value_type =  under_valued_t<T>;};
 /*/
-template <class U, class ...Us>	requires (...and _std::same_as<U, Us>)
-struct   fixed_valued<_std::tuple<U, Us...>> {using value_type =  common_t<U, Us...>;};
+template <class U, class ...Us>	requires (...and std::same_as<U, Us>)
+struct   fixed_valued<std::tuple<U, Us...>> {using value_type =  common_t<U, Us...>;};
 
-template <class U, class ...Us>	requires (...and _std::same_as<U, Us>)
-struct   fixed_valued<_std::pair <U, Us...>> {using value_type =  common_t<U, Us...>;};
+template <class U, class ...Us>	requires (...and std::same_as<U, Us>)
+struct   fixed_valued<std::pair <U, Us...>> {using value_type =  common_t<U, Us...>;};
 /***/
 template <class T             >	struct   fluid_valued    {using value_type =                 T ;};// TODO: Remove scalar specialization?
 template < fixed_valued_q T   >	struct   fluid_valued<T> {using value_type =  fixed_valued_t<T>;};
+template < scale_valued_q T   >	struct   fluid_valued<T> {using value_type =  scale_valued_t<T>;};
 template <scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = scalar_valued_t<T>;};
 template <Scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = Scalar_valued_t<T>;};
 
 
 template <class T    >	struct            fixed_shaped;
 template <class T    >	struct            fluid_shaped;
-template <class T    >	using             array_shaped  	=  assayed<_xtd::    extent_v<based_t<T>>>;
-template <class T    >	using             tuple_shaped  	=  assayed<_std::tuple_size_v<based_t<T>>>;
+template <class T    >	using             array_shaped  	=  assayed<xtd::    extent_v<based_t<T>>>;
+template <class T    >	using             tuple_shaped  	=  assayed<std::tuple_size_v<based_t<T>>>;
 template <class T    >	using            static_shaped  	=  assayed<static_cast<extent_type>(based_t<T>::size())>;
 template <class T    >	using           dynamic_shaped  	=  assayed<static_cast<extent_type>(-1)>;
 
 template <class T    >	concept           fixed_shaped_q	=  complete_q<fixed_shaped<T>>;
 template <class T    >	concept           fluid_shaped_q	=  complete_q<fluid_shaped<T>>;
 template <class T    >	concept           array_shaped_q	=  array_valued_q<T>;
-template <class T    >	concept           tuple_shaped_q	=  complete_q<_std::tuple_size<based_t<T>>>;
+template <class T    >	concept           tuple_shaped_q	=  complete_q<std::tuple_size<based_t<T>>>;
 template <class T    >	concept          static_shaped_q	=  un_v<tuple_shaped_q<T>> and                                         requires {based_t<T>::size();};
 template <class T    >	concept         dynamic_shaped_q	=  un_v<tuple_shaped_q<T>> and requires {XTAL_ANY_(T).size();} and not requires {based_t<T>::size();};
 
@@ -331,7 +334,7 @@ template <  based_q T>	requires          tuple_shaped_q<T>  struct fixed_shaped<
 template <  based_q T>	requires          array_shaped_q<T>  struct fixed_shaped<T>                :   array_shaped<T>                    {};
 template <  based_q T>	requires         static_shaped_q<T>  struct fixed_shaped<T>                :  static_shaped<T>                    {};
 template <unbased_q T>	requires  fixed_shaped_q<based_t<T>> struct fixed_shaped<T>                :   fixed_shaped<based_t<T>>           {};
-template <class     U>	                                     struct fixed_shaped<_std::complex<U>> :        assayed<2>                    {};
+template <class     U>	                                     struct fixed_shaped<std::complex<U>> :        assayed<2>                    {};
 
 template <  based_q T>	                                     struct fluid_shaped<T>                :        assayed<0>                   {};
 template <  based_q T>	requires        dynamic_shaped_q<T>  struct fluid_shaped<T>                : dynamic_shaped<T>                    {};
@@ -395,7 +398,7 @@ private:
 	XTAL_DEF_(set) N = fixed<T>::extent();
 
 public:
-	using       type = disqualify_s<T, _std::array<U, N>>;
+	using       type = disqualify_s<T, std::array<U, N>>;
 	using array_type = disqualify_s<T,             U [N]>;
 	using value_type = disqualify_s<T,             U    >;
 
@@ -455,7 +458,7 @@ template <class T             >	using        distance_t = typename   distance<T>
 template <class T             >	using         counted_t = typename    counted<T>::type;
 template <class T             >	using         counter_t = typename    counter<T>::type;
 
-template <class U, class V=U  >	using        interval_t	= _xtd::ranges::iota_view<_std::remove_reference_t<U>, _std::remove_reference_t<V>>;
+template <class U, class V=U  >	using        interval_t	= xtd::ranges::iota_view<std::remove_reference_t<U>, std::remove_reference_t<V>>;
 template <class T             >	concept      interval_q	=  fungible_q<T, interval_t<iteratee_t<T>>>;
 
 template <class T             >	concept      iterable_q	=  requires (T &t) {t.begin();          };
@@ -465,11 +468,11 @@ template <class T             >	concept      iteratee_q	=  true;
 template <class T             >	concept      sentinel_q	=  iterator_q<T>;
 template <class T             >	concept      distance_q	=  requires (T t) {{t - t} -> integral_variable_q;};
 template <class T             >	concept       counter_q	=  integral_variable_q<T>;
-template <class T             >	concept       counted_q	=  iterated_q<T> and _std::convertible_to<T, interval_t<_std::remove_reference_t<iteratee_t<T>>>>;
+template <class T             >	concept       counted_q	=  iterated_q<T> and std::convertible_to<T, interval_t<std::remove_reference_t<iteratee_t<T>>>>;
 
-template <class T             >	using      deiteratee_t = _std::    remove_reference_t<iteratee_t<T>>;
-template <class T             >	using      reiteratee_t = _std::add_lvalue_reference_t<iteratee_t<T>>;
-template <class T             >	using      reiterated_t	= _xtd::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
+template <class T             >	using      deiteratee_t =  std::    remove_reference_t<iteratee_t<T>>;
+template <class T             >	using      reiteratee_t =  std::add_lvalue_reference_t<iteratee_t<T>>;
+template <class T             >	using      reiterated_t	= xtd::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
 template <class T             >	concept    reiterated_q	=  fungible_q<T, reiterated_t<T>>;
 
 template <class T>     	   concept sequential_iterable_q	=  iterable_q<T> and not indexed_q<T>;
@@ -479,9 +482,9 @@ template <class T>     	   concept sequential_q         	=  sequential_iterable_
 template <class T             >	struct       iteratee     {using type =                   valued_t<T> ;};
 template <iterable_q T        >	struct       iteratee<T>  {using type =       pointee_t<iterator_t<T>>;};
 template <iterator_q T        >	struct       iteratee<T>  {using type =       pointee_t           <T> ;};
-template < counter_q T        >	struct       iteratee<T>  {using type =   _std::remove_reference_t<T> ;};
+template < counter_q T        >	struct       iteratee<T>  {using type =    std::remove_reference_t<T> ;};
 
-template <iterated_q T        >	struct       iterated<T>  {using type =   _std::remove_reference_t<T> ;};
+template <iterated_q T        >	struct       iterated<T>  {using type =    std::remove_reference_t<T> ;};
 template <iterator_q T        >	struct       iterated<T>  {using type =                          void ;};
 template < counter_q T        >	struct       iterated<T>  {using type =                 interval_t<T> ;};
 
@@ -495,7 +498,7 @@ template <iterator_q T        >	struct       sentinel<T>  {using type =         
 template <class T             >	struct       distance     {using type =      distance_t<iterator_t<T>>;};
 //\
 template <iterator_q T        >	struct       distance<T>  {using type = XTAL_ALL_(XTAL_ANY_(T) - XTAL_ANY_(T));};
-template <iterator_q T        >	struct       distance<T>  {using type = XTAL_ALL_(_std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
+template <iterator_q T        >	struct       distance<T>  {using type = XTAL_ALL_(std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
 
 
 template <counted_q  T        >	struct        counted<T>  {using type =    based_t<T>;};
@@ -599,37 +602,37 @@ template <class T, class  U=T  >	concept        digital_group_q =        digital
 template <         class ...   >	struct  multiplicative_group;
 template <class T              >	struct  multiplicative_group<T       > : logical_constant_t<multiplicative_group_q<T    >   > {};
 template <class T, class    U  >	struct  multiplicative_group<T, U    > : logical_constant_t<multiplicative_group_q<T, U >   > {};
-template <class T, class ...Us >	struct  multiplicative_group<T, Us...> :  _std::conjunction<multiplicative_group  <T, Us>...> {};
+template <class T, class ...Us >	struct  multiplicative_group<T, Us...> :   std::conjunction<multiplicative_group  <T, Us>...> {};
 
 template <         class ...   >	struct        additive_group;
 template <class T              >	struct        additive_group<T       > : logical_constant_t<      additive_group_q<T    >   > {};
 template <class T, class    U  >	struct        additive_group<T, U    > : logical_constant_t<      additive_group_q<T, U >   > {};
-template <class T, class ...Us >	struct        additive_group<T, Us...> :  _std::conjunction<      additive_group  <T, Us>...> {};
+template <class T, class ...Us >	struct        additive_group<T, Us...> :   std::conjunction<      additive_group  <T, Us>...> {};
 
 template <         class ...   >	struct        quotient_group;
 template <class T              >	struct        quotient_group<T       > : logical_constant_t<      quotient_group_q<T    >   > {};
 template <class T, class    U  >	struct        quotient_group<T, U    > : logical_constant_t<      quotient_group_q<T, U >   > {};
-template <class T, class ...Us >	struct        quotient_group<T, Us...> :  _std::conjunction<      quotient_group  <T, Us>...> {};
+template <class T, class ...Us >	struct        quotient_group<T, Us...> :   std::conjunction<      quotient_group  <T, Us>...> {};
 
 template <         class ...   >	struct        discrete_group;
 template <class T              >	struct        discrete_group<T       > : logical_constant_t<      discrete_group_q<T    >   > {};
 template <class T, class    U  >	struct        discrete_group<T, U    > : logical_constant_t<      discrete_group_q<T, U >   > {};
-template <class T, class ...Us >	struct        discrete_group<T, Us...> :  _std::conjunction<      discrete_group  <T, Us>...> {};
+template <class T, class ...Us >	struct        discrete_group<T, Us...> :   std::conjunction<      discrete_group  <T, Us>...> {};
 
 template <         class ...   >	struct        integral_group;
 template <class T              >	struct        integral_group<T       > : logical_constant_t<      integral_group_q<T    >   > {};
 template <class T, class    U  >	struct        integral_group<T, U    > : logical_constant_t<      integral_group_q<T, U >   > {};
-template <class T, class ...Us >	struct        integral_group<T, Us...> :  _std::conjunction<      integral_group  <T, Us>...> {};
+template <class T, class ...Us >	struct        integral_group<T, Us...> :   std::conjunction<      integral_group  <T, Us>...> {};
 
 template <         class ...   >	struct         logical_group;
 template <class T              >	struct         logical_group<T       > : logical_constant_t<       logical_group_q<T    >   > {};
 template <class T, class    U  >	struct         logical_group<T, U    > : logical_constant_t<       logical_group_q<T, U >   > {};
-template <class T, class ...Us >	struct         logical_group<T, Us...> :  _std::conjunction<       logical_group  <T, Us>...> {};
+template <class T, class ...Us >	struct         logical_group<T, Us...> :   std::conjunction<       logical_group  <T, Us>...> {};
 
 template <         class ...   >	struct         digital_group;
 template <class T              >	struct         digital_group<T       > : logical_constant_t<       digital_group_q<T    >   > {};
 template <class T, class    U  >	struct         digital_group<T, U    > : logical_constant_t<       digital_group_q<T, U >   > {};
-template <class T, class ...Us >	struct         digital_group<T, Us...> :  _std::conjunction<       digital_group  <T, Us>...> {};
+template <class T, class ...Us >	struct         digital_group<T, Us...> :   std::conjunction<       digital_group  <T, Us>...> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////

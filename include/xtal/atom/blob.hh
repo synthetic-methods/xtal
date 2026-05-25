@@ -1,0 +1,132 @@
+#pragma once
+#include "./any.hh"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::atom
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/*!
+\brief
+Provides local arena-like storage for `std::trivially_destructible` values.
+
+\code{.cpp}
+blob_t<xtd::byte[0x40]> blob;
+
+auto glob = blob.template form<X, Y>();
+auto [x, y] = glob;
+auto &x = get<0>(glob);
+auto &y = get<1>(glob);
+\endcode
+*/
+template <class ...As>	struct   blob;
+template <class ...As>	using    blob_t = typename blob<As...>::type;
+template <class ...Ts>	concept  blob_q = bond::tag_inner_p<blob, Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class ...As>
+struct blob
+{
+	template <class T>
+	using holotype = bond::compose<bond::tag<blob>, bond::define<T>>;
+
+	template <class T>
+	class homotype : public holotype<T>
+	{
+		using S_ = holotype<T>;
+		using U  = std::underlying_type_t<std::byte>;
+		/**/
+		static size_type constexpr N_bytes = _detail::aligned<As...>::size();
+		std::byte mutable m_bytes[N_bytes];
+		/*/
+		static size_type constexpr N_bytes = one << std::bit_width(_detail::aligned<As...>::size() - one);
+		alignas(N_bytes) std::byte mutable m_bytes[N_bytes];
+		/***/
+
+	protected:
+		template <class ...Us>
+		using form_t = bond::pack_t<Us...>;
+
+	public:// CONSTRUCT
+		using S_::S_;
+	
+	public:// OPERATE
+
+		/*!
+		\returns	The size in `byte`s.
+		*/
+		static cardinal_constant_t<N_bytes> constexpr size{};
+
+		/*!
+		\returns	`(void)` after overwriting the `byte`s in the blob with `(U) value`.
+		*/
+		XTAL_DEF_(inline,let)
+		fill(auto value=0)
+		noexcept -> void
+		{
+			std::memset(m_bytes, static_cast<U>(value), N_bytes);
+		}
+
+		/*!
+		\returns	A tuple of `rvalue`s conforming to `Vs...`,
+		representing the state of the blob prior to updating with `vs...`.
+		*/
+		template <class ...Vs>
+		XTAL_DEF_(return,inline,let)
+		form(Vs const &...vs) const
+		noexcept -> decltype(auto)
+		{
+			form_t<Vs  ...> f = form  <Vs      &&...>();
+			form  <Vs &...>() = form_t<Vs const &...>{vs...};
+			return f;
+		}
+
+		/*!
+		\returns	A tuple of references conforming to `Vs...`,
+		accessed via value-based destructuring, or reference-based `get`.
+		*/
+		template <class ...Vs>
+		XTAL_DEF_(return,inline,let)
+		form() const
+		noexcept -> decltype(auto)
+		{
+			return form<Vs &...>();
+		}
+		template <xtd::reference ...Vs>
+		XTAL_DEF_(return,inline,let)
+		form() const
+		noexcept -> decltype(auto)
+		{
+			static_assert(_detail::aligned<Vs...>::size() <= N_bytes);
+			int i{0};
+			return [&] <auto ...I>(bond::seek_in_t<I...>)
+				XTAL_0FN_(to) (form_t<Vs &&...>{form<Vs &&>(i)...})
+			(bond::seek_to_t<sizeof...(Vs)> {});
+		}
+		template <class V>
+		XTAL_DEF_(return,inline,let)
+		form(int &i) const
+		noexcept -> decltype(auto)
+		{
+			return reinterpret_cast<V &&>(m_bytes[_detail::aligned<V>::advance(i)]);
+		}
+
+	};
+	using type = bond::derive_t<homotype>;
+
+};
+template <>
+struct blob<> : blob<size_type[bond::fit<>::alignment]>
+{
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

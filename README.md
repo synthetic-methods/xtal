@@ -123,7 +123,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 auto resize = resize_f(1024);
 auto render = cursor_f(1024);
 
-using Mixer = processor::monomer_t<Mix, provision::stored<>>;
+using Mixer = processor::monomer_t<Mix, scheme::stored<>>;
 auto  sixer = Mixer::binding_f(one, two, three);
 
 // initialization
@@ -273,8 +273,8 @@ struct confine : compose<refine<U>, As..., define<U>> {};
 |[`processor/polymer.hh` ](include/xtal/processor/polymer.hh?ts=3) |Processor  polymorphism       |
 |[`schedule/slider.hh`   ](include/xtal/schedule/slider.hh?ts=3)   |Parameter  scheduling/ramping |
 |[`schedule/slicer.hh`   ](include/xtal/schedule/slicer.hh?ts=3)   |Event      scheduling/slicing |
-|[`atom/spool.hh`        ](include/xtal/atom/spool.hh?ts=3)        |Event      spooling           |
-|[`atom/block.hh`        ](include/xtal/atom/block.hh?ts=3)        |Buffer     management         |
+|[`atom/funnel.hh`       ](include/xtal/atom/funnel.hh?ts=3)       |Event      spooling           |
+|[`atom/bucket.hh`        ](include/xtal/atom/bucket.hh?ts=3)        |Buffer     management         |
 
 ## Contribution
 
