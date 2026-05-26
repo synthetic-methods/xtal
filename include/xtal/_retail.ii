@@ -167,8 +167,6 @@ template <auto  N=null_type{} >	struct       constant  	: std::integral_constant
 template <auto  N=null_type{} >	using        constant_t	=  constant<N>;
 template <class T             >	concept      constant_q	=  complete_q<T> and xtd::constant_equivocable<based_t<T>>;
 
-template <class T             >	struct       variable;
-template <class T             >	             variable(T) -> variable<T>;
 template <class T             >	struct       variable
 {
 	using value_type = T; T value;
@@ -177,7 +175,25 @@ template <class T             >	struct       variable
 
 };
 template <constant_q T        >	struct       variable<T> : T{};
-template <class T             >	concept      variable_q	=  not constant_q<T>;
+template <class T             >	             variable(T) -> variable<T>;
+template <class T             >	concept      variable_q	 =  not constant_q<T>;
+
+template <class     T         >	struct     exvariable    ;//TODO: Cascade `in_place` declarations?
+template <unbased_q T         >	struct     exvariable<T> : exvariable<based_t<T>> {};
+template <                    >	struct     exvariable<std::in_place_t         >	{};
+template <class U             >	struct     exvariable<std::in_place_type_t <U>>	{using value_type =    U; using index_type =   null_type; XTAL_DEF_(set) index =         null_type{};};
+template <auto  N             >	struct     exvariable<std::in_place_index_t<N>>	{using value_type = void; using index_type = extent_type; XTAL_DEF_(set) index = xtd::signed_cast<N>;};
+
+template <class     T         >	struct     invariable    : std::true_type {};
+template <unbased_q T         >	struct     invariable<T> : invariable<based_t<T>> {};
+template <                    >	struct     invariable<std::in_place_t         >	:  std::false_type {};
+template <class U             >	struct     invariable<std::in_place_type_t <U>>	:  std::false_type {};
+template <auto  N             >	struct     invariable<std::in_place_index_t<N>>	:  std::false_type {};
+
+template <class T             >	using          exvariable_t	=  typename exvariable<T>::value_type;
+template <class T             >	XTAL_DEF_(let) exvariable_v	=           exvariable<T>::index;
+template <class T             >	concept        exvariable_q	=       not invariable<T>::value;
+template <class T             >	concept        invariable_q	=           invariable<T>::value;
 
 template <auto  N        >	using     integral_constant_t	=  std::integral_constant<decltype(N), (N)>;
 template <auto  N        >	using     cardinal_constant_t	=     size_constant_t<N>;

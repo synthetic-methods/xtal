@@ -112,7 +112,12 @@ using _retail::           un_v;
 using _retail::           in_q;
 using _retail::           un_q;
 
-using _retail::variable;
+using _retail::     variable;
+using _retail::   exvariable;
+using _retail::   exvariable_t;
+using _retail::   exvariable_v;
+template <         class ...Ts>	concept          exvariable_q	= (some_q<Ts...> and...and _retail::         exvariable_q<based_t<Ts>>);
+template <         class ...Ts>	concept          invariable_q	= (some_q<Ts...> and...and _retail::         invariable_q<based_t<Ts>>);
 template <         class ...Ts>	concept            variable_q	= (some_q<Ts...> and...and _retail::           variable_q<based_t<Ts>>);
 template <         class ...Ts>	concept            constant_q	= (some_q<Ts...> and...and _retail::           constant_q<based_t<Ts>>);
 template <         class ...Ts>	concept        metaconstant_q	= (some_q<Ts...> and...and _retail::       metaconstant_q<based_t<Ts>>);
