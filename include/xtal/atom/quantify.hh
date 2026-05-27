@@ -30,7 +30,7 @@ template <class U, auto  N, auto  ...Ns> struct   quantify<U(&)[N][Ns]...> : qua
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires same_q<Us...>
+template <scalar_array_q ...Us> requires same_q<Us...>
 struct quantify<Us ...>
 :	quantify<common_t<Us...>[sizeof...(Us)]>
 {

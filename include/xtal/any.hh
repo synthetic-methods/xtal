@@ -49,7 +49,7 @@ concept  objective_q = same_q<objective_t<Xs>..., Xs...>;
 template <class ...Xs>
 concept subjective_q = not objective_q<Xs...>;
 
-template <class ...Ts> auto   surjective_f(            Ts... ) -> objective_t<typename fluid<Ts>::value_type...>;
+template <class ...Ts> auto   surjective_f(           Ts... ) -> objective_t<typename fluid<Ts>::value_type...>;
 template <class ...Ts> auto   surjective_f(std::tuple<Ts...>) -> objective_t<Ts...>;
 template <class ...Ts> auto   surjective_f(std::pair <Ts...>) -> objective_t<Ts...>;
 template <class ...Ts> using  surjective_t = common_t<XTAL_ALL_(surjective_f(XTAL_ANY_(Ts)))...>;
@@ -72,7 +72,7 @@ noexcept -> auto
 {
 	XTAL_IF0
 	XTAL_0IF (requires {typename F<based_t<Xs>...>;}) {return operative_f<[] XTAL_1FN_(make) (F<based_t<Xs>...>)>(XTAL_REF_(xs)...);}
-	XTAL_0IF (requires {typename F<cased_t<Xs...>>;}) {return operative_f<[] XTAL_1FN_(make) (F<cased_t<Xs...>>)>(XTAL_REF_(xs)...);}
+	XTAL_0IF (requires {typename F<based_t<Xs...>>;}) {return operative_f<[] XTAL_1FN_(make) (F<based_t<Xs...>>)>(XTAL_REF_(xs)...);}
 	XTAL_0IF_(void)
 }
 

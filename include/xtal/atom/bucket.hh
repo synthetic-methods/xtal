@@ -40,7 +40,7 @@ template <class ...Us> using    superbucket_t = typename superbucket<Us...>::typ
 template <class U, auto N, auto ...Ns> struct superbucket<U   [N][Ns]...> : superbucket<superbucket_t<U[Ns]...>   [N]> {};
 template <class U, auto N, auto ...Ns> struct superbucket<U(&)[N][Ns]...> : superbucket<superbucket_t<U[Ns]...>(&)[N]> {};
 
-template <scalar_q ...Us> requires different_q<Us...>
+template <scalar_array_q ...Us> requires different_q<Us...>
 struct superbucket<Us...>
 {
 	using endotype = bond::pack_t<xtd::decay_trivial_value_reference_t<Us>...>;
@@ -93,7 +93,7 @@ struct superbucket<Us...>
 	using type = bond::derive_t<homotype>;
 
 };
-template <vector_q A> requires in_v<xtd::reference<A>>
+template <vector_array_q A> requires in_v<xtd::reference<A>>
 struct superbucket<A>
 {
 	XTAL_TYP_(set) U = xtd::remove_reference_t<xtd::remove_extent_t<A>>;
@@ -139,7 +139,7 @@ struct superbucket<A>
 	using type = bond::derive_t<homotype>;
 
 };
-template <vector_q A> requires un_v<xtd::reference<A>>
+template <vector_array_q A> requires un_v<xtd::reference<A>>
 struct superbucket<A>
 {
 	XTAL_TYP_(set) U = xtd::remove_reference_t<xtd::remove_extent_t<A>>;
@@ -250,7 +250,7 @@ struct superbucket<A>
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires same_q<Us...>
+template <scalar_array_q ...Us> requires same_q<Us...>
 struct bucket<Us ...>
 :	bucket<common_t<Us...>[sizeof...(Us)]>
 {
@@ -280,7 +280,7 @@ struct bucket
 		template <class _             > struct form_<_, Us...> {using type = T;};
 		template <class _             > struct form_<_       > {using type = T;};
 		
-		template <class _, scalar_q ...As> requires same_q<As...>
+		template <class _, scalar_array_q ...As> requires same_q<As...>
 		struct form_<_, As...> : form_<_, common_t<As...>[sizeof...(As)]> {};
 
 	public:// CONSTRUCT
@@ -328,7 +328,7 @@ struct bucket
 		/*!
 		\returns	The first `count` elements of `this` as a truncated view of `U`.
 		*/
-		XTAL_FN2_(do) (template <scalar_q V=value_type>
+		XTAL_FN2_(do) (template <scalar_array_q V=value_type>
 		XTAL_DEF_(return,inline,let)
 		self(constant_q auto count),
 		{
@@ -366,7 +366,7 @@ struct bucket
 		/*!
 		\returns	A copy of `this` truncated to the first `count` elements.
 		*/
-		template <scalar_q V=value_type>
+		template <scalar_array_q V=value_type>
 		XTAL_DEF_(return,inline,let)
 		twin(constant_q auto count) const
 		noexcept -> auto

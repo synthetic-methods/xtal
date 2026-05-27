@@ -130,11 +130,10 @@ struct define
 				/*!
 				\brief  	Repackes then schedules the provided event to `self().fuse(...)`.
 				*/
-				template <signed N_ion, class ..._s>
+				template <signed N_ion, class ..._s> requires (2 <= sizeof...(Ys))
 				XTAL_DEF_(return,inline,let)
 				flux(flow::cue_s<> v, in_q<Ys...> auto &&x, _s &&...)
 				noexcept -> signed
-				requires multiple_q<Ys...>
 				{
 					static_assert(none_q<_s...>);
 					return flux<N_ion>(event_type{v.head(), XTAL_REF_(x)});

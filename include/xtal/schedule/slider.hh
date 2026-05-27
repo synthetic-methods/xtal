@@ -32,7 +32,7 @@ struct slider
 		template <class ...Ys>
 		struct suspend
 		{
-			static_assert(single_q<Ys...>);
+			static_assert(1 == sizeof...(Ys));
 			using superkind = bond::compose<typename S_::template suspend<Ys...>>;
 
 			template <class R>

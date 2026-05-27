@@ -44,7 +44,7 @@ noexcept -> decltype(auto)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires same_q<Us...>
+template <scalar_array_q ...Us> requires same_q<Us...>
 struct couple<Us ...>
 :	couple<common_t<Us...>[sizeof...(Us)]>
 {

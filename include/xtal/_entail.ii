@@ -34,191 +34,188 @@ using _retail::    metaconstant_t;
 ////////////////////////////////////////////////////////////////////////////////
 // Structural...
 
-using _retail::    isotropic_t;
-using _retail::    epitropic_t;
-using _retail::   isomorphic_t;
-using _retail::   epimorphic_t;
+using _retail::     isotropic_t;
+using _retail::     epitropic_t;
+using _retail::    isomorphic_t;
+using _retail::    epimorphic_t;
 
-using _retail::    isotropic_q;///< `Ts` are         the same modulo qualifiers.
-using _retail::    epitropic_q;///< `Ts` are interconvertible modulo qualifiers.
-using _retail::   isomorphic_q;///< `Ts` are `isotropic` or `isotropic<value_type>`.
-using _retail::   epimorphic_q;///< `Ts` are `epitropic` or `epitropic<value_type>`.
+using _retail::     isotropic_q;///< `Ts` are         the same modulo qualifiers.
+using _retail::     epitropic_q;///< `Ts` are interconvertible modulo qualifiers.
+using _retail::    isomorphic_q;///< `Ts` are `isotropic` or `isotropic<value_type>`.
+using _retail::    epimorphic_q;///< `Ts` are `epitropic` or `epitropic<value_type>`.
 
-using _retail::     fungible_q;///< `T` and `Ts...` are     related by inheritance.
-using _retail::   infungible_q;///< `T` and `Ts...` are not related by inheritance.
+using _retail::      fungible_q;///< `T` and `Ts...` are     related by inheritance.
+using _retail::    infungible_q;///< `T` and `Ts...` are not related by inheritance.
 
-using _retail::     multiple_q;///< `2 <= sizeof...(Ts)`
-using _retail::       single_q;///< `1 == sizeof...(Ts)`
-using _retail::         some_q;///< `1 <= sizeof...(Ts)`
-using _retail::         none_q;///< `0 == sizeof...(Ts)`
-using _retail::     multiple_v;///< `2 <= sizeof...(Ns)`
-using _retail::       single_v;///< `1 == sizeof...(Ns)`
-using _retail::         some_v;///< `1 <= sizeof...(Ns)`
-using _retail::         none_v;///< `0 == sizeof...(Ns)`
+using _retail::          some_q;///< `1 <= sizeof...(Ts)`
+using _retail::          none_q;///< `0 == sizeof...(Ts)`
+using _retail::          some_v;///< `1 <= sizeof...(Ns)`
+using _retail::          none_v;///< `0 == sizeof...(Ns)`
 
+using _retail::        either_t;
+using _retail::        either_q;
+using _retail::        common_t;
+using _retail::        common_q;
 
-using _retail::       either_t;
-using _retail::       either_q;
-using _retail::       common_t;
-using _retail::       common_q;
+template <          class ..._s>	XTAL_TYP_(new)              based     {using type =   common_t<_retail::        based_t<_s>...>;};
+template <class  T             >	XTAL_TYP_(new)              based<T>  {using type =            _retail::        based_t<T >    ;};
+template <          class ..._s>	XTAL_TYP_(let)              based_t	=  typename based<_s...>::type;
+template <          class ..._s>	XTAL_TYP_(ask)              based_q	= (some_q<_s...> and...and _retail::        based_q<_s    >);
+template <          class ..._s>	XTAL_TYP_(ask)            unbased_q	= (some_q<_s...> and...and _retail::      unbased_q<_s    >);
 
-template <         class ...Ts>	using           cased_t	=                 common_t<_retail::        based_t<Ts>...> ;
-template <class T             >	using           based_t	=                          _retail::        based_t<T     > ;
-template <         class ...Ts>	concept         based_q	= (some_q<Ts...> and...and _retail::        based_q<Ts    >);
-template <         class ...Ts>	concept       unbased_q	= (some_q<Ts...> and...and _retail::      unbased_q<Ts    >);
+template <          class ..._s>	XTAL_TYP_(let)           complete_t	=                          _retail::     complete_t<_s...>;
+template <          class ..._s>	XTAL_TYP_(ask)           complete_q	= (some_q<_s...> and...and _retail::     complete_q<_s   >);
+template <          class ..._s>	XTAL_TYP_(ask)         incomplete_q	= (some_q<_s...> and...and _retail::   incomplete_q<_s   >) or  none_q<_s...>;
 
+template <          class ..._s>	XTAL_TYP_(ask)             atomic_q	= (some_q<_s...> and...and _retail::       atomic_q<_s   >);
+template <          class ..._s>	XTAL_TYP_(ask)          molecular_q	= (some_q<_s...> and...and _retail::    molecular_q<_s   >);
+template <          class ..._s>	XTAL_TYP_(ask)       submolecular_q	= (some_q<_s...> and...and _retail:: submolecular_q<_s   >);
 
-template <         class ...Ts>	using        complete_t	=                          _retail::     complete_t<Ts...>;
-template <         class ...Ts>	concept      complete_q	= (some_q<Ts...> and...and _retail::     complete_q<Ts   >);
-template <         class ...Ts>	concept    incomplete_q	= (some_q<Ts...> and...and _retail::   incomplete_q<Ts   >) or  none_q<Ts...>;
+using _retail::     different_v;///< `Ns...` are different values.
+using _retail::          same_v;///< `Ns...` are identical values.
+using _retail::     different_q;///< `Ts...` are different modulo qualifiers.
+using _retail::          same_q;///< `Ts...` are identical modulo qualifiers.
+using _retail::          make_q;///< `Ts...` are constructible from `Ts[0]`.
+using _retail::          make_p;///< `T` is constructible from `Ts...`.
 
-template <         class ...Ts>	concept        atomic_q	= (some_q<Ts...> and...and _retail::       atomic_q<Ts   >);
-template <         class ...Ts>	concept     molecular_q	= (some_q<Ts...> and...and _retail::    molecular_q<Ts   >);
-template <         class ...Ts>	concept  submolecular_q	= (some_q<Ts...> and...and _retail:: submolecular_q<Ts   >);
-
-using _retail::    different_v;///< `Ns...` are different values.
-using _retail::         same_v;///< `Ns...` are identical values.
-using _retail::    different_q;///< `Ts...` are different modulo qualifiers.
-using _retail::         same_q;///< `Ts...` are identical modulo qualifiers.
-using _retail::         make_q;///< `Ts...` are constructible from `Ts[0]`.
-using _retail::         make_p;///< `T` is constructible from `Ts...`.
-
-using _retail::      qualify_s;///< Applies the qualifiers on `S` to `T`.
-using _retail::   disqualify_s;///< Applies the qualifiers on `S` to `T`.
+using _retail::       qualify_s;///< Applies the qualifiers on `S` to `T`.
+using _retail::    disqualify_s;///< Applies the qualifiers on `S` to `T`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-using _retail::       return_t;
-using _retail::   applicable_p;
-using _retail:: inapplicable_p;
-template <         class ...Fs>	concept    applicable_q	= (some_q<Fs...> and...and _retail::   applicable_q<   Fs   >);
-template <         class ...Fs>	concept  inapplicable_q	= (some_q<Fs...> and...and _retail:: inapplicable_q<   Fs   >);
-
-template <class X, class ...Fs>	concept  automorphism_q	= (some_q<Fs...> and...and _retail:: automorphism_q<X, Fs   >);///< `X `  is unchanged by `Fs...`.
-template <class F, class ...Xs>	concept  automorphism_p	= (some_q<Xs...> and...and _retail:: automorphism_p<F, Xs   >);///< `Xs` are unchanged by `F ...`.
+using _retail::        return_t;
+using _retail::    applicable_p;
+using _retail::  inapplicable_p;
+template <          class ..._s>	XTAL_TYP_(ask)         applicable_q	= (some_q<_s...> and...and _retail::   applicable_q<   _s   >);
+template <          class ..._s>	XTAL_TYP_(ask)       inapplicable_q	= (some_q<_s...> and...and _retail:: inapplicable_q<   _s   >);
+template <class  X, class ..._s>	XTAL_TYP_(ask)       automorphism_q	= (some_q<_s...> and...and _retail:: automorphism_q<X, _s   >);///< `X `  is unchanged by `Fs...`.
+template <class  F, class ..._s>	XTAL_TYP_(ask)       automorphism_p	= (some_q<_s...> and...and _retail:: automorphism_p<F, _s   >);///< `Xs` are unchanged by `F ...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // Valued...
 
-using _retail::         sign_v;// Evaluates `Replace[0->Z]@Sign[N]`.
-using _retail::       cosign_v;// Evaluates `(-1)^N == Cos[Pi*N]`.
-using _retail::         skip_v;
-using _retail::       modulo_v;
-using _retail::           in_v;
-using _retail::           un_v;
-using _retail::           in_q;
-using _retail::           un_q;
+using _retail::                      sign_v;// Evaluates `Replace[0->Z]@Sign[N]`.
+using _retail::                    cosign_v;// Evaluates `(-1)^N == Cos[Pi*N]`.
+using _retail::                      skip_v;
+using _retail::                    modulo_v;
+using _retail::                        in_v;
+using _retail::                        un_v;
+using _retail::                        in_q;
+using _retail::                        un_q;
 
-using _retail::     variable;
-using _retail::   exvariable;
-using _retail::   exvariable_t;
-using _retail::   exvariable_v;
-template <         class ...Ts>	concept          exvariable_q	= (some_q<Ts...> and...and _retail::         exvariable_q<based_t<Ts>>);
-template <         class ...Ts>	concept          invariable_q	= (some_q<Ts...> and...and _retail::         invariable_q<based_t<Ts>>);
-template <         class ...Ts>	concept            variable_q	= (some_q<Ts...> and...and _retail::           variable_q<based_t<Ts>>);
-template <         class ...Ts>	concept            constant_q	= (some_q<Ts...> and...and _retail::           constant_q<based_t<Ts>>);
-template <         class ...Ts>	concept        metaconstant_q	= (some_q<Ts...> and...and _retail::       metaconstant_q<based_t<Ts>>);
-using _retail::           constant_t;
-using _retail::  integral_constant_t;
-using _retail::  cardinal_constant_t;
-using _retail::   ordinal_constant_t;
-using _retail::   logical_constant_t;
+using _retail::                  variable;
+using _retail::         terminal_constant_v;
+using _retail::         terminal_constant_t;
+using _retail::         integral_constant_t;
+using _retail::         cardinal_constant_t;
+using _retail::          ordinal_constant_t;
+using _retail::          logical_constant_t;
+using _retail::                  constant_t;
+using _retail::                 precedent_s;
+using _retail::                 succedent_s;
 
-using _retail::  terminal_constant_t;
-using _retail::  terminal_constant_v;
-template <         class ...Ts>	concept   terminal_constant_q	= (some_q<Ts...> and...and _retail::  terminal_constant_q<Ts>);
+template <auto   N> XTAL_DEF_(return,inline,let)        exvariable_f(std::in_place_index_t<N>) noexcept -> ordinal_constant_t<xtd::signed_cast(N)> {return {};}
+template <auto   N> XTAL_DEF_(return,inline,let)        envariable_f(std::in_place_index_t<N>) noexcept -> logical_constant_t<1> {return {};}
+template <class  Z> XTAL_DEF_(return,inline,let)        envariable_f(std::in_place_type_t <Z>) noexcept -> logical_constant_t<1> {return {};}
+                    XTAL_DEF_(return,inline,let)        envariable_f(std::in_place_t         ) noexcept -> logical_constant_t<1> {return {};}
+                    XTAL_DEF_(return,inline,let)        envariable_f(auto                    ) noexcept -> logical_constant_t<0> {return {};}
+template <class  T> XTAL_DEF_(return,inline,let)        invariable_f(T                       ) noexcept -> std::negation<XTAL_ALL_(envariable_f(XTAL_ANY_(T)))> {return {};}
+template <class  T> XTAL_DEF_(let)                      exvariable_v = XTAL_ALL_(exvariable_f(XTAL_ANY_(T)))::value;
+template <class  T> XTAL_DEF_(let)                      envariable_v = XTAL_ALL_(envariable_f(XTAL_ANY_(T)))::value;
+template <class  T> XTAL_DEF_(let)                      invariable_v = XTAL_ALL_(invariable_f(XTAL_ANY_(T)))::value;
+//NOTE: Avoid using `(?:ex|en|in)variable_q` in LLVM 16...
+template <          class ..._s>	XTAL_TYP_(ask)         exvariable_q	= (some_q<_s...> and...and requires         {exvariable_f(XTAL_ANY_(_s));});
+template <          class ..._s>	XTAL_TYP_(ask)         envariable_q	= (some_q<_s...> and...and                   envariable_v<based_t<_s>>);
+template <          class ..._s>	XTAL_TYP_(ask)         invariable_q	= (some_q<_s...> and...and                   invariable_v<based_t<_s>>);
+template <          class ..._s>	XTAL_TYP_(ask)           variable_q	= (some_q<_s...> and...and _retail::           variable_q<based_t<_s>>);
+template <          class ..._s>	XTAL_TYP_(ask)           constant_q	= (some_q<_s...> and...and _retail::           constant_q<based_t<_s>>);
+template <          class ..._s>	XTAL_TYP_(ask)       metaconstant_q	= (some_q<_s...> and...and _retail::       metaconstant_q<based_t<_s>>);
+template <          class ..._s>	XTAL_TYP_(ask)  terminal_constant_q	= (some_q<_s...> and...and _retail::  terminal_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)  integral_constant_q	= (some_q<_s...> and...and _retail::  integral_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)  cardinal_constant_q	= (some_q<_s...> and...and _retail::  cardinal_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   ordinal_constant_q	= (some_q<_s...> and...and _retail::   ordinal_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   logical_constant_q	= (some_q<_s...> and...and _retail::   logical_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)      real_constant_q	= (some_q<_s...> and...and _retail::      real_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   complex_constant_q	= (some_q<_s...> and...and _retail::   complex_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   simplex_constant_q	= (some_q<_s...> and...and _retail::   simplex_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   numeric_constant_q	= (some_q<_s...> and...and _retail::   numeric_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   natural_constant_q	= (some_q<_s...> and...and _retail::   natural_constant_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask) unnatural_constant_q	= (some_q<_s...> and...and _retail:: unnatural_constant_q<_s>);
 
-template <         class ...Ts>  concept   integral_variable_q	= (some_q<Ts...> and...and _retail::  integral_variable_q<Ts>);
-template <         class ...Ts>  concept   cardinal_variable_q	= (some_q<Ts...> and...and _retail::  cardinal_variable_q<Ts>);
-template <         class ...Ts>  concept    ordinal_variable_q	= (some_q<Ts...> and...and _retail::   ordinal_variable_q<Ts>);
-template <         class ...Ts>  concept    logical_variable_q	= (some_q<Ts...> and...and _retail::   logical_variable_q<Ts>);
-template <         class ...Ts>  concept       real_variable_q	= (some_q<Ts...> and...and _retail::      real_variable_q<Ts>);
-template <         class ...Ts>  concept    complex_variable_q	= (some_q<Ts...> and...and _retail::   complex_variable_q<Ts>);
-template <         class ...Ts>  concept    simplex_variable_q	= (some_q<Ts...> and...and _retail::   simplex_variable_q<Ts>);
-template <         class ...Ts>  concept    numeric_variable_q	= (some_q<Ts...> and...and _retail::   numeric_variable_q<Ts>);
+template <          class ..._s>	XTAL_TYP_(ask)  integral_variable_q	= (some_q<_s...> and...and _retail::  integral_variable_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)  cardinal_variable_q	= (some_q<_s...> and...and _retail::  cardinal_variable_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   ordinal_variable_q	= (some_q<_s...> and...and _retail::   ordinal_variable_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   logical_variable_q	= (some_q<_s...> and...and _retail::   logical_variable_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)      real_variable_q	= (some_q<_s...> and...and _retail::      real_variable_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   complex_variable_q	= (some_q<_s...> and...and _retail::   complex_variable_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   simplex_variable_q	= (some_q<_s...> and...and _retail::   simplex_variable_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   numeric_variable_q	= (some_q<_s...> and...and _retail::   numeric_variable_q<_s>);
 
-template <         class ...Ts>  concept   integral_constant_q	= (some_q<Ts...> and...and _retail::  integral_constant_q<Ts>);
-template <         class ...Ts>  concept   cardinal_constant_q	= (some_q<Ts...> and...and _retail::  cardinal_constant_q<Ts>);
-template <         class ...Ts>  concept    ordinal_constant_q	= (some_q<Ts...> and...and _retail::   ordinal_constant_q<Ts>);
-template <         class ...Ts>  concept    logical_constant_q	= (some_q<Ts...> and...and _retail::   logical_constant_q<Ts>);
-template <         class ...Ts>  concept       real_constant_q	= (some_q<Ts...> and...and _retail::      real_constant_q<Ts>);
-template <         class ...Ts>  concept    complex_constant_q	= (some_q<Ts...> and...and _retail::   complex_constant_q<Ts>);
-template <         class ...Ts>  concept    simplex_constant_q	= (some_q<Ts...> and...and _retail::   simplex_constant_q<Ts>);
-template <         class ...Ts>  concept    numeric_constant_q	= (some_q<Ts...> and...and _retail::   numeric_constant_q<Ts>);
-template <         class ...Ts>  concept    natural_constant_q	= (some_q<Ts...> and...and _retail::   natural_constant_q<Ts>);
-template <         class ...Ts>  concept  unnatural_constant_q	= (some_q<Ts...> and...and _retail:: unnatural_constant_q<Ts>);
+template <          class ..._s>	XTAL_TYP_(ask)  integral_q        	= (some_q<_s...> and...and _retail::           integral_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)  cardinal_q        	= (some_q<_s...> and...and _retail::           cardinal_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   ordinal_q        	= (some_q<_s...> and...and _retail::            ordinal_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   logical_q        	= (some_q<_s...> and...and _retail::            logical_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)      real_q        	= (some_q<_s...> and...and _retail::               real_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   complex_q        	= (some_q<_s...> and...and _retail::            complex_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   simplex_q        	= (some_q<_s...> and...and _retail::            simplex_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)   numeric_q        	= (some_q<_s...> and...and _retail::            numeric_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)    number_q        	=  numeric_variable_q<_s...>;
 
-template <         class ...Ts>	concept   integral_q        	= (some_q<Ts...> and...and _retail::           integral_q<Ts>);
-template <         class ...Ts>	concept   cardinal_q        	= (some_q<Ts...> and...and _retail::           cardinal_q<Ts>);
-template <         class ...Ts>	concept    ordinal_q        	= (some_q<Ts...> and...and _retail::            ordinal_q<Ts>);
-template <         class ...Ts>	concept    logical_q        	= (some_q<Ts...> and...and _retail::            logical_q<Ts>);
-template <         class ...Ts>  concept       real_q        	= (some_q<Ts...> and...and _retail::               real_q<Ts>);
-template <         class ...Ts>  concept    complex_q        	= (some_q<Ts...> and...and _retail::            complex_q<Ts>);
-template <         class ...Ts>  concept    simplex_q        	= (some_q<Ts...> and...and _retail::            simplex_q<Ts>);
-template <         class ...Ts>  concept    numeric_q        	= (some_q<Ts...> and...and _retail::            numeric_q<Ts>);
-template <         class ...Ts>  concept     number_q        	=  numeric_variable_q<Ts...>;
-
-template <         class ...Ts>	concept 	       intercedent_q = (some_q<Ts...> and...and _retail::  intercedent_q<based_t<Ts>>);
-template <         class ...Ts>	concept 	        antecedent_q = (some_q<Ts...> and...and _retail::   antecedent_q<based_t<Ts>>);
-using _retail::    precedent_s;
-using _retail::    succedent_s;
-template <         class ...Ts>	concept 	           instant_q = (some_q<Ts...> and...and _retail::      instant_q<based_t<Ts>>);
+template <          class ..._s>	XTAL_TYP_(ask) 	    intercedent_q	= (some_q<_s...> and...and _retail::  intercedent_q<based_t<_s>>);
+template <          class ..._s>	XTAL_TYP_(ask) 	     antecedent_q	= (some_q<_s...> and...and _retail::   antecedent_q<based_t<_s>>);
+template <          class ..._s>	XTAL_TYP_(ask) 	        instant_q	= (some_q<_s...> and...and _retail::      instant_q<based_t<_s>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // Shaped...
 
-template <         class ...Ts>	concept        array_valued_q	= (some_q<Ts...> and...and _retail:: array_valued_q<Ts>);
-template <         class ...Ts>	concept        inner_valued_q	= (some_q<Ts...> and...and _retail:: inner_valued_q<Ts>);
-template <         class ...Ts>	concept        under_valued_q	= (some_q<Ts...> and...and _retail:: under_valued_q<Ts>);
-template <         class ...Ts>	concept        fixed_valued_q	= (some_q<Ts...> and...and _retail:: fixed_valued_q<Ts>);
-template <         class ...Ts>	concept        fluid_valued_q	= (some_q<Ts...> and...and _retail:: fluid_valued_q<Ts>);
+using _retail::     tuple_shaped;
+using _retail::     array_shaped;
+using _retail::     fixed_shaped;
+using _retail::     fluid_shaped;
+using _retail::     fixed;
+using _retail::     fluid;
+template <          class ..._s>	XTAL_TYP_(ask)       array_valued_q	= (some_q<_s...> and...and _retail:: array_valued_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)       inner_valued_q	= (some_q<_s...> and...and _retail:: inner_valued_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)       under_valued_q	= (some_q<_s...> and...and _retail:: under_valued_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)       fixed_valued_q	= (some_q<_s...> and...and _retail:: fixed_valued_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)       fluid_valued_q	= (some_q<_s...> and...and _retail:: fluid_valued_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)       tuple_shaped_q	= (some_q<_s...> and...and _retail:: tuple_shaped_q<_s>) and requires {requires same_v<tuple_shaped<_s>::extent()...>;};
+template <          class ..._s>	XTAL_TYP_(ask)       array_shaped_q	= (some_q<_s...> and...and _retail:: array_shaped_q<_s>) and requires {requires same_v<array_shaped<_s>::extent()...>;};
+template <          class ..._s>	XTAL_TYP_(ask)       fixed_shaped_q	= (some_q<_s...> and...and _retail:: fixed_shaped_q<_s>) and requires {requires same_v<fixed_shaped<_s>::extent()...>;};
+template <          class ..._s>	XTAL_TYP_(ask)       fluid_shaped_q	= (some_q<_s...> and...and _retail:: fluid_shaped_q<_s>);// and requires same size or size == -1
+template <          class ..._s>	XTAL_TYP_(ask)       fixed_q       	= (some_q<_s...> and...and _retail::        fixed_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)       fluid_q       	= (some_q<_s...> and...and _retail::        fluid_q<_s>);
 
-
-using _retail::    tuple_shaped  ;
-using _retail::    array_shaped  ;
-using _retail::    fixed_shaped  ;
-using _retail::    fluid_shaped  ;
-template <         class ...Ts>	concept        tuple_shaped_q	= (some_q<Ts...> and...and _retail::    tuple_shaped_q<Ts>) and requires {requires same_v<tuple_shaped<Ts>::extent()...>;};
-template <         class ...Ts>	concept        array_shaped_q	= (some_q<Ts...> and...and _retail::    array_shaped_q<Ts>) and requires {requires same_v<array_shaped<Ts>::extent()...>;};
-template <         class ...Ts>	concept        fixed_shaped_q	= (some_q<Ts...> and...and _retail::    fixed_shaped_q<Ts>) and requires {requires same_v<fixed_shaped<Ts>::extent()...>;};
-template <         class ...Ts>	concept        fluid_shaped_q	= (some_q<Ts...> and...and _retail::    fluid_shaped_q<Ts>);// and requires same size or size == -1
-
-using _retail::           fixed  ;
-using _retail::           fluid  ;
-template <         class ...Ts>	concept               fixed_q	= (some_q<Ts...> and...and _retail::           fixed_q<Ts>);
-template <         class ...Ts>	concept               fluid_q	= (some_q<Ts...> and...and _retail::           fluid_q<Ts>);
-
-
-using _retail::        destruct  ;
-using _retail::        restruct  ;
-using _retail::        destruct_t;
-using _retail::        restruct_t;
-template <         class ...Ts>	using              unstruct_t	=  common_t<typename restruct<based_t<Ts>>::value_type...>;
+using _retail::     destruct;
+using _retail::     restruct;
+using _retail::     destruct_t;
+using _retail::     restruct_t;
+template <          class ..._s>	XTAL_TYP_(let)           unstruct_t	=  common_t<typename restruct<based_t<_s>>::value_type...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // Ranged...
 
-template <         class ...Ts>	concept           scalar_q	= (some_q<Ts...> and...and _retail::       scalar_q<Ts>);
-template <         class ...Ts>	concept           vector_q	= (some_q<Ts...> and...and _retail::       vector_q<Ts>);
-template <         class ...Ts>	concept           matrix_q	= (some_q<Ts...> and...and _retail::       matrix_q<Ts>);
-template <         class ...Ts>	concept           tensor_q	= (some_q<Ts...> and...and _retail::       tensor_q<Ts>);
+template <          class ..._s>	XTAL_TYP_(ask)       scalar_array_q	= (some_q<_s...> and...and _retail::       scalar_array_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)       vector_array_q	= (some_q<_s...> and...and _retail::       vector_array_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)       matrix_array_q	= (some_q<_s...> and...and _retail::       matrix_array_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)       tensor_array_q	= (some_q<_s...> and...and _retail::       tensor_array_q<_s>);
 
-using _retail::      wrappee_t;
-using _retail::      pointee_t;
-using _retail::      indexee_t;
-using _retail::    expressee_t;
-template <         class ...Ts>	concept          wrapped_q	= (some_q<Ts...> and...and _retail::      wrapped_q<Ts>);
-template <         class ...Ts>	concept          pointed_q	= (some_q<Ts...> and...and _retail::      pointed_q<Ts>);
-template <         class ...Ts>	concept          indexed_q	= (some_q<Ts...> and...and _retail::      indexed_q<Ts>);
-template <         class ...Ts>	concept        expressed_q	= (some_q<Ts...> and...and _retail::    expressed_q<Ts>);
-template <         class ...Ts>	concept      reexpressed_q	= (some_q<Ts...> and...and _retail::  reexpressed_q<Ts>);
+using _retail::     wrappee_t;
+using _retail::     pointee_t;
+using _retail::     indexee_t;
+using _retail::   expressee_t;
+template <          class ..._s>	XTAL_TYP_(ask)            wrapped_q	= (some_q<_s...> and...and _retail::      wrapped_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)            pointed_q	= (some_q<_s...> and...and _retail::      pointed_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)            indexed_q	= (some_q<_s...> and...and _retail::      indexed_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)          expressed_q	= (some_q<_s...> and...and _retail::    expressed_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)        reexpressed_q	= (some_q<_s...> and...and _retail::  reexpressed_q<_s>);
 
 /*!
 \brief
@@ -228,34 +225,31 @@ Provides a suitable `initializer_list::value_type` for `T` (defaulting to itself
 If `T` has fixed-size and responds to both `[](unsigned)` and `()(unsigned)`,
 the return value of the latter is used.
 */
-template <class T             >	struct       initializer    {using type = typename fluid<T>::value_type;};
-template <reexpressed_q T     >	struct       initializer<T> {using type = based_t<expressee_t<T>>;};
-
-template <class T             >	using        initializer_t	= typename initializer<T>::type;
-template <class T             >	concept      initializer_q	= different_q<T, initializer_t<T>> and indexed_q<T>;// or reexpressed_q<T>);
+template <class T             >	XTAL_TYP_(new)        initializer    {using type = typename fluid<T>::value_type;};
+template <reexpressed_q T     >	XTAL_TYP_(new)        initializer<T> {using type = based_t<expressee_t<T>>;};
+template <class T             >	XTAL_TYP_(let)        initializer_t	= typename initializer<T>::type;
+template <class T             >	XTAL_TYP_(ask)        initializer_q	= different_q<T, initializer_t<T>> and indexed_q<T>;// or reexpressed_q<T>);
 
 using _retail::   deiteratee_t;
 using _retail::   reiteratee_t;
 using _retail::   reiterated_t;
-template <         class ...Ts>	concept       reiterated_q	= (some_q<Ts...> and...and _retail::   reiterated_q<Ts>);
-template <         class ...Ts>	concept       sequential_q	= (some_q<Ts...> and...and _retail::   sequential_q<Ts>);
-
 using _retail::     iteratee_t;
 using _retail::     iterated_t;
 using _retail::     iterator_t;
 using _retail::     distance_t;
 using _retail::     interval_t;
-template <class T=extent_type >	using            counted_t	=                          _retail::      counted_t<T >;
-template <class T=extent_type >	using            counter_t	=                          _retail::      counter_t<T >;
-
-template <class          ...Ts>	concept         iterable_q	= (some_q<Ts...> and...and _retail::     iterable_q<Ts>);
-template <class          ...Ts>	concept         iterated_q	= (some_q<Ts...> and...and _retail::     iterated_q<Ts>);
-template <class          ...Ts>	concept         iterator_q	= (some_q<Ts...> and...and _retail::     iterator_q<Ts>);
-template <class          ...Ts>	concept         sentinel_q	= (some_q<Ts...> and...and _retail::     sentinel_q<Ts>);
-template <class          ...Ts>	concept         distance_q	= (some_q<Ts...> and...and _retail::     distance_q<Ts>);
-template <class          ...Ts>	concept         interval_q	= (some_q<Ts...> and...and _retail::     interval_q<Ts>);
-template <class          ...Ts>	concept          counted_q	= (some_q<Ts...> and...and _retail::      counted_q<Ts>);
-template <class          ...Ts>	concept          counter_q	= (some_q<Ts...> and...and _retail::      counter_q<Ts>);
+template <          class ..._s>	XTAL_TYP_(ask)         sequential_q	= (some_q<_s...> and...and _retail::   sequential_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)         reiterated_q	= (some_q<_s...> and...and _retail::   reiterated_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)           iterable_q	= (some_q<_s...> and...and _retail::     iterable_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)           iterated_q	= (some_q<_s...> and...and _retail::     iterated_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)           iterator_q	= (some_q<_s...> and...and _retail::     iterator_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)           sentinel_q	= (some_q<_s...> and...and _retail::     sentinel_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)           distance_q	= (some_q<_s...> and...and _retail::     distance_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)           interval_q	= (some_q<_s...> and...and _retail::     interval_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)            counted_q	= (some_q<_s...> and...and _retail::      counted_q<_s>);
+template <          class ..._s>	XTAL_TYP_(ask)            counter_q	= (some_q<_s...> and...and _retail::      counter_q<_s>);
+template <class  T=extent_type >	XTAL_TYP_(let)            counted_t	=                          _retail::      counted_t<T >;
+template <class  T=extent_type >	XTAL_TYP_(let)            counter_t	=                          _retail::      counter_t<T >;
 
 /*!
 \brief
@@ -275,44 +269,43 @@ and std::invocable<F, xtd::ranges::range_reference_t<Xs> ...>;
 ////////////////////////////////////////////////////////////////////////////////
 // Arithmetic...
 
-using _retail:: multiplicative_group_p;
-using _retail::       additive_group_p;
-using _retail::       discrete_group_p;
-using _retail::       quotient_group_p;
-using _retail::       integral_group_p;
+using _retail::multiplicative_group_p;
+using _retail::      additive_group_p;
+using _retail::      discrete_group_p;
+using _retail::      quotient_group_p;
+using _retail::      integral_group_p;
 
-using _retail::     contiguous_group_p;
-using _retail::     contiguous_field_p;
-using _retail::     continuous_field_p;
-using _retail::        complex_field_p;
-using _retail::        simplex_field_p;
+using _retail::    contiguous_group_p;
+using _retail::    contiguous_field_p;
+using _retail::    continuous_field_p;
+using _retail::       complex_field_p;
+using _retail::       simplex_field_p;
 
-using _retail::        logical_group_p;
-using _retail::        digital_group_p;
+using _retail::       logical_group_p;
+using _retail::       digital_group_p;
 
-using _retail::           inequality_p;
-using _retail::             equality_p;
-using _retail::              quality_p;
+using _retail::    inequality_p;
+using _retail::      equality_p;
+using _retail::       quality_p;
 
+template <       class ..._s>	XTAL_TYP_(ask)  multiplicative_group_q	= (some_q<_s...> and _retail:: multiplicative_group  <_s...>{}());
+template <       class ..._s>	XTAL_TYP_(ask)        additive_group_q	= (some_q<_s...> and _retail::       additive_group  <_s...>{}());
+template <       class ..._s>	XTAL_TYP_(ask)        discrete_group_q	= (some_q<_s...> and _retail::       discrete_group  <_s...>{}());
+template <       class ..._s>	XTAL_TYP_(ask)        quotient_group_q	= (some_q<_s...> and _retail::       quotient_group  <_s...>{}());
+template <       class ..._s>	XTAL_TYP_(ask)        integral_group_q	= (some_q<_s...> and _retail::       integral_group  <_s...>{}());
 
-template <class   ...Ts>	concept   multiplicative_group_q	= (some_q<Ts...> and _retail:: multiplicative_group  <Ts...>{}());
-template <class   ...Ts>	concept         additive_group_q	= (some_q<Ts...> and _retail::       additive_group  <Ts...>{}());
-template <class   ...Ts>	concept         discrete_group_q	= (some_q<Ts...> and _retail::       discrete_group  <Ts...>{}());
-template <class   ...Ts>	concept         quotient_group_q	= (some_q<Ts...> and _retail::       quotient_group  <Ts...>{}());
-template <class   ...Ts>	concept         integral_group_q	= (some_q<Ts...> and _retail::       integral_group  <Ts...>{}());
+template <       class ..._s>	XTAL_TYP_(ask)      contiguous_group_q	= (some_q<_s...> and...and         contiguous_group_p<0, _s>);
+template <       class ..._s>	XTAL_TYP_(ask)      contiguous_field_q	= (some_q<_s...> and...and         contiguous_field_p<0, _s>);
+template <       class ..._s>	XTAL_TYP_(ask)      continuous_field_q	= (some_q<_s...> and...and         continuous_field_p<0, _s>);
+template <       class ..._s>	XTAL_TYP_(ask)         complex_field_q	= (some_q<_s...> and...and            complex_field_p<0, _s>);
+template <       class ..._s>	XTAL_TYP_(ask)         simplex_field_q	= (some_q<_s...> and...and            simplex_field_p<0, _s>);
 
-template <class   ...Ts>	concept       contiguous_group_q	= (some_q<Ts...> and...and         contiguous_group_p<0, Ts>);
-template <class   ...Ts>	concept       contiguous_field_q	= (some_q<Ts...> and...and         contiguous_field_p<0, Ts>);
-template <class   ...Ts>	concept       continuous_field_q	= (some_q<Ts...> and...and         continuous_field_p<0, Ts>);
-template <class   ...Ts>	concept          complex_field_q	= (some_q<Ts...> and...and            complex_field_p<0, Ts>);
-template <class   ...Ts>	concept          simplex_field_q	= (some_q<Ts...> and...and            simplex_field_p<0, Ts>);
+template <       class ..._s>	XTAL_TYP_(ask)         logical_group_q	=  some_q<_s...> and _retail::        logical_group  <_s...>{}();
+template <       class ..._s>	XTAL_TYP_(ask)         digital_group_q	=  some_q<_s...> and _retail::        digital_group  <_s...>{}();
 
-template <class   ...Ts>	concept          logical_group_q	=  some_q<Ts...> and _retail::        logical_group  <Ts...>{}();
-template <class   ...Ts>	concept          digital_group_q	=  some_q<Ts...> and _retail::        digital_group  <Ts...>{}();
-
-template <class   ...Ts>	concept             inequality_q	= (some_q<Ts...> and...and               inequality_p<2, Ts>);
-template <class   ...Ts>	concept               equality_q	= (some_q<Ts...> and...and                 equality_p<2, Ts>);
-template <class   ...Ts>	concept                quality_q	= (some_q<Ts...> and...and                  quality_p<2, Ts>);
+template <       class ..._s>	XTAL_TYP_(ask)            inequality_q	= (some_q<_s...> and...and               inequality_p<2, _s>);
+template <       class ..._s>	XTAL_TYP_(ask)              equality_q	= (some_q<_s...> and...and                 equality_p<2, _s>);
+template <       class ..._s>	XTAL_TYP_(ask)               quality_q	= (some_q<_s...> and...and                  quality_p<2, _s>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -508,9 +501,9 @@ template <class F, class    X >	requires   iterative_p<F, X    > XTAL_DEF_(inlin
 template <class F, class ...Xs>	requires   iterative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip_with(XTAL_REF_(f),   XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	requires initerative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
 
-//mplate <         class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
-template <auto  f, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return            iterative_f(                    f,  XTAL_REF_(xs)...);}
-template <class F, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return            iterative_f<[] XTAL_1FN_(make) (F)>(XTAL_REF_(xs)...);}
+//mplate <         class ...Xs>	                                 XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
+template <auto  f, class ...Xs>	                                 XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return           iterative_f(                    f,  XTAL_REF_(xs)...);}
+template <class F, class ...Xs>	                                 XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return           iterative_f<[] XTAL_1FN_(make) (F)>(XTAL_REF_(xs)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

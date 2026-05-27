@@ -34,7 +34,7 @@ template <class     ...Ts>	XTAL_TYP_(ask) quantity_q = quantity_plus_multiplies_
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires same_q<Us...>
+template <scalar_array_q ...Us> requires same_q<Us...>
 struct quantity_plus_multiplies<Us ...>
 :	quantity_plus_multiplies<common_t<Us...>[sizeof...(Us)]>
 {
@@ -110,7 +110,7 @@ public:
 /*!
 \brief   Extends `quantify` with component-wise multiplication.
 */
-template <scalar_q ...Us> requires same_q<Us...>
+template <scalar_array_q ...Us> requires same_q<Us...>
 struct quantity_multiplies<Us ...>
 :	quantity_multiplies<common_t<Us...>[sizeof...(Us)]>
 {
@@ -204,7 +204,7 @@ public:
 /*!
 \brief   Extends `quantify` with component-wise addition.
 */
-template <scalar_q ...Us> requires same_q<Us...>
+template <scalar_array_q ...Us> requires same_q<Us...>
 struct quantity_plus<Us ...>
 :	quantity_plus<common_t<Us...>[sizeof...(Us)]>
 {
@@ -268,12 +268,12 @@ XTAL_DEF_(let) quantity_plus_multiplies_f = [] XTAL_1FN_(call) (_detail::factory
 XTAL_DEF_(let) quantity_multiplies_f      = [] XTAL_1FN_(call) (_detail::factory<quantity_multiplies_t      >::make);
 XTAL_DEF_(let) quantity_plus_f            = [] XTAL_1FN_(call) (_detail::factory<quantity_plus_t            >::make);
 
-template <scalar_q  ...Us> requires quantity_multiplies_q <               Us...          > struct quantity<Us...> : quantity_multiplies<Us...> {};
-template <vector_q     Us> requires quantity_multiplies_q <typename fixed<Us>::value_type> struct quantity<Us   > : quantity_multiplies<Us   > {};
-template <scalar_q  ...Us> requires quantity_plus_q       <               Us...          > struct quantity<Us...> : quantity_plus      <Us...> {};
-template <vector_q     Us> requires quantity_plus_q       <typename fixed<Us>::value_type> struct quantity<Us   > : quantity_plus      <Us   > {};
-template <scalar_q  ...Us> requires integral_variable_q   <               Us...          > struct quantity<Us...> : quantity_plus      <Us...> {};
-template <vector_q     Us> requires integral_variable_q   <typename fixed<Us>::value_type> struct quantity<Us   > : quantity_plus      <Us   > {};
+template <scalar_array_q  ...Us> requires quantity_multiplies_q <               Us...          > struct quantity<Us...> : quantity_multiplies<Us...> {};
+template <vector_array_q     Us> requires quantity_multiplies_q <typename fixed<Us>::value_type> struct quantity<Us   > : quantity_multiplies<Us   > {};
+template <scalar_array_q  ...Us> requires quantity_plus_q       <               Us...          > struct quantity<Us...> : quantity_plus      <Us...> {};
+template <vector_array_q     Us> requires quantity_plus_q       <typename fixed<Us>::value_type> struct quantity<Us   > : quantity_plus      <Us   > {};
+template <scalar_array_q  ...Us> requires integral_variable_q   <               Us...          > struct quantity<Us...> : quantity_plus      <Us...> {};
+template <vector_array_q     Us> requires integral_variable_q   <typename fixed<Us>::value_type> struct quantity<Us   > : quantity_plus      <Us   > {};
 
 template <class     ...Us> struct quantity<xtd::plus_multiplies <Us>   ...> : quantity_plus_multiplies<Us...  > {};///<\brief Resolves as `quantity_plus_multiplies`.;
 template <class U, auto N> struct quantity<xtd::plus_multiplies <U >   [N]> : quantity_plus_multiplies<U   [N]> {};///<\brief Resolves as `quantity_plus_multiplies`.

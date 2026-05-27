@@ -39,7 +39,7 @@ struct depose<T_<U>> : depose<U>
 	using    type = U;
 
 };
-template <template <class> class T_, vector_q W>
+template <template <class> class T_, vector_array_q W>
 struct depose<T_<W>> : depose<xtd::remove_extent_t<W>>
 {
 	template <class V>

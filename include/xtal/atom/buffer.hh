@@ -31,13 +31,13 @@ then a fixed-capacity implementation is provided.
 
 \todo    Implement support functions like `std::erase(?:_if)`, and any additions to C++20.
 */
-template <scalar_q U_data>
+template <scalar_array_q U_data>
 struct buffer<U_data *>
 {
 	using type = bond::compose_s<std::vector<U_data>, bond::tag<buffer_t>>;
 
 };
-template <vector_q A_data> requires _detail::  elastic_fixed_q<A_data>
+template <vector_array_q A_data> requires _detail::  elastic_fixed_q<A_data>
 struct buffer<A_data>
 {
 	using U_data = typename fixed<A_data>::value_type;
@@ -45,7 +45,7 @@ struct buffer<A_data>
 	using type = bond::compose_s<std::vector<U_data>, bond::tag<buffer_t>>;
 
 };
-template <vector_q A_data> requires _detail::inelastic_fixed_q<A_data>
+template <vector_array_q A_data> requires _detail::inelastic_fixed_q<A_data>
 struct buffer<A_data>
 {
 	using U_data = typename fixed<A_data>::value_type;

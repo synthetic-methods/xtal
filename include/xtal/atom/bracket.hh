@@ -29,7 +29,7 @@ template <class U, auto N, auto ...Ns> struct   bracket<U(&)[N][Ns]...> : bracke
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires same_q<Us...>
+template <scalar_array_q ...Us> requires same_q<Us...>
 struct bracket<Us ...>
 :	bracket<common_t<Us...>[sizeof...(Us)]>
 {

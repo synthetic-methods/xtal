@@ -32,7 +32,7 @@ struct qualify
 		using type = T_<U>;
 
 	};
-	template <vector_q W>
+	template <vector_array_q W>
 	class epitype<W>
 	{
 		XTAL_DEF_(set) N = xtd::        extent_v<W>;
