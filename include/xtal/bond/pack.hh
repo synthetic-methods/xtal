@@ -70,8 +70,8 @@ noexcept -> decltype(auto)
 	auto constexpr N = pack_size_v<T_ref>;
 	auto constexpr K = modulo_v<N, I>;
 	XTAL_IF0
-	XTAL_0IF (xtd::rvalue_reference<T_ref &&>) {return XTAL_VAL_(get<K>(destruct_f(XTAL_REF_(t))));}
-	XTAL_0IF (xtd::lvalue_reference<T_ref &&>) {return          (get<K>(destruct_f(XTAL_REF_(t))));}
+	XTAL_0IF (xtd::rvalue<T_ref &&>) {return XTAL_VAL_(get<K>(destruct_f(XTAL_REF_(t))));}
+	XTAL_0IF (xtd::lvalue<T_ref &&>) {return          (get<K>(destruct_f(XTAL_REF_(t))));}
 }
 template <auto I, auto ...Is>// requires some_v<Is...>
 XTAL_DEF_(return,inline,let)

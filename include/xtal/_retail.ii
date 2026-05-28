@@ -134,7 +134,7 @@ template <class  T             >	XTAL_TYP_(ask)          molecular_q	=  complete
 template <class  T             >	XTAL_TYP_(ask)       submolecular_q	=  atomic_q<T> or (molecular_q<T> and std::is_standard_layout_v<based_t<T>>);
 
 template <class  S, class  T=S >	XTAL_TYP_(let)            qualify_s	=  xtd::qualify_cvref_t<                               S , based_t<T>>;
-template <class  S, class  T=S >	XTAL_TYP_(let)         disqualify_s	=  xtd::qualify_cvref_t<xtd::remove_rvalue_reference_t<S>, based_t<T>>;
+template <class  S, class  T=S >	XTAL_TYP_(let)         disqualify_s	=  xtd::qualify_cvref_t<xtd::dereference_rvalue_t<S>, based_t<T>>;
 
 
 template <class  F, class ..._s>	XTAL_TYP_(let)             return_t	=  std::invoke_result_t<F, _s...>;
@@ -159,7 +159,7 @@ template <auto   M, auto   N   >	XTAL_DEF_(let)             modulo_v	=  ((N%M) +
 
 template <auto   N=null_type{} >	XTAL_TYP_(new)           constant  	: std::integral_constant<decltype(N), N> {};
 template <auto   N=null_type{} >	XTAL_TYP_(let)           constant_t	=  constant<N>;
-template <class  T             >	XTAL_TYP_(ask)           constant_q	=  complete_q<T> and xtd::constant_equivocable<based_t<T>>;
+template <class  T             >	XTAL_TYP_(ask)           constant_q	=  complete_q<T> and xtd::trivially_evaluable<based_t<T>>;
 
 template <class      T         >	XTAL_TYP_(new)           variable;
 template <constant_q T         >	XTAL_TYP_(new)           variable<T>:  T{};

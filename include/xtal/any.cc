@@ -92,6 +92,11 @@ void echo_plot_(iterated_q auto const list, integral_q auto ...markers)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+static_assert(std::same_as<xtd::dereference_rvalue_t<const float(&&)[2]>, const float    [2]>);
+static_assert(std::same_as<xtd::dereference_lvalue_t<const float(&&)[2]>, const float(&&)[2]>);
+static_assert(std::same_as<xtd::dereference_rvalue_t<const float( &)[2]>, const float( &)[2]>);
+static_assert(std::same_as<xtd::dereference_lvalue_t<const float( &)[2]>, const float    [2]>);
+
 static_assert(incomplete_q           <void     > );
 static_assert(incomplete_q           <void_type> );
 static_assert(  complete_q<complete_t<void     >>);

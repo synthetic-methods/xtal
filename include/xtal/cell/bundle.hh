@@ -35,7 +35,7 @@ template <class ...Xs>
 struct bundle
 {
 	using superkind = bond::compose<bond::tag<bundle>
-	,	defer<bond::pack_t<xtd::decay_trivial_value_reference_t<Xs>...>>
+	,	defer<bond::pack_t<xtd::decay_trivial_xvalue_t<Xs>...>>
 	>;
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>

@@ -43,7 +43,7 @@ template <class U, auto N, auto ...Ns> struct superbucket<U(&)[N][Ns]...> : supe
 template <scalar_array_q ...Us> requires different_q<Us...>
 struct superbucket<Us...>
 {
-	using endotype = bond::pack_t<xtd::decay_trivial_value_reference_t<Us>...>;
+	using endotype = bond::pack_t<xtd::decay_trivial_xvalue_t<Us>...>;
 	
 	template <class T>
 	using holotype = bond::compose_s<endotype, bond::define<T>>;
@@ -96,7 +96,7 @@ struct superbucket<Us...>
 template <vector_array_q A> requires in_v<xtd::reference<A>>
 struct superbucket<A>
 {
-	XTAL_TYP_(set) U = xtd::remove_reference_t<xtd::remove_extent_t<A>>;
+	XTAL_TYP_(set) U = xtd::dereference_t<xtd::remove_extent_t<A>>;
 	XTAL_DEF_(set) N = xtd::extent_v<A>;
 	//\
 	using endotype = reiterated_t<std::array<U, N>>;//NOTE: Doesn't truncate properly?
@@ -142,7 +142,7 @@ struct superbucket<A>
 template <vector_array_q A> requires un_v<xtd::reference<A>>
 struct superbucket<A>
 {
-	XTAL_TYP_(set) U = xtd::remove_reference_t<xtd::remove_extent_t<A>>;
+	XTAL_TYP_(set) U = xtd::dereference_t<xtd::remove_extent_t<A>>;
 	XTAL_DEF_(set) N = xtd::extent_v<A>;
 	using endotype = std::array<U, N>;
 	
@@ -307,7 +307,7 @@ struct bucket
 		form(Xs &&...xs)
 		noexcept -> auto
 		{
-			return form_t<xtd::decay_value_reference_t<Xs>...>{XTAL_REF_(xs)...};
+			return form_t<xtd::decay_xvalue_t<Xs>...>{XTAL_REF_(xs)...};
 		}
 
 		/*!

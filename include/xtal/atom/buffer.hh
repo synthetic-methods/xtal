@@ -61,8 +61,8 @@ struct buffer<A_data>
 		using S_ = holotype<T>;
 
 	public:// DEFINITION
-		using                  size_type  =        ::std::size_t;
-		using            difference_type  =        ::std::ptrdiff_t;
+		using                  size_type  =                     std::size_t ;
+		using            difference_type  =  std::make_signed_t<std::size_t>;
 
 		using                 value_type  =        U_data;
 		using             allocator_type  =        T;// TODO: Provide interface.
@@ -75,8 +75,8 @@ struct buffer<A_data>
 
 		using                   iterator  =        U_data *;
 		using             const_iterator  =  const U_data *;
-		using           reverse_iterator  = std::reverse_iterator<      iterator >;
-		using     const_reverse_iterator  = std::reverse_iterator<const_iterator >;
+		using           reverse_iterator  =  std::reverse_iterator<      iterator >;
+		using     const_reverse_iterator  =  std::reverse_iterator<const_iterator >;
 	
 	private:
 		static auto constexpr value_size_ = _detail::aligned<value_type>::size;
@@ -84,8 +84,8 @@ struct buffer<A_data>
 
 		using                   iterator_ =        T_data *;
 		using             const_iterator_ =  const T_data *;
-		using           reverse_iterator_ = std::reverse_iterator<      iterator_>;
-		using     const_reverse_iterator_ = std::reverse_iterator<const_iterator_>;
+		using           reverse_iterator_ =  std::reverse_iterator<      iterator_>;
+		using     const_reverse_iterator_ =  std::reverse_iterator<const_iterator_>;
 
 		value_type_ m_data[N_data]{};
 		difference_type n_data{};
@@ -220,15 +220,15 @@ struct buffer<A_data>
 		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(std::is_nothrow_copy_constructible_v<value_type>) requires std::copy_constructible<value_type> and in_v<xtd::trivially_copyable<value_type>> = default;
 		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(std::is_nothrow_move_constructible_v<value_type>) requires std::move_constructible<value_type> and in_v<xtd::trivially_movable <value_type>> = default;
 
-		XTAL_NEW_(implicit)    homotype(std::initializer_list<value_type> t) noexcept(std::is_nothrow_copy_constructible_v<value_type>)                                                                                              : homotype(                 t.begin() ,                  t.end() ) {}
+		XTAL_NEW_(implicit)    homotype(std::initializer_list<value_type>  t) noexcept(std::is_nothrow_copy_constructible_v<value_type>)                                                                                              : homotype(                 t.begin() ,                  t.end() ) {}
 		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(std::is_nothrow_copy_constructible_v<value_type>) requires std::copy_constructible<value_type> and un_v<xtd::trivially_copyable<value_type>> : homotype(                 t.begin() ,                  t.end() ) {}
 		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(std::is_nothrow_move_constructible_v<value_type>) requires std::move_constructible<value_type> and un_v<xtd::trivially_movable <value_type>> : homotype(_detail::move_it(t.begin()), _detail::move_it(t.end())) {}
 
-		XTAL_DEF_(inline,let)    assign(std::initializer_list<value_type> t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> void {assign(                 t.begin() ,                  t.end() );}
+		XTAL_DEF_(inline,let)    assign(std::initializer_list<value_type>  t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> void {assign(                 t.begin() ,                  t.end() );}
 		XTAL_DEF_(inline,let)    assign(homotype                   const  &t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> void {assign(                 t.begin() ,                  t.end() );}
 		XTAL_DEF_(inline,let)    assign(homotype                         &&t) noexcept(std::is_nothrow_move_assignable_v   <value_type>) -> void {assign(_detail::move_it(t.begin()), _detail::move_it(t.end()));}
 
-		XTAL_DEF_(inline,let) operator=(std::initializer_list<value_type> t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> homotype & {assign(XTAL_REF_(t)); return *this;}
+		XTAL_DEF_(inline,let) operator=(std::initializer_list<value_type>  t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> homotype & {assign(XTAL_REF_(t)); return *this;}
 		XTAL_DEF_(inline,let) operator=(homotype                   const  &t) noexcept(std::is_nothrow_copy_assignable_v   <value_type>) -> homotype & {assign(XTAL_REF_(t)); return *this;}
 		XTAL_DEF_(inline,let) operator=(homotype                         &&t) noexcept(std::is_nothrow_move_assignable_v   <value_type>) -> homotype & {assign(XTAL_MOV_(t)); return *this;}
 

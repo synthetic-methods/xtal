@@ -337,19 +337,21 @@ noexcept -> void
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f, class Y>
+template <auto f, auto &&...fs>
 XTAL_DEF_(inline,let)
-apply_to(Y  &y, signed const ord=0)
+apply_to(iterable_q auto &yN, signed const ord=sequential_q<decltype(yN)>)
 noexcept -> void
 {
-	y = f(XTAL_MOV_(y));
+	if constexpr (some_q<decltype(fs)...>) {apply_to<fs...>(yN, ord);}
+	move_to<f>(yN.begin(), yN, ord);
 }
-template <auto f, iterable_q Ys>
+template <auto f, auto &&...fs>
 XTAL_DEF_(inline,let)
-apply_to(Ys &ys, signed const ord=sequential_q<Ys>)
+apply_to(auto &y1, signed const ord=0)
 noexcept -> void
 {
-	move_to<f>(ys.begin(), ys, ord);
+	if constexpr (some_q<decltype(fs)...>) {apply_to<fs...>(y1, ord);}
+	y1 = f(XTAL_MOV_(y1));
 }
 
 
