@@ -147,7 +147,7 @@ struct couple
 		noexcept -> auto
 		{
 			auto t = S_::twin();
-			bond::seek_to_e<N_ - 1>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<N_ - 1>([&]<constant_q I> (I) XTAL_0FN -> void {
 				get<I{} + 1>(t) += get<I{}>(t);
 			});
 			return t;
@@ -157,7 +157,7 @@ struct couple
 		noexcept -> auto
 		{
 			auto t = S_::twin();
-			bond::seek_to_e<1 - N_>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<1 - N_>([&]<constant_q I> (I) XTAL_0FN -> void {
 				get<I{} + 1>(t) -= get<I{}>(t);
 			});
 			return t;
@@ -171,7 +171,7 @@ struct couple
 			auto t = S_::twin();
 			value_type u{};
 			value_type v{};
-			bond::seek_to_e<+N_>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<+N_>([&]<constant_q I> (I) XTAL_0FN -> void {
 				u += get<I{}>(t); get<I{}>(t) = v;
 				v = u;
 			});
@@ -185,7 +185,7 @@ struct couple
 			auto t = S_::twin();
 			value_type u;
 			value_type v{t.sum()};
-			bond::seek_to_e<-N_>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<-N_>([&]<constant_q I> (I) XTAL_0FN -> void {
 				u = get<I{}>(t); get<I{}>(t) = v - u;
 				v = u;
 			});

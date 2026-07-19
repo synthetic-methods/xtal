@@ -172,7 +172,7 @@ struct operate : Fs...
 };
 template <inapplicable_q T>
 struct operate<T> : operate<decltype([] (auto &&...oo)
-XTAL_0FN
+XTAL_0FN -> decltype(auto)
 {
 	XTAL_IF0
 	XTAL_0IF_(to) (T   {XTAL_REF_(oo)...})

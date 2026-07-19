@@ -71,7 +71,7 @@ struct superbucket<Us...>
 
 	public:// OPERATE
 		XTAL_FN0_(go) (XTAL_DEF_(return,inline,let)
-		objectify, [] (auto &&o) XTAL_0FN {
+		objectify, [] (auto &&o) XTAL_0FN -> decltype(auto) {
 			if constexpr ((...or xtd::mutable_reference<Us>)) {
 				return qualify_f<T>(XTAL_REF_(o)).twin();
 			}
@@ -326,28 +326,34 @@ struct bucket
 		XTAL_DEF_(set) mask = size_constant_t<size - 1>{};
 
 		/*!
-		\returns	The first `count` elements of `this` as a truncated view of `U`.
+		\returns	The first `resize` elements of `this` as a truncated view of `U`.
 		*/
-		XTAL_FN2_(do) (template <scalar_array_q V=value_type>
+		XTAL_FN2_(do) (template <scalar_array_q U_val=value_type>
 		XTAL_DEF_(return,inline,let)
-		self(constant_q auto count),
+		self(cardinal_constant_q auto resize),
 		{
-			auto constexpr N = count();
-			auto constexpr M = N < 0? size + N: N;
-			static_assert(M <= size());
+			bool constexpr K_default = same_q<U_val, value_type>;
+			bool constexpr K_uniform = same_q<Us...>;
 			XTAL_IF0
-			XTAL_0IF (M == size()) {
+			XTAL_0IF (K_default and resize == size()) {
 				return self();
 			}
-			XTAL_0IF (same_q<Us...>) {
-				return reform<V(&)[M]>();
+			XTAL_0IF (K_uniform and resize <= size()) {
+				return reform<U_val(&)[resize]>();
 			}
-			else {
-				static_assert(same_q<V, value_type>);// Default...
+			XTAL_0IF_(else) {
+				static_assert(K_default);
 				return [&]<auto ...I> (bond::seek_in_t<I...>)
 					XTAL_0FN_(to) (reform(get<I>(self())...))
-				(bond::seek_to_t<M>{});
+				(bond::seek_to_t<resize>{});
 			}
+			static_assert(resize <= size());
+		})
+		XTAL_FN2_(do) (template <scalar_array_q U_val=value_type>
+		XTAL_DEF_(return,inline,let)
+		self( ordinal_constant_q auto desize),
+		{
+			return self<U_val>(cardinal_constant_t<desize + size()>{});
 		})
 
 	public:
@@ -362,111 +368,118 @@ struct bucket
 		{
 			return reform<std::remove_cvref_t<Us>...>();
 		}
-
 		/*!
-		\returns	A copy of `this` truncated to the first `count` elements.
+		\returns	A copy of `this` truncated to the first `resize` elements.
 		*/
-		template <scalar_array_q V=value_type>
+		template <scalar_array_q U_val=value_type>
 		XTAL_DEF_(return,inline,let)
-		twin(constant_q auto count) const
+		twin(cardinal_constant_q auto resize) const
 		noexcept -> auto
 		{
-			auto constexpr N = count();
-			auto constexpr M = N < 0? size + N: N;
-			static_assert(M <= size());
+			bool constexpr K_default = same_q<U_val, value_type>;
+			bool constexpr K_uniform = same_q<Us...>;
 			XTAL_IF0
-			XTAL_0IF (M == size()) {
+			XTAL_0IF (K_default and resize == size()) {
 				return twin();
 			}
-			XTAL_0IF (same_q<Us...>) {
-				return reform<V[M]>();
+			XTAL_0IF (K_uniform and resize == size()) {
+				return reform<U_val  [resize]>();
 			}
-			else {
-				static_assert(same_q<V, value_type>);// Default...
+			XTAL_0IF_(else) {
+			//	static_assert(K_default);// Not necessary?
 				return [&]<auto ...I> (bond::seek_in_t<I...>)
-					XTAL_0FN_(to) (reform(got<I>(self())...))
-				(bond::seek_to_t<M>{});
+					XTAL_0FN_(to) (form(got<I>(self())...))
+				(bond::seek_to_t<resize>{});
 			}
+		}
+		template <scalar_array_q U_val=value_type>
+		XTAL_DEF_(return,inline,let)
+		twin( ordinal_constant_q auto desize) const
+		noexcept -> auto
+		{
+			return twin<U_val>(cardinal_constant_t<desize + size()>{});
 		}
 
 	public:// ACCESS
-		/*!
-		\returns	The internal/external representation of the given co/devalue_f.
-		*/
-		static auto constexpr devalue_f = std::identity{};
-		static auto constexpr revalue_f = std::identity{};
+		static auto constexpr devalue_f = std::identity{};///<\returns The internal value.
+		static auto constexpr revalue_f = std::identity{};///<\returns The external value.
+		static auto constexpr deindex_f = std::identity{};///<\returns The internal index.
+		static auto constexpr reindex_f = std::identity{};///<\returns The external index.
 
-		template <index_type I=0>
+		template <index_type N_ind>
+		XTAL_DEF_(return,inline,set)
+		elementary_f(auto &&o)
+		noexcept -> decltype(auto)
+		requires requires {std::get<N_ind>(XTAL_ANY_(archetype));}
+		{
+			XTAL_IF0
+			XTAL_0IF (reiterated_q<archetype>) {return *get<N_ind>(elementary_f(XTAL_REF_(o)));}
+			XTAL_0IF_(else)                    {return  get<N_ind>(elementary_f(XTAL_REF_(o)));}
+		}
+		XTAL_DEF_(return,inline,set)
+		elementary_f(auto &&o)
+		noexcept -> decltype(auto)
+		{
+			return qualify_f<archetype>(XTAL_REF_(o));
+		}
+
+		template <index_type N_ind=0>
 		XTAL_DEF_(return,inline,set)
 		element_f(auto &&o)
 		noexcept -> decltype(auto)
 		{
-			index_type constexpr i = modulo_v<size, I>;
+			auto constexpr K_ind = T::deindex_f(N_ind);
 			XTAL_IF0
-			XTAL_0IF_(to) (*get<i>(qualify_f<archetype>(XTAL_REF_(o))))// Required for `subrange`!
-			XTAL_0IF_(to) ( get<i>(qualify_f<archetype>(XTAL_REF_(o))))
-			XTAL_0IF_(to) (qualify_f<archetype>(XTAL_REF_(o)).operator[](i))// Required for `span`!
-
+			XTAL_0IF (K_ind < zero and zero < size()) {return XTAL_ALL_(get<zero>(o)){};} // Negative underflow!
+			XTAL_0IF (mask < K_ind and zero < size()) {return XTAL_ALL_(get<mask>(o)){};} // Positive  overflow!
+			XTAL_0IF_(to) (elementary_f<K_ind>(XTAL_REF_(o)))
+			XTAL_0IF_(to) (elementary_f       (XTAL_REF_(o)).operator[](K_ind))           // Required for `span`!
 		}
-		template <index_type I=0>
+		template <index_type N_ind=0>
 		XTAL_DEF_(return,inline,set)
 		element_f(auto &&o, constant_q auto i)
 		noexcept -> decltype(auto)
 		{
 			return element_f<XTAL_ALL_(i){}>(XTAL_REF_(o));
 		}
-		template <index_type I=0>
+		template <index_type N_ind=0>
 		XTAL_DEF_(return,inline,set)
 		element_f(auto &&o, index_type i)
 		noexcept -> decltype(auto)
 		{
 			static_assert(same_q<Us...>);
-			if constexpr (0 != I%size) {
-				i += I;
-			}
-			XTAL_IF0
-			XTAL_0IF (0 == I) {
-				assert(0 <= i and i < size);
-			}
-			XTAL_0IF (0 != I and 1 == std::popcount(size())) {
-				i &= mask;
-			}
-			XTAL_0IF (0 != I and 2 <= std::popcount(size())) {
-				i %= size;
-				i += size;
-				i %= size;
-			}
-			return qualify_f<archetype>(XTAL_REF_(o)).operator[](i);
+			auto const K_ind = T::deindex_f(N_ind + i);
+			return qualify_f<archetype>(XTAL_REF_(o)).operator[](K_ind);
 		}
 
-		template <index_type I=0>
+		template <index_type N_ind=0>
 		XTAL_DEF_(return,inline,set)
 		coelement_f(auto &&...oo)
 		noexcept -> decltype(auto)
 		{
-			return T::revalue_f(T::template element_f<I>(XTAL_REF_(oo)...));
+			return T::revalue_f(T::template element_f<N_ind>(XTAL_REF_(oo)...));
 		}
 
-		XTAL_FN1_(go) (template <auto    ...Is> XTAL_DEF_(return,inline,get)    element, T::template   element_f<Is...>)
-		XTAL_FN1_(go) (template <auto    ...Is> XTAL_DEF_(return,inline,let)  coelement, T::template coelement_f<Is...>)
-		XTAL_FN1_(go) (template <auto    ...Is> XTAL_DEF_(return,inline,get) operator[], T::template   element_f<Is...>)
-		XTAL_FN1_(go) (template <auto    ...Is> XTAL_DEF_(return,inline,let) operator(), T::template coelement_f<Is...>)
-	//	XTAL_FN2_(to) (template <index_type I > XTAL_DEF_(return,inline,let) operator() (   ),       coelement<I>())
-	//	XTAL_FN2_(to) (template <integral_q I > XTAL_DEF_(return,inline,let) operator() (I i),       coelement(i))
+		XTAL_FN1_(go) (template <auto ...Ns> XTAL_DEF_(return,inline,get)    element, T::template   element_f<Ns...>)
+		XTAL_FN1_(go) (template <auto ...Ns> XTAL_DEF_(return,inline,let)  coelement, T::template coelement_f<Ns...>)
+		XTAL_FN1_(go) (template <auto ...Ns> XTAL_DEF_(return,inline,get) operator[], T::template   element_f<Ns...>)
+		XTAL_FN1_(go) (template <auto ...Ns> XTAL_DEF_(return,inline,let) operator(), T::template coelement_f<Ns...>)
+	//	XTAL_FN2_(to) (template <index_type N_ind > XTAL_DEF_(return,inline,let) operator() (       ), coelement<N_ind>())
+	//	XTAL_FN2_(to) (template <integral_q N_ind > XTAL_DEF_(return,inline,let) operator() (N_ind i), coelement(i))
 
 	};
 	using type = bond::derive_t<homotype>;
 
 };
-template <size_type I> XTAL_DEF_(inline,let) get(bucket_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<I>();}
-template <size_type I> XTAL_DEF_(inline,let) get(bucket_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<I>();}
-template <size_type I> XTAL_DEF_(inline,let) get(bucket_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<I>();}
-template <size_type I> XTAL_DEF_(inline,let) get(bucket_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<I>();}
+template <size_type N_ind> XTAL_DEF_(inline,let) get(bucket_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<N_ind>();}
+template <size_type N_ind> XTAL_DEF_(inline,let) get(bucket_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<N_ind>();}
+template <size_type N_ind> XTAL_DEF_(inline,let) get(bucket_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<N_ind>();}
+template <size_type N_ind> XTAL_DEF_(inline,let) get(bucket_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<N_ind>();}
 
-template <size_type I> XTAL_DEF_(inline,let) got(bucket_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<I>();}
-template <size_type I> XTAL_DEF_(inline,let) got(bucket_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<I>();}
-template <size_type I> XTAL_DEF_(inline,let) got(bucket_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<I>();}
-template <size_type I> XTAL_DEF_(inline,let) got(bucket_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<I>();}
+template <size_type N_ind> XTAL_DEF_(inline,let) got(bucket_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<N_ind>();}
+template <size_type N_ind> XTAL_DEF_(inline,let) got(bucket_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<N_ind>();}
+template <size_type N_ind> XTAL_DEF_(inline,let) got(bucket_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<N_ind>();}
+template <size_type N_ind> XTAL_DEF_(inline,let) got(bucket_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<N_ind>();}
 
 
 ////////////////////////////////////////////////////////////////////////////////

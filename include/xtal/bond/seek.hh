@@ -46,7 +46,7 @@ XTAL_0FN_(to) (reverse_seek_f(std::make_integer_sequence<int, N_count{}>{}));
 ///<\brief   Generates `std::make_integer_sequence<int, N_count>` from highest-to-lowest.
 
 XTAL_DEF_(let) seek_to_f = []<constant_q N_counter> (N_counter)
-XTAL_0FN {
+XTAL_0FN -> decltype(auto) {
 	XTAL_IF0
 	XTAL_0IF (N_counter{} == 0) {return         seek_in_t           <            >{} ;}
 	XTAL_0IF (N_counter{}  > 0) {return forward_seek_to_f(constant_t<+N_counter{}>{});}

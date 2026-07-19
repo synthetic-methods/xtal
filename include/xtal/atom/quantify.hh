@@ -195,7 +195,8 @@ struct quantify
 		{
 			auto &s = self();
 			
-			bond::seek_to_e<size>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<size>([&]<constant_q I> (I)
+			XTAL_0FN -> void {
 				sigma_type constexpr  i{I{}};
 				scale_type constexpr _1{cosign_v<i>};
 				auto const &v = get<I>(s);
@@ -215,7 +216,8 @@ struct quantify
 			auto &s = self();
 			value_type u{0};
 			
-			bond::seek_to_e<size>([&, this]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<size>([&, this]<constant_q I> (I)
+			XTAL_0FN -> void {
 				sigma_type constexpr  i{I{}};
 				scale_type constexpr _1{cosign_v<i>};
 				XTAL_IF0

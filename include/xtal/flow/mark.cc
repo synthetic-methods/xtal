@@ -33,14 +33,7 @@ TAG_("mark")
 
 	}
 	auto constexpr maybe = [] (mark_s<> g)
-	XTAL_0FN {
-		if (g) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	};
+	XTAL_0FN -> bool {return g;};
 	
 	TRY_("condition")
 	{

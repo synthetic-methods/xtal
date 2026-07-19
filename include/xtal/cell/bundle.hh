@@ -22,7 +22,7 @@ template <class ..._s> concept  bundle_q = bond::tag_inner_p<bundle, _s...>;
 //////////////////////////////////////////////////////////////////////////////////
 
 XTAL_DEF_(let) bundle_f = []<class ...Xs> (Xs &&...xs)
-XTAL_0FN {
+XTAL_0FN -> decltype(auto) {
 	XTAL_IF0
 	XTAL_0IF (un_v<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{            XTAL_REF_(xs) ...};}
 	XTAL_0IF (in_v<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{objective_f(XTAL_REF_(xs))...};}

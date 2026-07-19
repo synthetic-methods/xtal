@@ -3,6 +3,6 @@
 #include "./resample.cc"
 #include "./resize.cc"
 #include "./restep.cc"
-#include "./resync.cc"
 #include "./review.cc"
+#include "./rewind.cc"
 #include "./stage.cc"

@@ -133,6 +133,7 @@ template <          class ..._s>	XTAL_TYP_(ask)         invariable_q	= (some_q<_
 template <          class ..._s>	XTAL_TYP_(ask)           variable_q	= (some_q<_s...> and...and _retail::           variable_q<based_t<_s>>);
 template <          class ..._s>	XTAL_TYP_(ask)           constant_q	= (some_q<_s...> and...and _retail::           constant_q<based_t<_s>>);
 template <          class ..._s>	XTAL_TYP_(ask)       metaconstant_q	= (some_q<_s...> and...and _retail::       metaconstant_q<based_t<_s>>);
+template <          class ..._s>	XTAL_TYP_(ask)       paraconstant_q	= metaconstant_q<_s...> or constant_q<_s...>;
 template <          class ..._s>	XTAL_TYP_(ask)  terminal_constant_q	= (some_q<_s...> and...and _retail::  terminal_constant_q<_s>);
 template <          class ..._s>	XTAL_TYP_(ask)  integral_constant_q	= (some_q<_s...> and...and _retail::  integral_constant_q<_s>);
 template <          class ..._s>	XTAL_TYP_(ask)  cardinal_constant_q	= (some_q<_s...> and...and _retail::  cardinal_constant_q<_s>);
@@ -314,23 +315,21 @@ template <       class ..._s>	XTAL_TYP_(ask)               quality_q	= (some_q<_
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class Y>
-XTAL_DEF_(return,inline,let)
-qualify_f(auto &&t)
-noexcept -> decltype(auto)
-{
-	using T = decltype(t);
-	if constexpr (fungible_q<T, Y>) {return      static_cast<   qualify_s<T, Y>>(t);}
-	else                            {return reinterpret_cast<   qualify_s<T, Y>>(t);}
-}
+XTAL_DEF_(let)
+qualify_f = [] (auto &&x)
+XTAL_0FN -> decltype(auto) {
+	XTAL_IF0
+	XTAL_0IF (  fungible_q<decltype(x), Y>) {return      static_cast<   qualify_s<decltype(x), Y>>(x);}
+	XTAL_0IF (infungible_q<decltype(x), Y>) {return reinterpret_cast<   qualify_s<decltype(x), Y>>(x);}
+};
 template <class Y>
-XTAL_DEF_(return,inline,let)
-disqualify_f(auto &&t)
-noexcept -> decltype(auto)
-{
-	using T = decltype(t);
-	if constexpr (fungible_q<T, Y>) {return      static_cast<disqualify_s<T, Y>>(t);}
-	else                            {return reinterpret_cast<disqualify_s<T, Y>>(t);}
-}
+XTAL_DEF_(let)
+disqualify_f = [] (auto &&x)
+XTAL_0FN -> decltype(auto) {
+	XTAL_IF0
+	XTAL_0IF (  fungible_q<decltype(x), Y>) {return      static_cast<disqualify_s<decltype(x), Y>>(x);}
+	XTAL_0IF (infungible_q<decltype(x), Y>) {return reinterpret_cast<disqualify_s<decltype(x), Y>>(x);}
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////

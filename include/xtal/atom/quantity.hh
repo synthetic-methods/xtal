@@ -27,8 +27,8 @@ template <class     ...Us>	XTAL_TYP_(let) quantity_multiplies_t = typename quant
 template <class     ...Us>	XTAL_TYP_(let) quantity_plus_t       = typename quantity_plus       <Us...>::type;
 
 template <class     ...Ts>	XTAL_TYP_(ask) quantity_plus_multiplies_q     = bond::tag_inner_fixed_p<quantity_plus_multiplies_t     , Ts...>;
-template <class     ...Ts>	XTAL_TYP_(ask) quantity_plus_q       = bond::tag_inner_fixed_p<quantity_plus_t       , Ts...>;
-template <class     ...Ts>	XTAL_TYP_(ask) quantity_multiplies_q = bond::tag_inner_fixed_p<quantity_multiplies_t , Ts...>;
+template <class     ...Ts>	XTAL_TYP_(ask) quantity_plus_q                = bond::tag_inner_fixed_p<quantity_plus_t                , Ts...>;
+template <class     ...Ts>	XTAL_TYP_(ask) quantity_multiplies_q          = bond::tag_inner_fixed_p<quantity_multiplies_t          , Ts...>;
 template <class     ...Ts>	XTAL_TYP_(ask) quantity_q = quantity_plus_multiplies_q<Ts...> or quantity_multiplies_q<Ts...> or quantity_plus_q<Ts...>;
 
 
@@ -48,9 +48,9 @@ private:
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>
-	,	bond::tag<quantity_plus_multiplies_t>
-	,	bond::tag<quantity_multiplies_t>
 	,	bond::tag<quantity_plus_t>
+	,	bond::tag<quantity_multiplies_t>
+	,	bond::tag<quantity_plus_multiplies_t>
 	>;
 
 public:

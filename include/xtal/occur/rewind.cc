@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./resync.hh"// testing...
+#include "./rewind.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::occur::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("resync")
+TAG_("rewind")
 {
 	TRY_("task")
 	{

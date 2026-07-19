@@ -31,6 +31,11 @@ TAG_("atom", "quantity")
 	using M3 = quantity_multiplies_t<int[3]>;
 	using M4 = quantity_multiplies_t<int[4]>;
 	
+	using Z1 = quantity_plus_multiplies_t<int[1]>;
+	using Z2 = quantity_plus_multiplies_t<int[2]>;
+	using Z3 = quantity_plus_multiplies_t<int[3]>;
+	using Z4 = quantity_plus_multiplies_t<int[4]>;
+	
 	TRY_("partial construction")
 	{
 		A4 d4{1000};
@@ -62,6 +67,28 @@ TAG_("atom", "quantity")
 		auto  y =  W{4, 9};
 		auto  z =  y*T_alpha{3};
 		TRUE_(z == W{12, 27});
+
+	}
+	TRY_("quantity multiplication and addition")
+	{
+		Z2 d2_0{2, 2};
+		Z2 d2_1{5, 7};
+
+		TRUE_(d2_0*d2_1 == Z2{10, 14});
+		d2_0 *= d2_1;
+		TRUE_(d2_0      == Z2{10, 14});
+
+		using W =  quantity_plus_multiplies_t<T_aphex, T_alpha>;
+		auto  x =  W{2, 3};
+		auto  y =  W{4, 9};
+		auto  z =  y*T_alpha{3};
+		TRUE_(z == W{12, 27});
+
+		auto  zoo = d2_0.twin(+one);
+		using Zoo = decltype(zoo);
+		TRUE_(Zoo::size() == 3);
+		TRUE_(quantity_plus_multiplies_q<Zoo>);
+		TRUE_(same_q<Zoo, Z3>);
 
 	}
 }

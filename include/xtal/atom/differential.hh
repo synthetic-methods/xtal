@@ -87,7 +87,8 @@ struct differential
 		operator ++ ()
 		noexcept -> T &
 		{
-			bond::seek_to_e<(int) size - 1>([this]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<(int) size - 1>([this]<constant_q I> (I)
+			XTAL_0FN -> void {
 				auto           &s = S_::self();
 				auto constexpr I0 = 0 + I{};
 				auto constexpr I1 = 1 + I{};
@@ -106,7 +107,8 @@ struct differential
 		operator -- ()
 		noexcept -> T &
 		{
-			bond::seek_to_e<1 - (int) size>([this]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<1 - (int) size>([this]<constant_q I> (I)
+			XTAL_0FN -> void {
 				auto           &s = S_::self();
 				auto constexpr I0 = 0 + I{};
 				auto constexpr I1 = 1 + I{};

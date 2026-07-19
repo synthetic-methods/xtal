@@ -111,10 +111,10 @@ template <                   tab_q ..._s>	struct  tab_compatible<      _s...> : 
 template <tab_q T, class  U             >	struct  tab_precedence<T, U       > : std::disjunction<tab_compatible<T, U >, tab_precedence<tab_s<T>, U>>  {};// `T >= U`                 (deep)
 template <tab_q T, class  U, class ..._s>	struct  tab_precedence<T, U, _s...> : std::conjunction<tab_precedence<T, U >, tab_precedence<     U, _s ...>> {};// `T >= U`, `U >= _s...` (deep)
 #endif
-template <                   class ..._s>	concept tab_comparable_q =  tab_comparable<based_t<_s>...>{}();///<\brief Determines whether `_s...` share the top-most tab.
-template <                   class ..._s>	concept tab_compatible_q =  tab_compatible<based_t<_s>...>{}();///<\brief Determines whether `_s...` share the all tabs.
-template <                   class ..._s>	concept tab_precedence_p =  tab_precedence<based_t<_s>...>{}();///<\brief Determines whether `_s...` is in decreasing tab-order.
-template <class T,           class ..._s>	concept tab_preference_p =  requires {requires tab_precedence_p<tab_s<T>, _s...>;};///<\brief Determines whether `_s...` is in strictly-decreasing tab-order.
+template <                   class ..._s>	concept tab_compatible_q =  same_q<_s...> or tab_compatible<based_t<_s>...>{}();///<\brief Determines whether `_s...` share the all tabs.
+template <                   class ..._s>	concept tab_comparable_q =                   tab_comparable<based_t<_s>...>{}();///<\brief Determines whether `_s...` share the top-most tab.
+template <                   class ..._s>	concept tab_precedence_p =                   tab_precedence<based_t<_s>...>{}();///<\brief Determines whether `_s...` is in decreasing tab-order.
+template <class T,           class ..._s>	concept tab_preference_p =                   requires {requires tab_precedence_p<tab_s<T>, _s...>;};///<\brief Determines whether `_s...` is in strictly-decreasing tab-order.
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -49,6 +49,21 @@ TAG_("bucket")
 		TRUE_(0 == fluid_shaped<typename Z_alpha::value_type::value_type::value_type>::extent());
 
 	}
+	TRY_("bucket expansion")
+	{
+		using W2 = bucket_t<T_alpha[2]>;
+		using W3 = bucket_t<T_alpha[3]>;
+
+		auto w2 = W2{1, 2}; auto _w3 = w2.twin(cardinal_constant_t<3>{});
+		auto w3 = W3{1, 2};
+
+		TRUE_(w3[0] == _w3[0]);
+		TRUE_(w3[1] == _w3[1]);
+	//	TRUE_(w3[2] == _w3[2]);
+	//	TRUE_(w3    == _w3   );
+	//	TODO: Make this work with CLang/RELEASE...
+
+	}
 	TRY_("bucket slicing (array)")
 	{
 		using W = bucket_t<T_alpha[2]>;

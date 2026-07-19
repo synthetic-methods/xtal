@@ -276,7 +276,6 @@ struct defer_field
 		cardinality()
 		noexcept -> size_type
 		{
-			static_assert(same_q<bool, U> or requires {S_::cardinality();});
 			XTAL_IF0
 			XTAL_0IF (in_v<typename S_::pack_size{}(), 0> and same_q<bool, U>) {
 				return 2;
@@ -291,38 +290,7 @@ struct defer_field
 
 	};
 };
-template <metaconstant_q U>
-struct defer_field<U>
-{
-	template <class S>
-	class subtype : public bond::compose_s<S>
-	{
-		static_assert(any_q<S>);
-		using S_ = bond::compose_s<S>;
-
-	public:
-		using head_type = U;
-		using body_type = U;
-
-	public:
-		using S_::S_;
-
-		XTAL_NEW_(explicit)
-		subtype(metaconstant_q auto &&, auto &&...oo)
-		noexcept
-		:	S_{XTAL_REF_(oo)...}
-		{
-		}
-
-		/*!
-		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
-		*/
-	//	static head_type constexpr head{};
-		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type {return head_type{};}
-		
-	};
-};
-template <class U> requires constant_q<U>
+template <paraconstant_q U>
 struct defer_field<U>
 {
 	template <class S>
@@ -339,28 +307,46 @@ struct defer_field<U>
 		using S_::S_;
 	//	body_type body_part{};
 
-		template <constant_q V>
 		XTAL_NEW_(explicit)
-		subtype(V, auto &&...oo)
+		subtype(paraconstant_q auto &&u, auto &&...oo)
 		noexcept
 		:	S_{XTAL_REF_(oo)...}
 		{
-			static_assert(same_q<V, U>);
+			static_assert(same_q<decltype(u), U>);
 		}
 
 		/*!
 		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
 		*/
 	//	static head_type constexpr head{};
-		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type {return head_type{};}
-		
+		XTAL_DEF_(return,inline,let)
+		head() const
+		noexcept -> head_type
+		requires constant_q<U>
+		{
+			return {};
+		}
+
+		XTAL_DEF_(return,inline,set)
+		cardinality()
+		noexcept -> size_type
+		{
+			XTAL_IF0
+			XTAL_0IF (requires {S_::cardinality();}) {
+				return S_::cardinality();
+			}
+			XTAL_0IF_(else) {
+				return 0;
+			}
+		}
+
 	};
 };
 template <class I, auto ...Ns>
 struct defer_field<std::integer_sequence<I, Ns...>>
 {
-	static auto constexpr N_revalue = bond::seek_value_t<xtd::signed_cast(Ns)...>{};
-	static auto constexpr N_devalue = bond::seek_index_t<xtd::signed_cast(Ns)...>{};
+	XTAL_DEF_(set) N_revalue = bond::seek_value_t<xtd::signed_cast(Ns)...>{};
+	XTAL_DEF_(set) N_devalue = bond::seek_index_t<xtd::signed_cast(Ns)...>{};
 
 	template <class S>
 	class subtype : public bond::compose_s<S>
@@ -594,7 +580,6 @@ struct refer_inequality
 				auto constexpr o = bond::fit<U>::minilon_f();
 				auto const     x = xtd::copysign(u, o);
 				return o < x;
-				
 			}
 			XTAL_0IF (complex_variable_q<U> and real_variable_q<typename destruct<U>::value_type>) {
 				auto constexpr o = bond::fit<U>::minilon_f();

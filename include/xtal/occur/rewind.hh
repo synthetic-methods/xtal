@@ -11,17 +11,17 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct   resync;
-template <class ..._s> using    resync_t =     confined_t<resync< _s...>>;
-template <class ..._s> concept  resync_q = bond::tag_inner_p<resync, _s...> ;
+template <class ..._s> struct   rewind;
+template <class ..._s> using    rewind_t =        confined_t<rewind< _s...>>;
+template <class ..._s> concept  rewind_q = bond::tag_inner_p<rewind, _s...> ;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 
 template <class U>
-struct resync<U>
+struct rewind<U>
 {
-	using superkind = bond::compose<flow::tag<resync>, defer<U>>;
+	using superkind = bond::compose<flow::tag<rewind>, defer<U>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -37,9 +37,9 @@ struct resync<U>
 		using S_::self;
 		using S_::head;
 
-		using sync_type = U;
+		using wind_type = U;
 
-		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) sync, [] (auto &&o, auto &&...oo)
+		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) wind, [] (auto &&o, auto &&...oo)
 		XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
 	};
@@ -48,10 +48,10 @@ struct resync<U>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <> struct resync<void> : resync<signed> {};
-template <> struct resync<    > : resync<signed> {};
+template <> struct rewind<void> : rewind<signed> {};
+template <> struct rewind<    > : rewind<signed> {};
 
-XTAL_DEF_(let) resync_f = [] XTAL_1FN_(call) (resync_t<>);
+XTAL_DEF_(let) rewind_f = [] XTAL_1FN_(call) (rewind_t<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////
