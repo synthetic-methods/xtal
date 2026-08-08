@@ -53,18 +53,6 @@ struct beheader
 
 	public:// OPERATE
 
-		using S_::operator==;
-		using S_::operator<=>;
-
-		XTAL_DEF_(return,inline,let)
-		operator == (subtype const &t) const
-		noexcept -> bool
-		requires complete_q<std::variant_size<typename L_::head_type>>
-		{
-			auto const &s = S_::self();
-			return s.operator==(t) and x_(s).index() == x_(t).index();
-		}
-
 		XTAL_DEF_(return,inline,let)
 		operator << (auto &&u) const
 		noexcept -> auto

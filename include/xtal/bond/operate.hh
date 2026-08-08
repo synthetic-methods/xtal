@@ -38,7 +38,6 @@ struct operate : Fs...
 	XTAL_DEF_(return,inline,set)
 	object()
 	noexcept -> auto
-	requires requires {operate{}();}
 	{
 		using U = based_t<T>;
 		XTAL_IF0
@@ -50,7 +49,6 @@ struct operate : Fs...
 	XTAL_DEF_(return,inline,set)
 	subject()
 	noexcept -> auto
-	requires requires {operate{}();}
 	{
 		using U = based_t<T>;
 		using V = typename fluid<U>::value_type;
@@ -65,7 +63,6 @@ struct operate : Fs...
 	XTAL_DEF_(return,inline,set)
 	surject()
 	noexcept -> auto
-	requires requires {operate{}();}
 	{
 		return operate{[] XTAL_1FN_(to) (bond::fit<T>::alpha_1/object<T>())};
 	}
@@ -75,11 +72,31 @@ struct operate : Fs...
 	operator T() const
 	noexcept {return object<T>();}
 
-	XTAL_DEF_(return,inline,met) operator + (operate const &t) noexcept -> auto requires integral_q<decltype(operate{}())> {return operate<decltype([] XTAL_1FN_(to) (+xtd::signed_cast(operate{}())))>{};}
-	XTAL_DEF_(return,inline,met) operator - (operate const &t) noexcept -> auto requires integral_q<decltype(operate{}())> {return operate<decltype([] XTAL_1FN_(to) (-xtd::signed_cast(operate{}())))>{};}
-	XTAL_DEF_(return,inline,met) operator + (operate const &t) noexcept -> auto                                            {return operate<decltype([] XTAL_1FN_(to) (+                        operate{}() ))>{};}
-	XTAL_DEF_(return,inline,met) operator - (operate const &t) noexcept -> auto                                            {return operate<decltype([] XTAL_1FN_(to) (-                        operate{}() ))>{};}
-	XTAL_DEF_(return,inline,met) operator ~ (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(to) (~                    operate{}() ))>{};}
+	XTAL_DEF_(return,inline,met) operator + (operate const &t)
+	noexcept -> auto
+	{
+		auto constexpr value = operate{}();
+		using value_type = decltype(value);
+		XTAL_IF0
+		XTAL_0IF (un_v<integral_q<value_type>>) return operate<decltype([] XTAL_1FN_(to) (+                 value ))>{};
+		XTAL_0IF (in_v<integral_q<value_type>>) return operate<decltype([] XTAL_1FN_(to) (+xtd::signed_cast(value)))>{};
+	}
+	XTAL_DEF_(return,inline,met) operator - (operate const &t)
+	noexcept -> auto
+	{
+		auto constexpr value = operate{}();
+		using value_type = decltype(value);
+		XTAL_IF0
+		XTAL_0IF (un_v<integral_q<value_type>>) return operate<decltype([] XTAL_1FN_(to) (-                 value ))>{};
+		XTAL_0IF (in_v<integral_q<value_type>>) return operate<decltype([] XTAL_1FN_(to) (-xtd::signed_cast(value)))>{};
+	}
+	XTAL_DEF_(return,inline,met) operator ~ (operate const &t)
+	noexcept -> auto
+	{
+		auto constexpr value = operate{}();
+		using value_type = decltype(value);
+		return operate<decltype([] XTAL_1FN_(to) (~value))>{};
+	}
 
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator <=> (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (object<T>() <=> t)
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  == (same_q<operate> auto const &, T const &t) noexcept -> bool   requires XTAL_TRY_(to) (object<T>()  == t)
@@ -103,49 +120,6 @@ struct operate : Fs...
 	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  &  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() & T{}()))>{})
 	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  ^  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() ^ T{}()))>{})
 	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  |  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() | T{}()))>{})
-
-	/*!
-	\returns	The bit-shifted result if `integral_q<T>`,
-	otherwise fractional mutiplication by `exp2(t)`.
-	*/
-	template <inapplicable_p T>
-	//\
-	XTAL_DEF_(return,met)
-	XTAL_DEF_(return,inline,met)
-	operator << (same_q<operate> auto const &, T const &t)
-	noexcept -> decltype(object<T>())
-	{
-		auto o = object<T>();
-		if constexpr (integral_variable_q<T, decltype(o)>)  {
-			if (t < T{}) {o >>= -t;}
-			else         {o <<=  t;}
-		}
-		else {
-			o *= fit<T>::diplo_f(t);
-		}
-		return o;
-	}
-	/*!
-	\returns	The bit-shifted result if `integral_q<T>`,
-	otherwise fractional division by `exp2(t)`.
-	*/
-	template <inapplicable_p T>
-	//\
-	XTAL_DEF_(return,met)
-	XTAL_DEF_(return,inline,met)
-	operator >> (same_q<operate> auto const &, T const &t)
-	noexcept -> decltype(object<T>())
-	{
-		auto o = object<T>();
-		if constexpr (integral_variable_q<T, decltype(o)>)  {
-			if (t < T{}) {o <<= -t;}
-			else         {o >>=  t;}
-		}
-		else {
-			o *= fit<T>::haplo_f(t);
-		}
-		return o;
-	}
 
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  -  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  -  subject<T>())
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  +  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  +  subject<T>())
@@ -189,6 +163,48 @@ struct operate<> : std::identity
 
 template <class ...Fs>
 operate(Fs...) -> operate<Fs...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+/*!
+\returns	The bit-shifted result if `integral_q<T>`,
+otherwise fractional mutiplication by `exp2(t)`.
+*/
+template <inapplicable_p T, class ...Fs>
+XTAL_DEF_(return,inline,let)
+operator << (operate<Fs...> const &, T const &t)
+noexcept -> decltype(auto)
+{
+	auto o = operate<Fs...>::template object<T>();
+	if constexpr (integral_variable_q<T, decltype(o)>)  {
+		if (t < T{}) {o >>= -t;}
+		else         {o <<=  t;}
+	}
+	else {
+		o *= fit<T>::diplo_f(t);
+	}
+	return o;
+}
+/*!
+\returns	The bit-shifted result if `integral_q<T>`,
+otherwise fractional division by `exp2(t)`.
+*/
+template <inapplicable_p T, class ...Fs>
+XTAL_DEF_(return,inline,let)
+operator >> (operate<Fs...> const &, T const &t)
+noexcept -> decltype(auto)
+{
+	auto o = operate<Fs...>::template object<T>();
+	if constexpr (integral_variable_q<T, decltype(o)>)  {
+		if (t < T{}) {o <<= -t;}
+		else         {o >>=  t;}
+	}
+	else {
+		o *= fit<T>::haplo_f(t);
+	}
+	return o;
+}
 
 
 namespace _detail

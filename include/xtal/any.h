@@ -67,29 +67,31 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_ENV_(NAME,...) XTAL_ENV_##NAME __VA_ARGS__///< Compiler version (`100*${major}.${minor}`), and `_Pragma`s.
-#if 00//XTAL_ENV
 
-#ifdef  NDEBUG
-#define XTAL_ENV_release 1
-#define XTAL_ENV_debug   0
-#else
-#define XTAL_ENV_release 0
-#define XTAL_ENV_debug   1
-#endif
-
-
-#elif   defined(_MSC_VER)
+#if     defined(_MSC_VER)
 #define XTAL_ENV_MSVC   (_MSC_VER)
 #define XTAL_ENV_LLVM   0
 #define XTAL_ENV_GNUC   0
-#define XTAL_ENV_pop   _Pragma("warning(pop)")
-#define XTAL_ENV_push  _Pragma("warning(push)")\
-                       _Pragma("warning(disable:4010)")\
 
 #elif   defined(__clang__)
 #define XTAL_ENV_LLVM   (100*__clang_major__ + __clang_minor__)
 #define XTAL_ENV_GNUC   0
 #define XTAL_ENV_MSVC   0
+
+#elif   defined(__GNUC__)
+#define XTAL_ENV_GNUC   (100*__GNUC__ + __GNUC_MINOR__)
+#define XTAL_ENV_MSVC   0
+#define XTAL_ENV_LLVM   0
+
+#endif
+
+
+#if     0 < XTAL_ENV_(MSVC)
+#define XTAL_ENV_pop   _Pragma("warning(pop)")
+#define XTAL_ENV_push  _Pragma("warning(push)")\
+                       _Pragma("warning(disable:4010)")\
+
+#elif   0 < XTAL_ENV_(LLVM)
 #define XTAL_ENV_pop   _Pragma("clang diagnostic pop")
 #define XTAL_ENV_push  _Pragma("clang diagnostic push")\
                        _Pragma("clang diagnostic ignored \"-Wcomment\"")\
@@ -100,18 +102,18 @@
                        _Pragma("clang diagnostic ignored \"-Wlogical-op-parentheses\"")\
                        _Pragma("STDC FP_CONTRACT ON")\
 
-#elif   defined(__GNUC__)
-#define XTAL_ENV_GNUC   (100*__GNUC__ + __GNUC_MINOR__)
-#define XTAL_ENV_MSVC   0
-#define XTAL_ENV_LLVM   0
+#elif   0 < XTAL_ENV_(GNUC) and XTAL_ENV_(GNUC) <= 1599
 #define XTAL_ENV_pop   _Pragma("GCC diagnostic pop")
 #define XTAL_ENV_push  _Pragma("GCC diagnostic push")\
                        _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
 
-#else
-#endif//XTAL_ENV
-#define XTAL_ENV_GCC XTAL_ENV_(GNUC)
-#define XTAL_ENV (XTAL_ENV_(MSVC) or XTAL_ENV_(LLVM) or XTAL_ENV_(GNUC))
+#elif   0 < XTAL_ENV_(GNUC) and 1600 <= XTAL_ENV_(GNUC)
+#define XTAL_ENV_pop   _Pragma("GCC diagnostic pop")
+#define XTAL_ENV_push  _Pragma("GCC diagnostic push")\
+                       _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
+                       _Pragma("GCC diagnostic ignored \"-Wsfinae-incomplete\"")\
+
+#endif
 
 
 
@@ -300,10 +302,10 @@ template <class X         > concept XTAL_NYM_(synthesized) = not ::std::same_as<
 
 #define XTAL_DEF_explicit        constexpr explicit                             ///< Start `explicit` function.
 #define XTAL_DEF_implicit        constexpr                                      ///< Start `implicit` function.
+#define XTAL_DEF_let             constexpr          auto                                 ///< Start `auto` function.
 #define XTAL_DEF_get      inline constexpr decltype(auto)                       ///< Start `decltype(auto)` function.
-#define XTAL_DEF_let      inline constexpr auto                                 ///< Start `auto` function.
-#define XTAL_DEF_met      inline constexpr auto friend                          ///< Start `auto` function (friend).
-#define XTAL_DEF_set      static constexpr auto                                 ///< Start `auto` function (static).
+#define XTAL_DEF_met      inline constexpr          auto friend                          ///< Start `auto` function (friend).
+#define XTAL_DEF_set      static constexpr          auto                                 ///< Start `auto` function (static).
 
 
 #define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.

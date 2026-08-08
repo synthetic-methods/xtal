@@ -233,7 +233,7 @@ struct defer<U>
 		method(auto &&...xs),
 		noexcept -> auto
 		{
-			return normalize_f<Ns...>(iterative_f(head().template
+			return normalize_f<Ns...>(applicative_f(head().template
 				reify<iteratee_t<decltype(xs)> &&...>(constant_t<Ns>{}...), XTAL_REF_(xs)...));
 		})
 

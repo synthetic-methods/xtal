@@ -124,7 +124,7 @@ template <auto   N, auto  ..._s>	XTAL_TYP_(ask)                 un_v	=  not in_v
 template <class  T, class ..._s>	XTAL_TYP_(ask)                 un_q	=  not in_q<T, _s...>;
 
 template <          class ..._s>	XTAL_TYP_(ask)             common_q	=  some_q<_s...> and requires {typename std::common_type<_s...>::type;};
-template <          class ..._s>	XTAL_TYP_(let)             common_t	=  std::conditional_t<common_q<_s...>,  std::common_type<_s...>, std::type_identity<void>>::type;
+template <          class ..._s>	XTAL_TYP_(let)             common_t	=  typename std::conditional_t<common_q<_s...>,  std::common_type<_s...>, std::type_identity<void>>::type;
 
 template <          class ..._s>	XTAL_TYP_(let)             either_t	=  std::variant<based_t<_s>...>;
 template <class  T, class ..._s>	XTAL_TYP_(ask)             either_q	=  fungible_q<T, either_t<_s...>>;
@@ -252,10 +252,10 @@ struct   assess
 	static extent_constant_t<(0 +...+ (0 < Ns)) > constexpr    rank{};
 
 };
-template <          auto  ...Ns>                              struct   assayed        : assayed<xtd::signed_cast(Ns)...> {};
-template <ordinal_q auto  ...Ns> requires (...and (0  <= Ns)) struct   assayed<Ns...> : assess <Ns...> {static extent_constant_t<(1 *...* Ns)> constexpr extent{};};
-template <ordinal_q auto  ...Ns> requires (...or  (Ns <  0 )) struct   assayed<Ns...> : assess <Ns...> {static extent_constant_t<-1          > constexpr extent{};};
-template <                     >                              struct   assayed<     > : assess <     > {static extent_constant_t< 0          > constexpr extent{};};
+template <                            auto  ...Ns>                                          struct   assayed           : assayed<xtd::signed_cast(Ns)...> {};
+template <ordinal_q auto N, ordinal_q auto  ...Ns> requires ((0 <= N) and...and (0  <= Ns)) struct   assayed<N, Ns...> : assess <N, Ns...> {static extent_constant_t<(N *...* Ns)> constexpr extent{};};
+template <ordinal_q auto N, ordinal_q auto  ...Ns> requires ((N <  0) or ...or  (Ns <  0 )) struct   assayed<N, Ns...> : assess <N, Ns...> {static extent_constant_t<-1          > constexpr extent{};};
+template <                                       >                                          struct   assayed<        > : assess <     > {static extent_constant_t< 0          > constexpr extent{};};
 
 
 ////////////////////////////////////////////////////////////////////////////////

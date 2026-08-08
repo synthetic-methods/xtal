@@ -1,12 +1,12 @@
 #pragma once
 #include "./any.cc"
-#include "./pack.hh"// testing...
+
+#include "../atom/all.hh"
 
 
 
 
-
-
+#include "./pack.hh"
 XTAL_ENV_(push)
 namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
@@ -35,6 +35,18 @@ TAG_("pack")
 		TRUE_(xs[1][0] == ys[1][0]);
 		TRUE_(xs[0][1] == ys[0][1]);
 		TRUE_(xs[1][1] == ys[1][1]);
+
+		using U0 = float;
+		using W0 = std::complex<U0>;
+		using U1 = atom::bucket_t<U0[1]>;
+		using U2 = atom::bucket_t<U0[2]>;
+		using U3 = atom::bucket_t<U0[3]>;
+		using U4 = atom::bucket_t<U0[4]>;
+		using U5 = atom::bucket_t<U0[5]>;
+
+		using Y5 = XTAL_ALL_(transpack_f<U5>(1U, XTAL_ANY_(U0 **)));
+		using Y4 = XTAL_ALL_(transpack_f<U4>(1U, XTAL_ANY_(initializer_t<U4> **)));
+		using Y3 = bond::transpack_t<U3>;
 
 	}
 	TRY_("pack_item_f(std::complex{...})")

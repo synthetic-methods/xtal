@@ -257,12 +257,12 @@ template <class  T=extent_type >	XTAL_TYP_(let)            counter_t	=          
 Determines whether `...xs` can be zipped with `f`.
 */
 template <class F, class ...Xs>
-concept initerative_p = incomplete_q<F>
+concept inapplicative_p = incomplete_q<F>
 or same_q<F, std::tuple<std::remove_cvref_t<xtd::ranges::range_reference_t<Xs>>...>>
 or same_q<F, std::pair <std::remove_cvref_t<xtd::ranges::range_reference_t<Xs>>...>>;
 
 template <class F, class ...Xs>
-concept   iterative_p = not initerative_p<F, Xs...>
+concept   applicative_p = not inapplicative_p<F, Xs...>
 and std::invocable<F, xtd::ranges::range_reference_t<Xs> ...>;
 
 
@@ -489,20 +489,18 @@ template <iterable_q T>
 using derange_t = XTAL_ALL_(derange_f(XTAL_ANY_(T))); 
 
 /*!
-\returns
-The result of zipping `...xs` with `f`.
-
-\note
-The name is intended to mimic Haskell's `ApplicativeFunctor`.
+\returns The result of zipping `...xs` with `f(...)`.
 */
-template <class F             >	requires   iterative_p<F       > XTAL_DEF_(inline,let) iterative_f(F &&f            ) noexcept -> decltype(auto) {return xtd::ranges::views:: generate(XTAL_REF_(f)                    );}
-template <class F, class    X >	requires   iterative_p<F, X    > XTAL_DEF_(inline,let) iterative_f(F &&f, X  &&   x ) noexcept -> decltype(auto) {return xtd::ranges::views::transform(XTAL_REF_(x),   XTAL_REF_(f)    );}
-template <class F, class ...Xs>	requires   iterative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip_with(XTAL_REF_(f),   XTAL_REF_(xs)...);}
-template <class F, class ...Xs>	requires initerative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
+template <class F             >	requires applicative_p<F       > XTAL_DEF_(inline,let) applicative_f(F &&f            ) noexcept -> decltype(auto) {return xtd::ranges::views::  generate(XTAL_REF_(f)                  );}
+template <class F, class    X >	requires applicative_p<F, X    > XTAL_DEF_(inline,let) applicative_f(F &&f, X  &&   x ) noexcept -> decltype(auto) {return xtd::ranges::views:: transform(XTAL_REF_(x), XTAL_REF_(f )   );}
+template <class F, class ...Xs>	requires applicative_p<F, Xs...> XTAL_DEF_(inline,let) applicative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views::  zip_with(XTAL_REF_(f), XTAL_REF_(xs)...);}
+template <auto  f, class ...Xs>	                                 XTAL_DEF_(inline,let) applicative_f(       Xs &&...xs) noexcept -> decltype(auto) {return                            applicative_f(f , XTAL_REF_(xs)...);}
 
-//mplate <         class ...Xs>	                                 XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
-template <auto  f, class ...Xs>	                                 XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return           iterative_f(                    f,  XTAL_REF_(xs)...);}
-template <class F, class ...Xs>	                                 XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return           iterative_f<[] XTAL_1FN_(make) (F)>(XTAL_REF_(xs)...);}
+/*!
+\returns The result of zipping `...xs` with `F{...}`.
+*/
+template <  complete_q F, class ...Xs>	XTAL_DEF_(inline,let) constructive_f(Xs &&...xs) noexcept -> decltype(auto) {return applicative_f([] XTAL_1FN_(make) (F), XTAL_REF_(xs)...);}
+template <incomplete_q F, class ...Xs>	XTAL_DEF_(inline,let) constructive_f(Xs &&...xs) noexcept -> decltype(auto) {return               xtd::ranges::views::zip(XTAL_REF_(xs)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

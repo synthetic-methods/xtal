@@ -188,7 +188,7 @@ noexcept -> auto
 requires requires {{**table} -> different_q<U>;}
 {
 	return [&]<auto ...I> (bond::seek_in_t<I...>)
-	XTAL_0FN_(to) (iterative_f<U>(std::span(point_f(XTAL_REF_(table)[I], index), limit)...))
+	XTAL_0FN_(to) (constructive_f<U>(std::span(point_f(table[I], index), limit)...))
 		(bond::seek_to_t<fluid_shaped<U>::extent()>{});
 }
 template <class U>
@@ -206,7 +206,7 @@ noexcept -> decltype(auto)
 	return [=] (auto &&table) XTAL_0FN_(to) (transpack_f<U>(ns..., XTAL_REF_(table)));
 }
 template <class U>
-using    transpack_t = XTAL_ALL_(transpack_f<U>(0x1000U, XTAL_ANY_(initializer_t<U> **)));
+using    transpack_t = XTAL_ALL_(transpack_f<U>(1U, XTAL_ANY_(initializer_t<U> **)));
 
 
 ////////////////////////////////////////////////////////////////////////////////

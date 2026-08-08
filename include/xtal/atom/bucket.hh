@@ -454,10 +454,10 @@ struct bucket
 
 		template <index_type N_ind=0>
 		XTAL_DEF_(return,inline,set)
-		coelement_f(auto &&...oo)
-		noexcept -> decltype(auto)
+		coelement_f(auto &&o, auto &&...oo)
+		noexcept -> auto
 		{
-			return T::revalue_f(T::template element_f<N_ind>(XTAL_REF_(oo)...));
+			return T::revalue_f(T::template element_f<N_ind>(XTAL_REF_(o), XTAL_REF_(oo)...));
 		}
 
 		XTAL_FN1_(go) (template <auto ...Ns> XTAL_DEF_(return,inline,get)    element, T::template   element_f<Ns...>)
