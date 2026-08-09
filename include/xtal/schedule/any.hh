@@ -63,7 +63,7 @@ struct define
 				\brief  	Forwards the message upstream.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
@@ -72,7 +72,7 @@ struct define
 				/*!
 				\brief  	Forwards the descheduled message to `self()`.
 				*/
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(flow::ion_s<> x_, auto &&...oo)
 				noexcept -> signed
 				{
@@ -87,7 +87,7 @@ struct define
 				/*!
 				\brief  	Forwards the descheduled message to `self()` by visitation.
 				*/
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(flow::ion_s<> x_, either_q<Ys...> auto &&w)
 				noexcept -> signed
 				{
@@ -98,7 +98,7 @@ struct define
 				/*!
 				\brief  	Repacks and forwards the dequeued message to `self()`.
 				*/
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(flow::ion_s<> x_, flow::packed_q auto &&o)
 				noexcept -> signed
 				{
@@ -109,7 +109,7 @@ struct define
 				/*!
 				\brief  	Repacks and forwards the dequeued message to `self()`.
 				*/
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(flow::ion_q auto const xo)
 				noexcept -> signed
 				{
@@ -120,7 +120,7 @@ struct define
 				\brief  	Schedules the provided event to `self().fuse(...)`.
 				*/
 				template <signed N_ion, class ..._s>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(same_q<event_type> auto &&o, _s &&...)
 				noexcept -> signed
 				{
@@ -131,7 +131,7 @@ struct define
 				\brief  	Repackes then schedules the provided event to `self().fuse(...)`.
 				*/
 				template <signed N_ion, class ..._s> requires (2 <= sizeof...(Ys))
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(flow::cue_s<> v, in_q<Ys...> auto &&x, _s &&...)
 				noexcept -> signed
 				{
@@ -142,7 +142,7 @@ struct define
 				\brief  	Repackes then schedules the provided event to `self().fuse(...)`.
 				*/
 				template <signed N_ion, class ..._s>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(flow::cue_s<> v, same_q<payload_type> auto &&w, _s &&...)
 				noexcept -> signed
 				{

@@ -24,7 +24,7 @@ template <class ..._s> concept  bundle_q = bond::tag_inner_p<bundle, _s...>;
 
 //////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(let) bundle_f = []<class ...Xs> (Xs &&...xs)
+XTAL_VAL_(let) bundle_f = []<class ...Xs> (Xs &&...xs)
 XTAL_0FN -> decltype(auto) {
 	XTAL_IF0
 	XTAL_0IF (un_v<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{            XTAL_REF_(xs) ...};}
@@ -54,7 +54,7 @@ struct bundle
 		using S_::head;
 
 		XTAL_FN2_(to) (template <size_type ...Ns>
-		XTAL_DEF_(return,inline,get)
+		XTAL_VAL_(return,inline,get)
 		argument(), S_::template argument<Ns...>())
 
 	public:// FLOW
@@ -65,7 +65,7 @@ struct bundle
 		If `N_ion == -1`, evaluates `self` if `arguments` evaluate  succesfully.
 		*/
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(auto &&...oo)
 		noexcept -> signed
 		{
@@ -88,14 +88,14 @@ struct bundle
 		If prefixed by a negative `constant_q`, forwards to all `arguments`.
 		*/
 		template <signed N_ion,   natural_constant_q I_path>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(I_path, auto &&...oo)
 		noexcept -> signed
 		{
 			return argument<I_path{}>().template flux<N_ion>(XTAL_REF_(oo)...);
 		}
 		template <signed N_ion, unnatural_constant_q I_path>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(I_path, auto &&...oo)
 		noexcept -> signed
 		{
@@ -109,7 +109,7 @@ struct bundle
 		\brief  	Forwards `oo...` to all `arguments`, bypassing `self`.
 		*/
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux_rest(auto &&...oo)
 		noexcept -> signed
 		{
@@ -122,14 +122,14 @@ struct bundle
 		If `0 <= N_dex`, the message is prefixed by `o` for the `argument` specified.
 		*/
 		template <signed N_ion, unnatural_constant_q I_head>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux_unrest(I_head, auto &&o, auto &&...oo)
 		noexcept -> signed
 		{
 			return flux_rest<N_ion>(XTAL_REF_(oo)...);
 		}
 		template <signed N_ion,   natural_constant_q I_head>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux_unrest(I_head, auto &&o, auto &&...oo)
 		noexcept -> signed
 		{

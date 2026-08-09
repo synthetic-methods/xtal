@@ -25,7 +25,7 @@ struct irritator_mix
 	public:
 
 		template <auto onset=0>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...xs)
 		const noexcept -> auto
 		{

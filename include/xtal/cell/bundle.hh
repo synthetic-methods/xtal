@@ -21,7 +21,7 @@ template <class ..._s> concept  bundle_q = bond::tag_inner_p<bundle, _s...>;
 
 //////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(let) bundle_f = []<class ...Xs> (Xs &&...xs)
+XTAL_VAL_(let) bundle_f = []<class ...Xs> (Xs &&...xs)
 XTAL_0FN -> decltype(auto) {
 	XTAL_IF0
 	XTAL_0IF (un_v<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{            XTAL_REF_(xs) ...};}
@@ -50,7 +50,7 @@ struct bundle
 		/*!
 		\brief  	Initialize `arguments` using those provided.
 		*/
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		subtype(Xs &&...xs)
 		noexcept
 	//	requires make_p<H_, Xs...>
@@ -62,19 +62,19 @@ struct bundle
 		using S_::head;
 
 		XTAL_FN0_(go) (
-		XTAL_DEF_(return,inline,get) arguments,
+		XTAL_VAL_(return,inline,get) arguments,
 			[] (auto &&o          ) XTAL_0FN_(to) (                          XTAL_REF_(o).head() ))
 
 		XTAL_FN0_(go) (template <auto f>
-		XTAL_DEF_(return,inline,get) arguments,
+		XTAL_VAL_(return,inline,get) arguments,
 			[] (auto &&o          ) XTAL_0FN_(to) (std::apply(          f , XTAL_REF_(o).head())))
 
 		XTAL_FN1_(go) (
-		XTAL_DEF_(return,inline,get) arguments,
+		XTAL_VAL_(return,inline,get) arguments,
 			[] (auto &&o, auto &&f) XTAL_0FN_(to) (std::apply(XTAL_REF_(f), XTAL_REF_(o).head())))
 
 		XTAL_FN2_(to) (template <size_type ...Ns>
-		XTAL_DEF_(return,inline,get)
+		XTAL_VAL_(return,inline,get)
 		argument(), bond::pack_item_f<Ns...>(head()))
 
 	};

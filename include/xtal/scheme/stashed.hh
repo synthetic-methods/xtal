@@ -42,18 +42,18 @@ struct stashed
 		\returns	The contents of `stash` as a tuple of `Vs &...`.
 		*/
 		XTAL_FN2_(to) (template <class ...Vs> requires variable_q<Vs...>
-		XTAL_DEF_(return,inline,get) stash(), head().template form<Vs...>())
+		XTAL_VAL_(return,inline,get) stash(), head().template form<Vs...>())
 		
 		/*!
 		\returns	The contents of `stash` as a tuple of `Vs &...` prior to replacement with `vs...`.
 		*/
 		XTAL_FN2_(to) (template <class ...Vs> requires variable_q<Vs...>
-		XTAL_DEF_(return,inline,get) stash(Vs const &...vs), head().form(vs...))
+		XTAL_VAL_(return,inline,get) stash(Vs const &...vs), head().form(vs...))
 		
 		template <auto u>
-		XTAL_DEF_(inline,let) stash(                 ) noexcept -> void {head().fill(u  );}///< Clears/fills `stash` with the given `byte`.
-		XTAL_DEF_(inline,let) stash(constant_t<>     ) noexcept -> void {head().fill(0  );}///< Clears/fills `stash` with the given `byte`.
-		XTAL_DEF_(inline,let) stash(constant_q auto f) noexcept -> void {head().fill(f());}///< Clears/fills `stash` with the given `byte`.
+		XTAL_VAL_(inline,let) stash(                 ) noexcept -> void {head().fill(u  );}///< Clears/fills `stash` with the given `byte`.
+		XTAL_VAL_(inline,let) stash(constant_t<>     ) noexcept -> void {head().fill(0  );}///< Clears/fills `stash` with the given `byte`.
+		XTAL_VAL_(inline,let) stash(constant_q auto f) noexcept -> void {head().fill(f());}///< Clears/fills `stash` with the given `byte`.
 
 	};
 };

@@ -36,7 +36,7 @@ struct biased
 		using S_::S_;
 		
 		template <class U=U_bias>
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		bias()
 		noexcept -> auto
 		{

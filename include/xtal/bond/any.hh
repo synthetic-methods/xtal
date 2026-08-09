@@ -75,15 +75,15 @@ struct define
 
 	public:
 		template <class Y=T>
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		self_f(auto &&o)
 		noexcept -> decltype(auto)
 		{
 			return qualify_f<Y>(XTAL_REF_(o));
 		}
-		XTAL_FN1_(go) (template <class Y=T> XTAL_DEF_(return,inline,get) self, self_f<Y>)///<\returns	A reference to `*this` with type `Y=T`.
-		XTAL_FN1_(go) (template <class Y=T> XTAL_DEF_(return,inline,let) twin, self_f<Y>)///<\returns	A copy      of `*this` with type `Y=T`.
-		XTAL_FN1_(go) (                     XTAL_DEF_(return,inline,get) tail, self_f<S>)///<\returns	`this` as the `define`d supertype.
+		XTAL_FN1_(go) (template <class Y=T> XTAL_VAL_(return,inline,get) self, self_f<Y>)///<\returns	A reference to `*this` with type `Y=T`.
+		XTAL_FN1_(go) (template <class Y=T> XTAL_VAL_(return,inline,let) twin, self_f<Y>)///<\returns	A copy      of `*this` with type `Y=T`.
+		XTAL_FN1_(go) (                     XTAL_VAL_(return,inline,get) tail, self_f<S>)///<\returns	`this` as the `define`d supertype.
 
 	};
 	using type = subtype<unit_type>;

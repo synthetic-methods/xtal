@@ -36,14 +36,14 @@ struct mask
 		using S_::self;
 
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(auto &&...oo)
 		noexcept -> signed
 		{
 			return S_::template flux<N_ion>(XTAL_REF_(oo)...);
 		}
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(mark_q auto o, auto &&...oo)
 		noexcept -> signed
 		{

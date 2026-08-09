@@ -30,18 +30,18 @@ template <auto N>
 struct   text_type
 {
 	char           value[N];
-	XTAL_DEF_(set) value_size =  std::integral_constant<std::size_t, N>{};
+	XTAL_VAL_(set) value_size =  std::integral_constant<std::size_t, N>{};
 	XTAL_TYP_(let) value_type = decltype(value);
 	XTAL_TYP_(let)       type = text_type;
 
-	XTAL_DEF_(let)      operator()          () const {return  value ;}
-	XTAL_DEF_(implicit) operator std::string() const {return {value};}
-	XTAL_NEW_(implicit)
+	XTAL_VAL_(let)      operator()          () const {return  value ;}
+	XTAL_VAL_(implicit) operator std::string() const {return {value};}
+	XTAL_VAL_(new,implicit)
 	text_type(const char(&str)[N]) {std::copy_n(str, N, value);}
 
 	template <auto M>
-	XTAL_DEF_(return,inline,met) operator  == (text_type const &s, text_type<M> const &t) noexcept -> bool requires (M != N) and XTAL_TRY_(to) (false)
-	XTAL_DEF_(return,inline,met) operator  == (text_type const &s, text_type    const &t) noexcept -> bool requires              XTAL_TRY_(to) ((std::string) s == (std::string) t)
+	XTAL_VAL_(return,inline,met) operator  == (text_type const &s, text_type<M> const &t) noexcept -> bool requires (M != N) and XTAL_TRY_(to) (false)
+	XTAL_VAL_(return,inline,met) operator  == (text_type const &s, text_type    const &t) noexcept -> bool requires              XTAL_TRY_(to) ((std::string) s == (std::string) t)
 
 };
 
@@ -152,10 +152,10 @@ template <class  X, class F    >	XTAL_TYP_(ask)       automorphism_q	=  same_q<r
 //\
 Valued...
 
-template <auto   N, auto   Z=0 >	XTAL_DEF_(let)               sign_v	=  (0 < N) - (N < 0) + (N == 0)*sign_type{Z};
-template <auto   N             >	XTAL_DEF_(let)             cosign_v	= -sign_v<N&1, -1>;
-template <auto   M, auto   N   >	XTAL_DEF_(let)               skip_v	=  (M < 0)? N: (M <= N) + N;
-template <auto   M, auto   N   >	XTAL_DEF_(let)             modulo_v	=  ((N%M) + M)%M;
+template <auto   N, auto   Z=0 >	XTAL_VAL_(let)               sign_v	=  (0 < N) - (N < 0) + (N == 0)*sign_type{Z};
+template <auto   N             >	XTAL_VAL_(let)             cosign_v	= -sign_v<N&1, -1>;
+template <auto   M, auto   N   >	XTAL_VAL_(let)               skip_v	=  (M < 0)? N: (M <= N) + N;
+template <auto   M, auto   N   >	XTAL_VAL_(let)             modulo_v	=  ((N%M) + M)%M;
 
 template <auto   N=null_type{} >	XTAL_TYP_(new)           constant  	: std::integral_constant<decltype(N), N> {};
 template <auto   N=null_type{} >	XTAL_TYP_(let)           constant_t	=  constant<N>;
@@ -168,7 +168,7 @@ template <class      T         >	XTAL_TYP_(ask)           variable_q	=  not cons
 template <class      T         >	XTAL_TYP_(new)           variable
 {
 	using value_type = T; T value;
-	XTAL_DEF_(implicit) operator value_type() const noexcept {return value;}
+	XTAL_VAL_(implicit) operator value_type() const noexcept {return value;}
 
 };
 template <auto       N         >	XTAL_TYP_(let)  integral_constant_t	=  std::integral_constant<decltype(N), (N)>;
@@ -206,7 +206,7 @@ template <class      T         >	XTAL_TYP_(ask)            simplex_q	=  simplex_
 template <class      T         >	XTAL_TYP_(ask)            numeric_q	=  numeric_variable_q<T> or  numeric_constant_q<T>;
 template <class      T         >	XTAL_TYP_(ask)            instant_q	= integral_q         <T> or          constant_q<T>;
 
-template <class      T         >	XTAL_DEF_(let)  terminal_constant_v	= xtd::bit_cast<T>(~xtd::unsigned_case_t<T>{} >> 1U);
+template <class      T         >	XTAL_VAL_(let)  terminal_constant_v	= xtd::bit_cast<T>(~xtd::unsigned_case_t<T>{} >> 1U);
 template <class      T         >	XTAL_TYP_(let)  terminal_constant_t	=  constant_t<terminal_constant_v<T>>;
 template <class      T         >	XTAL_TYP_(ask)  terminal_constant_q	=  constant_q<T> and same_q<T, terminal_constant_t<decltype(T{}())>>;
 
@@ -224,19 +224,19 @@ struct extense : std::integer_sequence<extent_type, Ns...>
 	using petrotype =  std::array<extent_type, sizeof...(Ns)>;
 	using supertype =  std::integer_sequence<extent_type, Ns...>;
 
-	XTAL_DEF_(return,inline,explicit)
+	XTAL_VAL_(return,inline,explicit)
 	operator auto() const noexcept {return petrotype{Ns...};}
 
-	XTAL_DEF_(return,inline,let)
+	XTAL_VAL_(return,inline,let)
 	operator() ()   const noexcept {return *this;}
 
 	template <extent_type ...Ms>
-	XTAL_DEF_(return,inline,met)
+	XTAL_VAL_(return,inline,met)
 	operator <=> (extense, extense<Ms...>)
 	noexcept -> auto {return sizeof...(Ns) <=> sizeof...(Ms);}
 
 	template <extent_type ...Ms>
-	XTAL_DEF_(return,inline,met)
+	XTAL_VAL_(return,inline,met)
 	operator  == (extense, extense<Ms...>)
 	noexcept -> bool {return sizeof...(Ns) == sizeof...(Ms);}
 
@@ -382,7 +382,7 @@ struct destruct<T> : fixed_shaped<T>
 {
 private:
 	XTAL_TYP_(set) U = typename fixed<T>::value_type;
-	XTAL_DEF_(set) N = fixed<T>::extent();
+	XTAL_VAL_(set) N = fixed<T>::extent();
 
 public:
 	using       type = disqualify_s<T, std::array<U, N>>;
@@ -510,11 +510,11 @@ Arithmetic...
 template <class          T     >	XTAL_TYP_(new)             cedent;
 template <constant_q     T     >	XTAL_TYP_(new)             cedent<T> :             T {}  ;
 template <array_shaped_q T     >	XTAL_TYP_(new)             cedent<T> : constant_t<array_shaped<T>::extent()> {};
-template <class          T     >	XTAL_DEF_(let)             cedent_v	= cedent<T>{}();
-template <class          T     >	XTAL_DEF_(let)          precedent_v	= cedent_v<T> -  1;
-template <class          T     >	XTAL_DEF_(let)          succedent_v	= cedent_v<T> +  1;
-template <class          T     >	XTAL_DEF_(let)        intercedent_v	= cedent_v<T> != 0;
-template <class          T     >	XTAL_DEF_(let)         antecedent_v	= cedent_v<T> == 0;
+template <class          T     >	XTAL_VAL_(let)             cedent_v	= cedent<T>{}();
+template <class          T     >	XTAL_VAL_(let)          precedent_v	= cedent_v<T> -  1;
+template <class          T     >	XTAL_VAL_(let)          succedent_v	= cedent_v<T> +  1;
+template <class          T     >	XTAL_VAL_(let)        intercedent_v	= cedent_v<T> != 0;
+template <class          T     >	XTAL_VAL_(let)         antecedent_v	= cedent_v<T> == 0;
 template <class          T     >	XTAL_TYP_(new)          precedent;
 template <class          T     >	XTAL_TYP_(new)          succedent;
 template <constant_q     T     >	XTAL_TYP_(new)          precedent<T>  	{using type = constant_t<                   precedent_v<T>>;};

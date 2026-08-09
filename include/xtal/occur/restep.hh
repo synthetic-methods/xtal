@@ -40,7 +40,7 @@ struct restep<U>
 
 		using step_type = U;
 
-		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) step, [] (auto &&o, auto &&...oo)
+		XTAL_FN1_(go) (XTAL_VAL_(return,inline,get) step, [] (auto &&o, auto &&...oo)
 		XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
 	};
@@ -52,7 +52,7 @@ struct restep<U>
 template <> struct restep<void> : restep<extent_type> {};
 template <> struct restep<    > : restep<extent_type> {};
 
-XTAL_DEF_(let) restep_f = [] XTAL_1FN_(call) (restep_t<>);
+XTAL_VAL_(let) restep_f = [] XTAL_1FN_(call) (restep_t<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

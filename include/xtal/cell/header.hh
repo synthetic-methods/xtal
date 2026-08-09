@@ -43,23 +43,23 @@ struct beheader
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 		using L_ = typename S_::tail_type;
-		XTAL_DEF_(set) x_ = [] (auto &&o) XTAL_0FN_(to) (XTAL_REF_(o).tail().head());
+		XTAL_VAL_(set) x_ = [] (auto &&o) XTAL_0FN_(to) (XTAL_REF_(o).tail().head());
 
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_FN0_(go) (XTAL_DEF_(return,inline,implicit) operator L_,
+		XTAL_FN0_(go) (XTAL_VAL_(return,inline,implicit) operator L_,
 			[] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).tail()))
 
 	public:// OPERATE
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator << (auto &&u) const
 		noexcept -> auto
 		{
 			return S_::operator<<(XTAL_REF_(u));
 		}
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator << (any_q auto &&u) const
 		noexcept -> auto
 		{
@@ -83,13 +83,13 @@ struct beheader
 	public:
 		using S_::S_;
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator << (auto &&u) const
 		noexcept -> auto
 		{
 			return S_::operator<<(XTAL_REF_(u));
 		}
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator << (any_q auto &&u) const
 		noexcept -> auto
 		{

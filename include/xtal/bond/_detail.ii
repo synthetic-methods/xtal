@@ -16,7 +16,7 @@ using namespace _retail::_detail;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 thunk_f(auto &&o)
 noexcept -> decltype(auto)
 {
@@ -39,10 +39,10 @@ template <class       W >	using      member_t =              typename member<W>:
 \brief
 Constructs/references the provided value.
 */
-template <    class   M >	XTAL_DEF_(return,inline,let)   member_f(auto &&...w) noexcept -> decltype(auto) {return             M (XTAL_REF_(w)...);}
-template <   atomic_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&   w) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(w))   ;}
+template <    class   M >	XTAL_VAL_(return,inline,let)   member_f(auto &&...w) noexcept -> decltype(auto) {return             M (XTAL_REF_(w)...);}
+template <   atomic_q M >	XTAL_VAL_(return,inline,let)   member_f(auto &&   w) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(w))   ;}
 template <dismember_q M >
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 member_f(auto &&w)
 noexcept -> decltype(auto)
 requires xtd::lvalue<decltype(w)>
@@ -56,9 +56,9 @@ requires xtd::lvalue<decltype(w)>
 \brief
 Resolves/dereferences the provided value.
 */
-template <    class   M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m)      ;}
-template <  pointed_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return *XTAL_REF_(m)      ;}
-//mplate <  wrapped_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m).get();}
+template <    class   M >	XTAL_VAL_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m)      ;}
+template <  pointed_q M >	XTAL_VAL_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return *XTAL_REF_(m)      ;}
+//mplate <  wrapped_q M >	XTAL_VAL_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m).get();}
 
 /*!
 \brief
@@ -68,14 +68,14 @@ Resolves/dereferences the provided value.
 The previous value.
 */
 template <member_q W>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 dismember_f(W &m, W w)
 noexcept -> decltype(auto)
 {
 	return std::exchange(m, XTAL_MOV_(w));
 }
 template <member_q W>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 dismember_f(W &m, auto &&...x)
 noexcept -> decltype(auto)
 {
@@ -172,7 +172,7 @@ struct navigate
 		template <class ..._s> using head_t = typename super<T_node, based_t<_s>...>::type::head_type;
 
 		template <class ..._s>
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		self_f(auto &&o, auto &&...oo)
 		noexcept -> decltype(auto)
 		{
@@ -181,7 +181,7 @@ struct navigate
 			XTAL_0IF (some_q<_s...>) {return S::template self_f<self_s<_s...>>(XTAL_REF_(o), XTAL_REF_(oo)...);}
 		}
 		template <class ..._s>
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		head_f(auto &&o, auto &&...oo)
 		noexcept -> decltype(auto)
 		{
@@ -189,8 +189,8 @@ struct navigate
 			XTAL_0IF (none_q<_s...>) {return qualify_f<        S    >(XTAL_REF_(o)).head(XTAL_REF_(oo)...);}
 			XTAL_0IF (some_q<_s...>) {return qualify_f<head_s<_s...>>(XTAL_REF_(o)).head(XTAL_REF_(oo)...);}
 		}
-		XTAL_FN1_(go) (template <class ..._s> requires complete_q<self_s<_s...>> XTAL_DEF_(return,inline,get) self, self_f<_s...>)
-		XTAL_FN1_(go) (template <class ..._s> requires complete_q<head_t<_s...>> XTAL_DEF_(return,inline,get) head, head_f<_s...>)
+		XTAL_FN1_(go) (template <class ..._s> requires complete_q<self_s<_s...>> XTAL_VAL_(return,inline,get) self, self_f<_s...>)
+		XTAL_FN1_(go) (template <class ..._s> requires complete_q<head_t<_s...>> XTAL_VAL_(return,inline,get) head, head_f<_s...>)
 
 	};
 };

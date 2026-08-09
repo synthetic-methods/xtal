@@ -27,7 +27,7 @@ struct subtract
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&x, auto &&y) const
 		noexcept -> auto
 		{
@@ -49,7 +49,7 @@ struct square_root
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&o)
 		const noexcept -> auto
 		{
@@ -71,7 +71,7 @@ struct halve
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&o)
 		const noexcept -> auto
 		{

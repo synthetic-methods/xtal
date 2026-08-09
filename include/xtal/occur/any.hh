@@ -36,8 +36,8 @@ struct define
 	public:
 		using S_::S_;//NOTE: Inherited and respecialized!
 
-		template <constant_q        U> XTAL_NEW_(explicit) subtype(U u) noexcept {assert(0 == u);};
-	//	template <same_q<size_type> U> XTAL_NEW_(explicit) subtype(U u) noexcept {assert(0 == u);};
+		template <constant_q        U> XTAL_VAL_(new,explicit) subtype(U u) noexcept {assert(0 == u);};
+	//	template <same_q<size_type> U> XTAL_VAL_(new,explicit) subtype(U u) noexcept {assert(0 == u);};
 
 		/*!
 		\brief  	Attaches `T` as a member of `this`.
@@ -58,18 +58,18 @@ struct define
 			public:// CONSTRUCT
 			//	using R_::R_;
 
-				XTAL_NEW_(delete) (subtype, noexcept=default)
-				XTAL_NEW_(create) (subtype, noexcept=default)
-				XTAL_NEW_(move)   (subtype, noexcept=default)
-				XTAL_NEW_(copy)   (subtype, noexcept=default)
-				XTAL_NEW_(then)   (subtype, noexcept:subtype)
-			//	XTAL_NEW_(else)   (subtype, noexcept:S_)
+				XTAL_VAL_(delete) (subtype, noexcept=default)
+				XTAL_VAL_(create) (subtype, noexcept=default)
+				XTAL_VAL_(move)   (subtype, noexcept=default)
+				XTAL_VAL_(copy)   (subtype, noexcept=default)
+				XTAL_VAL_(induce) (subtype, noexcept:subtype)
+			//	XTAL_VAL_(reduce) (subtype, noexcept:S_)
 
 				/*!
 				\brief  	Constructs the `attach`ed message using its default,
 				before `forward`ing the arguments to `this`.
 				*/
-				XTAL_NEW_(explicit)
+				XTAL_VAL_(new,explicit)
 				subtype(auto &&...oo)
 				noexcept
 				:	R_{U_{}, XTAL_REF_(oo)...}
@@ -77,14 +77,14 @@ struct define
 
 			public:// ACCESS
 
-				XTAL_FN0_(go) (XTAL_DEF_(return,inline,implicit) operator U_,
+				XTAL_FN0_(go) (XTAL_VAL_(return,inline,implicit) operator U_,
 					[] (auto &&o) XTAL_0FN_(to)
 						(qualify_f<R_>(XTAL_REF_(o)).head()))
 
 			public:// FLOW
 
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				fuse(auto &&o)
 				noexcept -> signed
 				{
@@ -113,7 +113,7 @@ struct define
 				using R_::self;
 
 				template <auto ...Ns>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				method(auto &&...oo)
 				noexcept -> decltype(auto)
 				requires requires (R_       &r_) {
@@ -123,7 +123,7 @@ struct define
 					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template headed<T>());
 				}
 				template <auto ...Ns>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				method(auto &&...oo) const
 				noexcept -> decltype(auto)
 				requires requires (R_ const &r_) {
@@ -161,14 +161,14 @@ struct define
 			
 			public:// FLOW
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 				template <signed N_ion> requires in_v<N_ion, +1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(same_q<T> auto &&t, auto &&...oo)
 				noexcept -> signed
 				{
@@ -207,14 +207,14 @@ struct define
 			public:
 
 				template <class ...Xs>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				deify(constant_q auto ...Ns) const
 				noexcept -> decltype(auto)
 				{
 					return deify(digest<Xs...>::template index<Ns...>::point);
 				}
 				template <class A>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				deify(std::array<A, A_size> const &point) const
 				noexcept -> decltype(auto)
 				{
@@ -283,7 +283,7 @@ struct define
 				using R_::head;
 
 				template <auto ...>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				method() const
 				{
 					return head();

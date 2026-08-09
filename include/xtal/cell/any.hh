@@ -46,22 +46,22 @@ struct define
 		/*!
 		\returns	`true` (when vacant).
 		*/
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator == (subtype const &t) const
 		noexcept -> bool
 		{
 			return true;
 		}
 
-		XTAL_DEF_(return,inline,let) operator << (auto &&t1) const noexcept -> auto {return bond::pack_f(self(), XTAL_REF_(t1));}
-		XTAL_DEF_(return,inline,let) operator >> (auto &&t0) const noexcept -> auto {return bond::pack_f(XTAL_REF_(t0), self());}
+		XTAL_VAL_(return,inline,let) operator << (auto &&t1) const noexcept -> auto {return bond::pack_f(self(), XTAL_REF_(t1));}
+		XTAL_VAL_(return,inline,let) operator >> (auto &&t0) const noexcept -> auto {return bond::pack_f(XTAL_REF_(t0), self());}
 
-		XTAL_DEF_(return,inline,met) operator << (bond::tupack_q auto &&t0, subtype      &&s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_MOV_(s1)));}
-		XTAL_DEF_(return,inline,met) operator << (bond::tupack_q auto &&t0, subtype const &s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_REF_(s1)));}
-		XTAL_DEF_(return,inline,met) operator >> (bond::tupack_q auto &&t1, subtype      &&s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_MOV_(s0)), XTAL_REF_(t1));}
-		XTAL_DEF_(return,inline,met) operator >> (bond::tupack_q auto &&t1, subtype const &s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_REF_(s0)), XTAL_REF_(t1));}
+		XTAL_VAL_(return,inline,met) operator << (bond::tupack_q auto &&t0, subtype      &&s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_MOV_(s1)));}
+		XTAL_VAL_(return,inline,met) operator << (bond::tupack_q auto &&t0, subtype const &s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_REF_(s1)));}
+		XTAL_VAL_(return,inline,met) operator >> (bond::tupack_q auto &&t1, subtype      &&s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_MOV_(s0)), XTAL_REF_(t1));}
+		XTAL_VAL_(return,inline,met) operator >> (bond::tupack_q auto &&t1, subtype const &s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_REF_(s0)), XTAL_REF_(t1));}
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		then(any_q auto &&...oo) const
 		noexcept -> auto
 		{
@@ -117,7 +117,7 @@ struct refine
 	public:
 		using S_::S_;
 
-		XTAL_NEW_(implicit)
+		XTAL_VAL_(new,implicit)
 		subtype(std::initializer_list<U_> u_)
 		noexcept requires make_p<W_, std::initializer_list<U_>>
 		:	S_{W_(u_)}
@@ -156,14 +156,14 @@ struct defer
 		/*!
 		\brief  	Converts `this` to the base-type (explicit).
 		*/
-		XTAL_FN0_(go) (XTAL_DEF_(return,inline,explicit) operator U_,
+		XTAL_FN0_(go) (XTAL_VAL_(return,inline,explicit) operator U_,
 			[] (auto &&o) XTAL_0FN_(to) (XTAL_REF_(o).head()))
 
 		/*!
 		\returns	The `head`-`head`.
 		*/
 		XTAL_FN0_(go) (template <class ..._s>// requires requires {S_::template head<_s...>().      head();}
-		XTAL_DEF_(return,inline,get)
+		XTAL_VAL_(return,inline,get)
 		headed, [] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).
 			template head<_s...>().head()))
 
@@ -171,14 +171,14 @@ struct defer
 		\returns	The `tail`-`head`.
 		*/
 		XTAL_FN0_(go) (template <class ..._s>// requires requires {S_::template self<_s...>().tail().head();}
-		XTAL_DEF_(return,inline,get)
+		XTAL_VAL_(return,inline,get)
 		tailed, [] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).
 			template self<_s...>().tail().head()))
 
 		/*!
 		\returns	`1` if the supplied value matches `self`, `0` otherwise.
 		*/
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		heading(auto &&o) const
 		noexcept -> bool
 		{
@@ -187,7 +187,7 @@ struct defer
 		/*!
 		\returns	`1` if the supplied value matches `head`, `0` otherwise.
 		*/
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		heading(same_q<U_> auto &&o) const
 		noexcept -> bool
 		{
@@ -197,7 +197,7 @@ struct defer
 		/*!
 		\returns	`true` if the supplied body matches `this`, `false` otherwise.
 		*/
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator == (subtype const &t) const
 		noexcept -> bool
 		{
@@ -230,7 +230,7 @@ struct refer : bond::compose<void
 \brief   Forces equality resolution via the member `operator==`.
 */
 template <any_q X, any_q Y> requires same_q<X, Y>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 operator == (X const &x, Y const &y)
 noexcept -> bool
 {

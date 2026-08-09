@@ -39,7 +39,7 @@ struct rewind<U>
 
 		using wind_type = U;
 
-		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) wind, [] (auto &&o, auto &&...oo)
+		XTAL_FN1_(go) (XTAL_VAL_(return,inline,get) wind, [] (auto &&o, auto &&...oo)
 		XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
 	};
@@ -51,7 +51,7 @@ struct rewind<U>
 template <> struct rewind<void> : rewind<signed> {};
 template <> struct rewind<    > : rewind<signed> {};
 
-XTAL_DEF_(let) rewind_f = [] XTAL_1FN_(call) (rewind_t<>);
+XTAL_VAL_(let) rewind_f = [] XTAL_1FN_(call) (rewind_t<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

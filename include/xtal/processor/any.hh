@@ -64,7 +64,7 @@ struct define
 				\brief  	Determines the size of the first chunk to be rendered.
 				\brief  	The current delay if available, otherwise the size of the current block.
 				*/
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				delay()
 				noexcept -> auto
 				{
@@ -78,7 +78,7 @@ struct define
 				\brief  	Forwards the message upstream.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
@@ -89,7 +89,7 @@ struct define
 				\brief  	Invokes the super-method `pump` to handle chunking and event dispatch.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
@@ -107,7 +107,7 @@ struct define
 				\brief  	Renders the subslice of designated by `rev` and `cur`.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(std::in_place_t, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
@@ -183,7 +183,7 @@ struct defer<U>
 		using S_::S_;
 
 		XTAL_FN2_(do) (template <auto ...>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(),
 		noexcept -> auto
 		{
@@ -229,7 +229,7 @@ struct defer<U>
 		\brief  	If `1 <= sizeof...(Ns)`, the returned range is type-erased with `ranges::any_view` (so it can be `vtable`d).
 		*/
 		XTAL_FN2_(do) (template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...xs),
 		noexcept -> auto
 		{
@@ -240,7 +240,7 @@ struct defer<U>
 	private:
 
 		template <auto ...Ns>
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		normalize_f(auto &&y)
 		noexcept -> decltype(auto)
 		{

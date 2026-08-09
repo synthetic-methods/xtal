@@ -19,33 +19,33 @@ template <         class ...Ts>	XTAL_TYP_(ask) seek_q =             (...and seek
 template <         int   ...Ns>	XTAL_TYP_(let) seek_in_t = std::integer_sequence<int, Ns...>  ;///<\brief Defines                        `std::integer_sequence<int, Ns...>`.
 
 
-XTAL_DEF_(let) forward_seek_f = []<int ...Ns> (seek_in_t<Ns...>)
+XTAL_VAL_(let) forward_seek_f = []<int ...Ns> (seek_in_t<Ns...>)
 XTAL_0FN_(to) (seek_in_t<(Ns)...>{});
 ///<\brief   Reproduces `std::integer_sequence<int, Ns...>` from left-to-right.
 
-XTAL_DEF_(let) reverse_seek_f = []<int ...Ns> (seek_in_t<Ns...>)
+XTAL_VAL_(let) reverse_seek_f = []<int ...Ns> (seek_in_t<Ns...>)
 XTAL_0FN_(to) (seek_in_t<(sizeof...(Ns) - 1 - Ns)...>{});
 ///<\brief   Reproduces `std::integer_sequence<int, Ns...>` from right-to-left.
 
 
-XTAL_DEF_(let) forward_seek_in_f = []<constant_q ...Ns> (Ns...)
+XTAL_VAL_(let) forward_seek_in_f = []<constant_q ...Ns> (Ns...)
 XTAL_0FN_(to) (forward_seek_f(seek_in_t<(Ns{})...>{}));
 ///<\brief   Produces `std::integer_sequence<int, Ns...>` from left-to-right.
 
-XTAL_DEF_(let) reverse_seek_in_f = []<constant_q ...Ns> (Ns...)
+XTAL_VAL_(let) reverse_seek_in_f = []<constant_q ...Ns> (Ns...)
 XTAL_0FN_(to) (reverse_seek_f(seek_in_t<(Ns{})...>{}));
 ///<\brief   Produces `std::integer_sequence<int, Ns...>` from right-to-left.
 
 
-XTAL_DEF_(let) forward_seek_to_f = []<constant_q N_count> (N_count)
+XTAL_VAL_(let) forward_seek_to_f = []<constant_q N_count> (N_count)
 XTAL_0FN_(to) (forward_seek_f(std::make_integer_sequence<int, N_count{}>{}));
 ///<\brief   Generates `std::make_integer_sequence<int, N_count>` from lowest-to-highest.
 
-XTAL_DEF_(let) reverse_seek_to_f = []<constant_q N_count> (N_count)
+XTAL_VAL_(let) reverse_seek_to_f = []<constant_q N_count> (N_count)
 XTAL_0FN_(to) (reverse_seek_f(std::make_integer_sequence<int, N_count{}>{}));
 ///<\brief   Generates `std::make_integer_sequence<int, N_count>` from highest-to-lowest.
 
-XTAL_DEF_(let) seek_to_f = []<constant_q N_counter> (N_counter)
+XTAL_VAL_(let) seek_to_f = []<constant_q N_counter> (N_counter)
 XTAL_0FN -> decltype(auto) {
 	XTAL_IF0
 	XTAL_0IF (N_counter{} == 0) {return         seek_in_t           <            >{} ;}
@@ -65,9 +65,9 @@ template <         class ...Ts>  XTAL_TYP_(new) seek_front           {using type
 template <class T, class ...Ts>  XTAL_TYP_(new) seek_front<T, Ts...> {using type = T   ;};
 #endif
 template <         class ...Ts>  XTAL_TYP_(let) seek_front_t = typename seek_front  <           Ts ...>::type; ///<\brief Produces the first  type within `Ts...`.
-template <         auto  ...Ns>  XTAL_DEF_(let) seek_front_v =          seek_front_t<constant_t<Ns>...>{}();   ///<\brief Produces the first value within `Ns...`.
+template <         auto  ...Ns>  XTAL_VAL_(let) seek_front_v =          seek_front_t<constant_t<Ns>...>{}();   ///<\brief Produces the first value within `Ns...`.
 
-XTAL_DEF_(let) seek_front_f = []<class ...Ts> (Ts &&...ts)
+XTAL_VAL_(let) seek_front_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN_(to) (get<0>(std::tuple<Ts...>{XTAL_REF_(ts)...}));
 ///<\brief   Produces the first argument of `ts...`.
 
@@ -77,9 +77,9 @@ template <class T             >  XTAL_TYP_(new) seek_back <T       >       {usin
 template <class T, class ...Ts>  XTAL_TYP_(new) seek_back <T, Ts...>  : seek_back <Ts...> {};
 #endif
 template <         class ...Ts>  XTAL_TYP_(let) seek_back_t = typename seek_back <Ts...>::type;            ///<\brief Produces the  last  type within `Ts...`.
-template <         auto  ...Ns>  XTAL_DEF_(let) seek_back_v =          seek_back_t<constant_t<Ns>...>{}(); ///<\brief Produces the  last value within `Ns...`.
+template <         auto  ...Ns>  XTAL_VAL_(let) seek_back_v =          seek_back_t<constant_t<Ns>...>{}(); ///<\brief Produces the  last value within `Ns...`.
 
-XTAL_DEF_(let) seek_back_f = []<class ...Ts> (Ts &&...ts)
+XTAL_VAL_(let) seek_back_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN_(to) (get<sizeof...(Ts) - 1>(std::tuple<Ts...>{XTAL_REF_(ts)...}));
 ///<\brief   Produces the  last argument of `ts...`.
 
@@ -92,9 +92,9 @@ template <auto F, auto N0, auto N1, auto ...Ns> requires (F(N0, N1)) XTAL_TYP_(n
 template <auto F, auto N0, auto N1, auto ...Ns>                      XTAL_TYP_(new) seek_extremum<F, N0, N1, Ns...> : seek_extremum<F, N1, Ns...> {};
 #endif
 
-template <auto F, auto ...Ns> XTAL_DEF_(let) seek_extremum_v = seek_extremum<F, Ns...>{}();                                      ///<\brief Produces the lattice-join w.r.t. the binary-function `F`.
-template <        auto ...Ns>	XTAL_DEF_(let) seek_minimum_v  = seek_extremum_v<[] (auto i, auto j) XTAL_0FN_(to) (i < j), Ns...>;///<\brief Produces the lower-most element in `Ns...`.
-template <        auto ...Ns>	XTAL_DEF_(let) seek_maximum_v  = seek_extremum_v<[] (auto i, auto j) XTAL_0FN_(to) (i > j), Ns...>;///<\brief Produces the upper-most element in `Ns...`.
+template <auto F, auto ...Ns> XTAL_VAL_(let) seek_extremum_v = seek_extremum<F, Ns...>{}();                                      ///<\brief Produces the lattice-join w.r.t. the binary-function `F`.
+template <        auto ...Ns>	XTAL_VAL_(let) seek_minimum_v  = seek_extremum_v<[] (auto i, auto j) XTAL_0FN_(to) (i < j), Ns...>;///<\brief Produces the lower-most element in `Ns...`.
+template <        auto ...Ns>	XTAL_VAL_(let) seek_maximum_v  = seek_extremum_v<[] (auto i, auto j) XTAL_0FN_(to) (i > j), Ns...>;///<\brief Produces the upper-most element in `Ns...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ template <constant_q T, class ...Ts>  XTAL_TYP_(new) seek_constant<T, Ts...>    
 template <class T,      class ...Ts>  XTAL_TYP_(new) seek_constant<T, Ts...> :  seek_constant<Ts...>    {};
 #endif
 template <              class ...Ts>  XTAL_TYP_(let) seek_constant_t = typename seek_constant<Ts...>::type; ///<\brief Produces the `constant_q`  type within `Ts...`.
-template <              class ...Ts>  XTAL_DEF_(let) seek_constant_v = seek_constant_t<Ts...>{}();          ///<\brief Produces the `constant_q` value within `Ts...`.
+template <              class ...Ts>  XTAL_VAL_(let) seek_constant_v = seek_constant_t<Ts...>{}();          ///<\brief Produces the `constant_q` value within `Ts...`.
 template <              class ...Ts>  XTAL_TYP_(ask) seek_constant_q = complete_q<seek_constant_t<Ts...>>;  ///<\brief Determines whether a `constant_q` exists within `Ts...`.
 
 
@@ -117,14 +117,14 @@ template <int  I, bool ...Ns>	XTAL_TYP_(new) seek_truth<I,  true, Ns...> : const
 template <int  I, bool ...Ns>	XTAL_TYP_(new) seek_truth<I, false, Ns...> : seek_truth<1 + I, Ns...> {};
 #endif
 
-template <        bool ...Ns>	XTAL_DEF_(let) seek_truth_v = seek_truth<0, Ns...>{}();
+template <        bool ...Ns>	XTAL_VAL_(let) seek_truth_v = seek_truth<0, Ns...>{}();
 ///<\brief   Produces the index of `true` within `Ns...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto T, auto ...Ts>
-XTAL_DEF_(let) seek_index_v = seek_truth_v<(T == Ts)...>;
+XTAL_VAL_(let) seek_index_v = seek_truth_v<(T == Ts)...>;
 ///<\brief   Produces the index of `T` within `Ts...`.
 
 #ifndef XTAL_DOC
@@ -142,12 +142,12 @@ struct seek_index
 	{
 	public:// CONSTRUCT
 	//	using supertype::supertype;
-		XTAL_NEW_(delete) (type, noexcept=default)
-//		XTAL_NEW_(create) (type, noexcept=default)
-		XTAL_NEW_(move)   (type, noexcept=default)
-		XTAL_NEW_(copy)   (type, noexcept=default)
+		XTAL_VAL_(delete) (type, noexcept=default)
+//		XTAL_VAL_(create) (type, noexcept=default)
+		XTAL_VAL_(move)   (type, noexcept=default)
+		XTAL_VAL_(copy)   (type, noexcept=default)
 
-		XTAL_NEW_(implicit)
+		XTAL_VAL_(new,implicit)
 		type()
 		noexcept
 		:	supertype{[]<auto ...I> (bond::seek_in_t<I...>)
@@ -157,7 +157,7 @@ struct seek_index
 
 	public:// OPERATE
 		template <integral_q I>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator[](I i) const
 		noexcept -> decltype(auto)
 		{
@@ -189,12 +189,12 @@ struct seek_value
 	class       type : public supertype
 	{
 	public:// CONSTRUCT
-		XTAL_NEW_(delete) (type, noexcept=default)
-//		XTAL_NEW_(create) (type, noexcept=default)
-		XTAL_NEW_(move)   (type, noexcept=default)
-		XTAL_NEW_(copy)   (type, noexcept=default)
+		XTAL_VAL_(delete) (type, noexcept=default)
+//		XTAL_VAL_(create) (type, noexcept=default)
+		XTAL_VAL_(move)   (type, noexcept=default)
+		XTAL_VAL_(copy)   (type, noexcept=default)
 
-		XTAL_NEW_(implicit)
+		XTAL_VAL_(new,implicit)
 		type()
 		noexcept
 		:	supertype{[]<auto ...I> (bond::seek_in_t<I...>)
@@ -216,7 +216,7 @@ using    seek_value_t = typename seek_value<Ns...>::type;
 
 template        <int I= terminal_constant_v<int>, int ...Ns>
 requires      same_v<I, terminal_constant_v<int>>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 seek_expose_f(seek_in_t<Ns...>)
 noexcept -> decltype(auto)
 {
@@ -226,7 +226,7 @@ noexcept -> decltype(auto)
 }
 template        <int I= terminal_constant_v<int>, int ...Ns>
 requires different_v<I, terminal_constant_v<int>>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 seek_expose_f(seek_in_t<Ns...>)
 noexcept -> decltype(auto)
 {
@@ -237,7 +237,7 @@ noexcept -> decltype(auto)
 ///<\returns The `integer_sequence` as a `{tuple,pair}` of constants, or the constant at index `I` if supplied.
 ///<\note    May eventually be `fixed` and replaced by `repack`.
 template <class N_, int I=terminal_constant_v<int>> XTAL_TYP_(let) seek_expose_t = XTAL_ALL_(seek_expose_f<I>(N_{}));
-template <class N_, int I=terminal_constant_v<int>> XTAL_DEF_(let) seek_expose_v = seek_expose_t<N_, I>{};
+template <class N_, int I=terminal_constant_v<int>> XTAL_VAL_(let) seek_expose_v = seek_expose_t<N_, I>{};
 
 
 template <template <auto ...> class T_>
@@ -260,13 +260,13 @@ seek_impose
 ////////////////////////////////////////////////////////////////////////////////
 
 template <integral_q auto ...Ns>
-XTAL_DEF_(let) seek_in_e = [] (auto const &f)
+XTAL_VAL_(let) seek_in_e = [] (auto const &f)
 XTAL_0FN_(to) ([&] <int ...I>(seek_in_t<I...>)
 	XTAL_0FN_(to) (..., f(constant_t<I>{})) (seek_in_t<Ns...> {}));
 ///<\brief   Invokes the function `f` with each index `Ns...`.
 
 template <int N_counter=0, int N_onset=0>
-XTAL_DEF_(let) seek_to_e = [] (auto const &f)
+XTAL_VAL_(let) seek_to_e = [] (auto const &f)
 XTAL_0FN_(to) ([&] <int ...I>(seek_in_t<I...>)
 	XTAL_0FN_(to) (..., f(constant_t<I + N_onset>{})) (seek_to_t<N_counter> {}));
 ///<\brief   Invokes the function `f` with each index from `N_onset` to `N_onset + N_count`.

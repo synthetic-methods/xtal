@@ -30,7 +30,7 @@ template <           >	struct  assign<> : cell::header<bond::tag<assign_s>> {};
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(let) assign_f = []<class ...Us> (Us &&...us)
+XTAL_VAL_(let) assign_f = []<class ...Us> (Us &&...us)
 XTAL_0FN_(to) (assign_s<based_t<Us>...>(XTAL_REF_(us)...));
 
 template <class U, class T>

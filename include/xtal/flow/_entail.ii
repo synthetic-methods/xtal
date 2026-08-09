@@ -23,7 +23,7 @@ template <class ...Ts>	struct    packed;
 template <class ...Ts>	using     packed_t =  typename packed<Ts...>::type;///<\brief Produces the `type` for `packed<Ts...>`.
 template <class ...Ts>	concept   packed_q = bond::tag_inner_p<packed, Ts...>;///<\brief Determines whether `Ts...` were decorated by `packed`.
 
-XTAL_DEF_(let) packed_f = []<class ...Ts> (Ts &&...ts)
+XTAL_VAL_(let) packed_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN_(to) (packed_t<Ts...>(static_cast<Ts &&> (ts)...));
 
 template <class ...Ts>
@@ -41,7 +41,7 @@ struct   packed
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator, (auto &&w) const
 		noexcept -> auto
 		{
@@ -54,14 +54,14 @@ struct   packed
 			}
 		}
 		template <class U> requires un_v<packed_q<U>>
-		XTAL_DEF_(return,inline,met)
+		XTAL_VAL_(return,inline,met)
 		operator, (U &&u, subtype      &&s)
 		noexcept -> auto
 		{
 			return (packed_f(XTAL_REF_(u)), XTAL_MOV_(s).self());
 		}
 		template <class U> requires un_v<packed_q<U>>
-		XTAL_DEF_(return,inline,met)
+		XTAL_VAL_(return,inline,met)
 		operator, (U &&u, subtype const &s)
 		noexcept -> auto
 		{
@@ -91,7 +91,7 @@ template <any_q    T >	struct  packet<T> : metaconstant_t<T> {};
 #endif
 template <class ...Ts>	using   packet_t = typename packet<Ts...>::type;///<\brief Produces the `type` for `packet<Ts...>`.
 
-XTAL_DEF_(let) packet_f = []<class ...Ts> (Ts &&...ts)
+XTAL_VAL_(let) packet_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN_(to) (packet_t<Ts...>(static_cast<Ts &&> (ts)...));
 
 /*!
@@ -119,11 +119,11 @@ template <                  >	struct  let<     > {using type =  inferred_t< >;};
 template <       class ...Ts>	using   let_t = typename let<Ts...>::type;
 ///<\brief Produces the `type` for `let<Ts...>`.
 /*/
-XTAL_DEF_(let) let_f = []<class ...Ts> (Ts &&...ts)
+XTAL_VAL_(let) let_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN_(to) (let_t<Ts...>(static_cast<Ts &&> (ts)...));
 /*/
 template <class ...Ts>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 let_f(Ts &&...ts)
 noexcept -> decltype(auto)
 {

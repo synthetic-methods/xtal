@@ -33,7 +33,7 @@ template <typename ...Qs>	concept polymer_body_q = bond::tag_inner_p<polymer, Qs
 \brief   Creates a `polymer` by lifting the given function/`process`, and attaching `As...`.
 */
 template <typename ...As>
-XTAL_DEF_(let) polymer_f = []<class U> (U &&u)
+XTAL_VAL_(let) polymer_f = []<class U> (U &&u)
 XTAL_0FN_(to) (polymer_t<based_t<U>, As...>(XTAL_REF_(u)));
 
 
@@ -105,14 +105,14 @@ public:
 
 			public:// CONSTRUCT
 			//	using R_::R_;
-				XTAL_NEW_(delete) (subtype, noexcept=default)
-				XTAL_NEW_(create) (subtype, noexcept=default)
-				XTAL_NEW_(move)   (subtype, noexcept=default)
-				XTAL_NEW_(copy)   (subtype, noexcept=default)
-				XTAL_NEW_(then)   (subtype, noexcept:subtype)
-			//	XTAL_NEW_(else)   (subtype, noexcept:S_)
+				XTAL_VAL_(delete) (subtype, noexcept=default)
+				XTAL_VAL_(create) (subtype, noexcept=default)
+				XTAL_VAL_(move)   (subtype, noexcept=default)
+				XTAL_VAL_(copy)   (subtype, noexcept=default)
+				XTAL_VAL_(induce) (subtype, noexcept:subtype)
+			//	XTAL_VAL_(reduce) (subtype, noexcept:S_)
 
-				XTAL_NEW_(explicit)
+				XTAL_VAL_(new,explicit)
 				subtype(same_q<Xs> auto &&...xs)
 				noexcept
 				:	u_ensemble{
@@ -127,10 +127,10 @@ public:
 				using R_::self;
 				using R_::head;
 
-				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)     lead(), u_ensemble.peek(-1))
-				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) ensemble(), u_ensemble)
-				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) ensemble(integral_q auto i), u_ensemble[i])
-				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) ensemble(occur::stage_q auto &&o)
+				XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)     lead(), u_ensemble.peek(-1))
+				XTAL_FN2_(to) (XTAL_VAL_(return,inline,get) ensemble(), u_ensemble)
+				XTAL_FN2_(to) (XTAL_VAL_(return,inline,get) ensemble(integral_q auto i), u_ensemble[i])
+				XTAL_FN2_(to) (XTAL_VAL_(return,inline,get) ensemble(occur::stage_q auto &&o)
 				,	u_ensemble
 				|	xtd::ranges::views::filter([o=XTAL_REF_(o)] (auto &&e)
 						XTAL_0FN_(to) (0 != XTAL_REF_(e).influx(o)))
@@ -141,7 +141,7 @@ public:
 				\brief  	Forwards the message upstream.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
@@ -153,7 +153,7 @@ public:
 				governing the allocation/deallocation of keyed instances.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(flow::key_q auto io, auto &&...oo)
 				noexcept -> signed
 				{
@@ -163,7 +163,7 @@ public:
 				\brief  	Forwards the message to the associated voice.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(U_key i_, auto &&...oo)
 				noexcept -> signed
 				{
@@ -186,7 +186,7 @@ public:
 				the new instance is duplicated from `lead`.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,let)
+				XTAL_VAL_(return,let)
 				flux(U_key k_, U_stage o, auto &&...oo)
 				noexcept -> signed
 				{
@@ -213,7 +213,7 @@ public:
 				Variadic expansion can be achieved by prefixing the render-tuple with `key_s`.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,let)
+				XTAL_VAL_(return,let)
 				flux(std::in_place_t, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
@@ -247,7 +247,7 @@ public:
 				\brief  	The `lead` is included when `N_ion == 1` in order to maintain state continuity.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,let)
+				XTAL_VAL_(return,let)
 				flux_rest(auto &&...oo)
 				noexcept -> signed
 				{

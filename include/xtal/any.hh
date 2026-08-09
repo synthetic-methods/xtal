@@ -20,17 +20,17 @@ namespace xtal
 
 
 template <auto f>
-XTAL_DEF_(return,inline,let) objective_f(auto &&...) noexcept -> auto;///< Mapping    for expression-templates.
-XTAL_DEF_(return,inline,let) operative_f(auto &&   ) noexcept -> auto;///< Resolution for expression-templates.
+XTAL_VAL_(return,inline,let) objective_f(auto &&...) noexcept -> auto;///< Mapping    for expression-templates.
+XTAL_VAL_(return,inline,let) operative_f(auto &&   ) noexcept -> auto;///< Resolution for expression-templates.
 
 template <auto f>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 operative_f(auto &&...xs)
 noexcept -> auto
 {
 	return f(XTAL_REF_(xs)...);
 }
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 objective_f(auto &&o)
 noexcept -> auto
 {
@@ -61,12 +61,12 @@ template <class ...Ts> using  surjective_t = common_t<XTAL_ALL_(surjective_f(XTA
 An instance of the given template applied to either `Xs...` or `common_t<Xs...>`.
 */
 template <template <class ...> class F, class ...Xs>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 construxion_f(Xs &&...xs)
 noexcept -> auto;
 
 template <template <class ...> class F, class ...Xs>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 construxion_f(Xs &&...xs)
 noexcept -> auto
 {
@@ -81,19 +81,19 @@ noexcept -> auto
 An instance of `std::complex` applied to `common_t<Xs...>`.
 */
 template <class ...Xs>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 complexion_f(Xs &&...xs)
 noexcept -> auto;
 
 template <class ...Xs>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 complexion_f(Xs &&...xs)
 noexcept -> auto
 {
 	return construxion_f<std::complex>(XTAL_REF_(xs)...);
 }
 template <class X>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 complexion_f(X &&x)
 noexcept -> auto
 {

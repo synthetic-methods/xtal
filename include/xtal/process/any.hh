@@ -76,7 +76,7 @@ struct define
 		         (respectively bound by `digest<Xs...>` and `method(auto &&xs...)`).
 		*/
 		template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		digress(auto &&...xs)
 		noexcept -> decltype(auto)
 			requires  none_v<Ns...> and requires (T       &t) {t.         method       (XTAL_REF_(xs)...);}
@@ -87,7 +87,7 @@ struct define
 			XTAL_0IF (some_v<Ns...>)               {return self().template method<Ns...>(XTAL_REF_(xs)...);}
 		}
 		template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		digress(auto &&...xs) const
 		noexcept -> decltype(auto)
 			requires  none_v<Ns...> and requires (T const &t) {t.         method       (XTAL_REF_(xs)...);}
@@ -101,7 +101,7 @@ struct define
 		/*!
 		\returns	The provided pointer.
 		*/
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		deify(auto const &point) const
 		noexcept -> decltype(auto)
 		{
@@ -111,7 +111,7 @@ struct define
 		\returns	A pointer to the digested `method` indexed by the given constants.
 		*/
 		template <class ...Xs>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		deify(constant_q auto ...Ns) const
 		noexcept -> decltype(auto)
 		{
@@ -125,7 +125,7 @@ struct define
 		\returns	The lambda abstraction of `operator()`.
 		*/
 		XTAL_FN2_(do) (template <class ...Xs>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		reify(constant_q auto ...is),
 		noexcept -> decltype(auto)
 		{
@@ -141,7 +141,7 @@ struct define
 		\returns	The result of applying `method`, with `dispatch`ed parameters resolved.
 		*/
 		XTAL_FN2_(do) (template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator() (auto &&...xs),
 		noexcept -> decltype(auto)
 		{
@@ -178,12 +178,12 @@ struct define
 				/*!
 				\brief  	Initialize `arguments` using those supplied.
 				*/
-				XTAL_NEW_(explicit)
+				XTAL_VAL_(new,explicit)
 				subtype(Xs &&...xs)
 				noexcept
 				:	subtype{T{}, XTAL_REF_(xs)...}
 				{}
-				XTAL_NEW_(explicit)
+				XTAL_VAL_(new,explicit)
 				subtype(fungible_q<S_> auto &&t, Xs &&...xs)
 				noexcept
 				:	R_(XTAL_REF_(t), XTAL_REF_(xs)...)
@@ -194,7 +194,7 @@ struct define
 
 				using process_type = T;
 
-				XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) process, [] (auto &&o, auto &&...oo)
+				XTAL_FN1_(go) (XTAL_VAL_(return,inline,get) process, [] (auto &&o, auto &&...oo)
 				XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
 			public:// OPERATE
@@ -203,7 +203,7 @@ struct define
 				\brief  	Evaluates the lifted `method` using the bound arguments.
 				*/
 				XTAL_FN2_(do) (template <auto ...Ns>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				method(auto &&...xs),
 				noexcept -> decltype(auto)
 				{
@@ -248,19 +248,19 @@ struct refine
 		template <class ...Xs>
 		using    bind_x = bind_t<bond::transpack_t<Xs>...>;
 
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		bind_f(auto &&...xs)
 		noexcept -> auto
 		{
 			return bind_t<decltype(xs)...>{XTAL_REF_(xs)...};
 		}
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		bind_f(same_q<T> auto &&t, auto &&...xs)
 		noexcept -> auto
 		{
 			return bind_t<decltype(xs)...>{XTAL_REF_(t), XTAL_REF_(xs)...};
 		}
-		XTAL_FN1_(go) (template <class ...Xs> XTAL_DEF_(return,inline,get) bind, bind_f)
+		XTAL_FN1_(go) (template <class ...Xs> XTAL_VAL_(return,inline,get) bind, bind_f)
 
 	};
 };
@@ -294,7 +294,7 @@ struct defer
 		\brief  	Resolves `head` as either a value or function.
 		*/
 		XTAL_FN2_(do) (template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...xs),
 		noexcept -> decltype(auto)
 		{

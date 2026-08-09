@@ -204,8 +204,8 @@ struct define
    template <class S>
    class subtype
    {
-      XTAL_DEF_(return,inline,let) self() const noexcept -> decltype(auto) {return static_cast<T const &>(*this);}
-      XTAL_DEF_(return,inline,let) self()       noexcept -> decltype(auto) {return static_cast<T       &>(*this);}
+      XTAL_VAL_(return,inline,let) self() const noexcept -> decltype(auto) {return static_cast<T const &>(*this);}
+      XTAL_VAL_(return,inline,let) self()       noexcept -> decltype(auto) {return static_cast<T       &>(*this);}
 
    // [[nodiscard]] __attribute__((always_inline)) constexpr auto self()...
    // [[nodiscard]] __attribute__((always_inline)) constexpr auto self()...

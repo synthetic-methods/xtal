@@ -18,7 +18,7 @@ template <class ...Us>	struct  differential;
 template <class ...Us>	using   differential_t = typename differential<Us...>::type;
 template <class ...Us>	concept differential_q = bond::tag_inner_fixed_p<differential_t, Us...>;
 
-XTAL_DEF_(let) differential_f = [] XTAL_1FN_(call) (_detail::factory<differential_t>::make);
+XTAL_VAL_(let) differential_f = [] XTAL_1FN_(call) (_detail::factory<differential_t>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,14 +51,14 @@ struct differential
 		using typename S_::scale_type;
 
 		template <intercedent_q K, quantity_multiplies_q U>
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		homotype(U &&u, K)
  		noexcept
 		:	S_{XTAL_REF_(u), [=]<auto ...I> (bond::seek_in_t<I...>)
 				XTAL_0FN_(to) ((I, u) *...* (u)) (bond::seek_to_t<K::value - 1>{})}
  		{}
 		template <intercedent_q K, class                  U>
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		homotype(U &&u, K)
  		noexcept
 		:	S_{XTAL_REF_(u), [=]<auto ...I> (bond::seek_in_t<I...>)
@@ -73,17 +73,17 @@ struct differential
 	
 	public:// OPERATE
 		
-		XTAL_DEF_(inline,let) operator++(int)
+		XTAL_VAL_(inline,let) operator++(int)
 		noexcept -> auto {auto t = twin(); operator++(); return t;}
 		
-		XTAL_DEF_(inline,let) operator--(int)
+		XTAL_VAL_(inline,let) operator--(int)
 		noexcept -> auto {auto t = twin(); operator--(); return t;}
 
 		/*!
 		\brief  	Produces the successor by pairwise addition from `begin()` to `end()`,
 		assuming the entries of `this` are finite differences/derivatives.
 		*/
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator ++ ()
 		noexcept -> T &
 		{
@@ -103,7 +103,7 @@ struct differential
 		\brief  	Produces the predecessor by pairwise subtraction from `end()` to `begin()`,
 		assuming the entries of `this` are finite differences/derivatives.
 		*/
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator -- ()
 		noexcept -> T &
 		{

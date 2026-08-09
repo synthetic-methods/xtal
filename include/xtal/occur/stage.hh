@@ -62,9 +62,9 @@ struct stage
 				static_assert(cell::any_q<R>);
 				using R_ = bond::compose_s<R>;
 				
-				XTAL_DEF_(set) K_size = 4;
-				XTAL_DEF_(set) K_mask = K_size  - 1;
-				XTAL_DEF_(set) K_fill = K_size >> 1;
+				XTAL_VAL_(set) K_size = 4;
+				XTAL_VAL_(set) K_mask = K_size  - 1;
+				XTAL_VAL_(set) K_fill = K_size >> 1;
 
 				using U_value =  U;
 				using U_table = std::array<U, K_size>;
@@ -74,14 +74,14 @@ struct stage
 				using R_::R_;
 
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(same_q<T_> auto &&s, auto &&...oo)
 				noexcept -> signed
 				{
@@ -90,7 +90,7 @@ struct stage
 					return R_::       template flux<N_ion>(XTAL_REF_(s), XTAL_REF_(oo)...);
 				}
 				template <signed N_ion> requires in_v<N_ion, +1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(same_q<flow::assign_s<T_>> auto &&t, same_q<U_value> auto &&o, auto &&...oo)
 				noexcept -> signed
 				{
@@ -110,7 +110,7 @@ struct stage
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(let) stage_f = [] (auto &&o)
+XTAL_VAL_(let) stage_f = [] (auto &&o)
 XTAL_0FN {
 	if constexpr (stage_q<decltype(o)>)
 		{return XTAL_REF_(o);} else {return stage_t<>{XTAL_REF_(o)};}

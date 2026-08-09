@@ -54,7 +54,7 @@ struct slicer
 				E_spool u_spool{bond::seek_in_t<>{}
 				,	std::numeric_limits<delay_type>::max()
 				};
-				XTAL_DEF_(return,inline,get)
+				XTAL_VAL_(return,inline,get)
 				next()
 				noexcept
 				{
@@ -69,7 +69,7 @@ struct slicer
 				\brief Forwards the message upstream.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				fuse(auto &&o)
 				noexcept -> signed
 				{
@@ -82,7 +82,7 @@ struct slicer
 				\returns `0` if enqueued, otherwise the forwarded result.
 				*/
 				template <signed N_ion>// requires in_v<N_ion, +1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				fuse(same_q<event_type> auto &&q)
 				noexcept -> signed
 				{
@@ -97,7 +97,7 @@ struct slicer
 				/*!
 				\returns The delay until the next event to be processed.
 				*/
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				delay()
 				noexcept -> delay_type
 				{
@@ -107,7 +107,7 @@ struct slicer
 				\brief   Brings forward any future events at the end of the render cycle.
 				\returns The size of the render cycle.
 				*/
-				XTAL_DEF_(mutate,inline,let)
+				XTAL_VAL_(mutate,inline,let)
 				belay()
 				noexcept -> delay_type
 				{
@@ -121,7 +121,7 @@ struct slicer
 				\brief   Dispatches all events up-to the supplied delay `<= i`.
 				\returns The delay until the next event.
 				*/
-				XTAL_DEF_(mutate,inline,let)
+				XTAL_VAL_(mutate,inline,let)
 				relay(delay_type i)
 				noexcept -> delay_type
 				{

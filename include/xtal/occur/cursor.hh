@@ -67,31 +67,31 @@ struct cursor<T>
 		using value_type = V_;
 
 	public:// OPERATE
-		XTAL_DEF_(return,inline,let)        skip(V_step i) const noexcept -> auto   {auto o = twin(); (void) o.step(i + self().step()); return o;} ///<\returns `twin` with `step` adjusted by `i`.
-		XTAL_DEF_(return,inline,let)        null(V_step i) const noexcept -> auto   {auto o = null(); (void) o.step(i                ); return o;} ///<\returns the adjacent block of `size=0` with `step=i`.
-		XTAL_DEF_(return,inline,let)        null(        ) const noexcept -> auto   {return twin().operator+=(0);}                                 ///<\returns the adjacent block of `size=0`.
+		XTAL_VAL_(return,inline,let)        skip(V_step i) const noexcept -> auto   {auto o = twin(); (void) o.step(i + self().step()); return o;} ///<\returns `twin` with `step` adjusted by `i`.
+		XTAL_VAL_(return,inline,let)        null(V_step i) const noexcept -> auto   {auto o = null(); (void) o.step(i                ); return o;} ///<\returns the adjacent block of `size=0` with `step=i`.
+		XTAL_VAL_(return,inline,let)        null(        ) const noexcept -> auto   {return twin().operator+=(0);}                                 ///<\returns the adjacent block of `size=0`.
 
-		XTAL_DEF_(return,inline,let)        next(V_step i) const noexcept -> auto   {return self().operator* (i);}                ///<\returns the following `i`th block with the same `size`.
-		XTAL_DEF_(return,inline,let)        next(        ) const noexcept -> auto   {return twin().operator++( );}                ///<\returns the following       block with the same `size`.
+		XTAL_VAL_(return,inline,let)        next(V_step i) const noexcept -> auto   {return self().operator* (i);}                ///<\returns the following `i`th block with the same `size`.
+		XTAL_VAL_(return,inline,let)        next(        ) const noexcept -> auto   {return twin().operator++( );}                ///<\returns the following       block with the same `size`.
 
-		XTAL_DEF_(return,inline,let) operator + (V_size n) const noexcept -> auto   {return twin().operator+=(n);}                ///<\returns the following adjacent block of size `n`.
-		XTAL_DEF_(return,inline,let) operator - (V_size n) const noexcept -> auto   {return twin().operator-=(n);}                ///<\returns the preceding adjacent block of size `n`.
+		XTAL_VAL_(return,inline,let) operator + (V_size n) const noexcept -> auto   {return twin().operator+=(n);}                ///<\returns the following adjacent block of size `n`.
+		XTAL_VAL_(return,inline,let) operator - (V_size n) const noexcept -> auto   {return twin().operator-=(n);}                ///<\returns the preceding adjacent block of size `n`.
 
-		XTAL_DEF_(return,inline,let) operator * (V_step i) const noexcept -> auto   {return twin().operator*=(i);}                ///<\returns the following `i`th block with the same `size`.
-		XTAL_DEF_(return,inline,let) operator / (V_step i) const noexcept -> auto   {return twin().operator/=(i);}                ///<\returns the preceding `i`th block with the same `size`.
+		XTAL_VAL_(return,inline,let) operator * (V_step i) const noexcept -> auto   {return twin().operator*=(i);}                ///<\returns the following `i`th block with the same `size`.
+		XTAL_VAL_(return,inline,let) operator / (V_step i) const noexcept -> auto   {return twin().operator/=(i);}                ///<\returns the preceding `i`th block with the same `size`.
 
-		XTAL_DEF_(mutate,inline,let) operator ++(   )        noexcept -> auto & {return self().operator+=(count_f(self()));}      ///<\returns `self()` after   advancing one step while retaining `size`.
-		XTAL_DEF_(mutate,inline,let) operator --(   )        noexcept -> auto & {return self().operator-=(count_f(self()));}      ///<\returns `self()` after  retreating one step while retaining `size`.
+		XTAL_VAL_(mutate,inline,let) operator ++(   )        noexcept -> auto & {return self().operator+=(count_f(self()));}      ///<\returns `self()` after   advancing one step while retaining `size`.
+		XTAL_VAL_(mutate,inline,let) operator --(   )        noexcept -> auto & {return self().operator-=(count_f(self()));}      ///<\returns `self()` after  retreating one step while retaining `size`.
 		
-		XTAL_DEF_(mutate,inline,let) operator ++(int)        noexcept -> auto   {return _detail::thunk_f(twin()) (operator++());} ///<\returns `twin()` before  advancing one step while retaining `size`.
-		XTAL_DEF_(mutate,inline,let) operator --(int)        noexcept -> auto   {return _detail::thunk_f(twin()) (operator--());} ///<\returns `twin()` before retreating one step while retaining `size`.
+		XTAL_VAL_(mutate,inline,let) operator ++(int)        noexcept -> auto   {return _detail::thunk_f(twin()) (operator++());} ///<\returns `twin()` before  advancing one step while retaining `size`.
+		XTAL_VAL_(mutate,inline,let) operator --(int)        noexcept -> auto   {return _detail::thunk_f(twin()) (operator--());} ///<\returns `twin()` before retreating one step while retaining `size`.
 
-		XTAL_DEF_(return,inline,let) operator >=(subtype const &t) const noexcept -> bool {return self().operator>(t.self()) or self().operator==(t.self());} ///<\returns `true` if the LHS immediately follows  the RHS.
-		XTAL_DEF_(return,inline,let) operator <=(subtype const &t) const noexcept -> bool {return self().operator<(t.self()) or self().operator==(t.self());} ///<\returns `true` if the LHS immediately precedes the RHS.
+		XTAL_VAL_(return,inline,let) operator >=(subtype const &t) const noexcept -> bool {return self().operator>(t.self()) or self().operator==(t.self());} ///<\returns `true` if the LHS immediately follows  the RHS.
+		XTAL_VAL_(return,inline,let) operator <=(subtype const &t) const noexcept -> bool {return self().operator<(t.self()) or self().operator==(t.self());} ///<\returns `true` if the LHS immediately precedes the RHS.
 
 	public:// FLOW
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(auto &&o)
 		noexcept -> signed
 		{
@@ -103,7 +103,7 @@ struct cursor<T>
 		\brief  	Unrecognized `cursor_q` are incorporated by arithmetic assigment.
 		*/
 		template <signed N_ion> requires in_v<N_ion, -1>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(cursor_q auto &&t)
 		noexcept -> signed
 		{
@@ -118,7 +118,7 @@ struct cursor<T>
 			}
 		}
 		template <signed N_ion> requires in_v<N_ion, +1>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(cursor_q auto &&t)
 		noexcept -> signed
 		{
@@ -160,23 +160,23 @@ struct cursor<V>
 
 	public:// CONSTRUCT
 	//	using S_::S_;
-		XTAL_NEW_(delete) (subtype, noexcept=default)
-	//	XTAL_NEW_(create) (subtype, noexcept=default)
-		XTAL_NEW_(move)   (subtype, noexcept=default)
-		XTAL_NEW_(copy)   (subtype, noexcept=default)
-		XTAL_NEW_(then)   (subtype, noexcept:subtype)
-		XTAL_NEW_(else)   (subtype, noexcept:S_)
+		XTAL_VAL_(delete) (subtype, noexcept=default)
+	//	XTAL_VAL_(create) (subtype, noexcept=default)
+		XTAL_VAL_(move)   (subtype, noexcept=default)
+		XTAL_VAL_(copy)   (subtype, noexcept=default)
+		XTAL_VAL_(induce) (subtype, noexcept:subtype)
+		XTAL_VAL_(reduce) (subtype, noexcept:S_)
 
-		XTAL_NEW_(implicit) subtype()
+		XTAL_VAL_(new,implicit) subtype()
 		noexcept
 		:	S_(0, 0)
 		{}
-		XTAL_NEW_(explicit) subtype(iterated_q auto &&o, auto &&...oo)
+		XTAL_VAL_(new,explicit) subtype(iterated_q auto &&o, auto &&...oo)
 		noexcept
 		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{}
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		subview(auto &&w) const
 		noexcept -> auto
 		{
@@ -187,14 +187,14 @@ struct cursor<V>
 		using S_::self;
 		using S_::twin;
 
-		XTAL_DEF_(inline,let) operator *=(V_step i) noexcept -> auto & {S_::step() += i; return self();}                                   ///<\returns `self()` after  advancing `i` steps of the current `size`.
-		XTAL_DEF_(inline,let) operator /=(V_step i) noexcept -> auto & {S_::step() -= i; return self();}                                   ///<\returns `self()` after retreating `i` steps of the current `size`.
+		XTAL_VAL_(inline,let) operator *=(V_step i) noexcept -> auto & {S_::step() += i; return self();}                                   ///<\returns `self()` after  advancing `i` steps of the current `size`.
+		XTAL_VAL_(inline,let) operator /=(V_step i) noexcept -> auto & {S_::step() -= i; return self();}                                   ///<\returns `self()` after retreating `i` steps of the current `size`.
 
-		XTAL_DEF_(inline,let) operator +=(V_size n) noexcept -> auto & {S_::step() += S_::size() != 0; (void) S_::size(n); return self();} ///<\returns `self()` after  advancing one step of size `n`.
-		XTAL_DEF_(inline,let) operator -=(V_size n) noexcept -> auto & {S_::step() -=          n != 0; (void) S_::size(n); return self();} ///<\returns `self()` after retreating one step of size `n`.
+		XTAL_VAL_(inline,let) operator +=(V_size n) noexcept -> auto & {S_::step() += S_::size() != 0; (void) S_::size(n); return self();} ///<\returns `self()` after  advancing one step of size `n`.
+		XTAL_VAL_(inline,let) operator -=(V_size n) noexcept -> auto & {S_::step() -=          n != 0; (void) S_::size(n); return self();} ///<\returns `self()` after retreating one step of size `n`.
 
-		XTAL_DEF_(return,inline,let) operator < (subtype const &t) const noexcept -> bool {return S_::next().step() == t.step();}          ///<\returns `true` iff the LHS strictly precedes the RHS.
-		XTAL_DEF_(return,inline,let) operator > (subtype const &t) const noexcept -> bool {return S_::step() == t.next().step();}          ///<\returns `true` iff the LHS strictly follows  the RHS.
+		XTAL_VAL_(return,inline,let) operator < (subtype const &t) const noexcept -> bool {return S_::next().step() == t.step();}          ///<\returns `true` iff the LHS strictly precedes the RHS.
+		XTAL_VAL_(return,inline,let) operator > (subtype const &t) const noexcept -> bool {return S_::step() == t.next().step();}          ///<\returns `true` iff the LHS strictly follows  the RHS.
 
 	};
 };
@@ -223,21 +223,21 @@ public:
 	public:// CONSTRUCT
 		using S_::S_;
 		
-		XTAL_NEW_(implicit) subtype(U u, V v)
+		XTAL_VAL_(new,implicit) subtype(U u, V v)
 		noexcept
 		:	S_(u, v)
 		{}
 		template <make_q<V> W>
-		XTAL_NEW_(implicit) subtype(W w)
+		XTAL_VAL_(new,implicit) subtype(W w)
 		noexcept
 		:	subtype(U(0, w), 0)
 		{}
-		XTAL_NEW_(implicit) subtype()
+		XTAL_VAL_(new,implicit) subtype()
 		noexcept
 		:	subtype(U(0, 0), 0)
 		{}
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		subview(auto &&w) const
 		noexcept -> typename S_::self_type
 		{
@@ -248,7 +248,7 @@ public:
 		using S_::self;
 		using S_::twin;
 
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator *=(V_step i)
 		noexcept -> auto &
 		{
@@ -262,7 +262,7 @@ public:
 		}
 		///<\brief Advances `i` steps while retaining `size`.
 
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator /=(V_step i)
 		noexcept -> auto &
 		{
@@ -276,7 +276,7 @@ public:
 		}
 		///<\brief Retreats `i` steps while retaining `size`.
 
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator +=(V_size n)
 		noexcept -> auto &
 		{
@@ -289,7 +289,7 @@ public:
 		}
 		///<\brief Advances `1` step of size `n`.
 
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator -=(V_size n)
 		noexcept -> auto &
 		{
@@ -302,8 +302,8 @@ public:
 		}
 		///<\brief Retreats `1` step of size `n`.
 
-		XTAL_DEF_(return,inline,let) operator > (subtype const &t) const noexcept -> bool {return S_::begin() == t.  end();}///<\returns `true` iff the LHS strictly precedes the RHS.
-		XTAL_DEF_(return,inline,let) operator < (subtype const &t) const noexcept -> bool {return S_::  end() == t.begin();}///<\returns `true` iff the LHS strictly follows  the RHS.
+		XTAL_VAL_(return,inline,let) operator > (subtype const &t) const noexcept -> bool {return S_::begin() == t.  end();}///<\returns `true` iff the LHS strictly precedes the RHS.
+		XTAL_VAL_(return,inline,let) operator < (subtype const &t) const noexcept -> bool {return S_::  end() == t.begin();}///<\returns `true` iff the LHS strictly follows  the RHS.
 
 	};
 };
@@ -312,7 +312,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 template <cursor_q X, cursor_q Y> requires different_q<X, Y>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 operator == (X const &x, Y const &y)
 noexcept -> bool
 {
@@ -327,7 +327,7 @@ noexcept -> bool
 template <class W=counter_t<>>
 using cursor_t = confined_t<cursor<W>>;
 
-XTAL_DEF_(let) cursor_f = [] XTAL_1FN_(call) (cursor_t<>);
+XTAL_VAL_(let) cursor_f = [] XTAL_1FN_(call) (cursor_t<>);
 
 static_assert(cursor_q<cursor_t<counter_t<>>>);
 static_assert(cursor_q<cursor_t<counted_t<>>>);

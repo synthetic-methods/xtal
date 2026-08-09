@@ -28,26 +28,26 @@ XTAL_TYP_(let)   std::   make_move_iterator;
 XTAL_TYP_(let) ::ranges::          any_view;
 XTAL_TYP_(let) ::ranges::    get_categories;
 
-XTAL_DEF_(let) accumulate   = [] XTAL_1FN_(call) (fold_left);
+XTAL_VAL_(let) accumulate   = [] XTAL_1FN_(call) (fold_left);
 }
 namespace ranges::views
 {
-XTAL_DEF_(let) zip          = [] XTAL_1FN_(call) (zip_view);
+XTAL_VAL_(let) zip          = [] XTAL_1FN_(call) (zip_view);
 //\
-XTAL_DEF_(let) zip_with     = [] XTAL_1FN_(call) (zip_transform);
-XTAL_DEF_(let) zip_with     = [] XTAL_1FN_(call) (::ranges::views::zip_with);
+XTAL_VAL_(let) zip_with     = [] XTAL_1FN_(call) (zip_transform);
+XTAL_VAL_(let) zip_with     = [] XTAL_1FN_(call) (::ranges::views::zip_with);
 //\
-XTAL_DEF_(let) generate     = [] XTAL_1FN_(call) (::std::generator);
-XTAL_DEF_(let) generate     = [] XTAL_1FN_(call) (::ranges::views::generate);
-XTAL_DEF_(let) drop_exactly = [] XTAL_1FN_(call) (drop);
-XTAL_DEF_(let) take_exactly = [] XTAL_1FN_(call) (take);
+XTAL_VAL_(let) generate     = [] XTAL_1FN_(call) (::std::generator);
+XTAL_VAL_(let) generate     = [] XTAL_1FN_(call) (::ranges::views::generate);
+XTAL_VAL_(let) drop_exactly = [] XTAL_1FN_(call) (drop);
+XTAL_VAL_(let) take_exactly = [] XTAL_1FN_(call) (take);
 }
 #endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 sqr(auto const &o)
 noexcept -> auto
 {
@@ -55,7 +55,7 @@ noexcept -> auto
 }
 
 template <class T>
-XTAL_DEF_(let)
+XTAL_VAL_(let)
 bit_cast = [] (auto s)
 XTAL_0FN_(to) (__builtin_bit_cast(T, s));// `constexpr`!
 
@@ -139,7 +139,7 @@ template <class U, auto     N  >	XTAL_TYP_(new)         intent       <U(&)[N]>: 
 
 template <class T, unsigned N=0>	XTAL_TYP_(new)         extent                :  extent<remove_extent_t<T>, N - 1> {};
 template <class T              >	XTAL_TYP_(new)         extent       <T,   0U>:  intent<T> {};
-template <class T, unsigned N=0>	XTAL_DEF_(let)         extent_v              =  extent<T, N>::value;
+template <class T, unsigned N=0>	XTAL_VAL_(let)         extent_v              =  extent<T, N>::value;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -234,7 +234,7 @@ template <                     >	XTAL_TYP_(new) unsigned_case<XTAL_STD_flt_4> : 
 template <class T              >	XTAL_TYP_(let) unsigned_case_t               = typename     unsigned_case<XTAL_NOM_(T)>::type;
 
 template <class T=void>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 signed_cast(auto const f)
 noexcept -> auto
 {
@@ -251,7 +251,7 @@ noexcept -> auto
 	}
 }
 template <class T=void>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 unsigned_cast(auto const f)
 noexcept -> auto
 {
@@ -292,11 +292,11 @@ public:
 	template <U N_shift, U N_depth, U N_range=U{1} << N_depth>
 	struct field_type
 	{
-		XTAL_DEF_(set) shift = N_shift;
-		XTAL_DEF_(set) depth = N_depth;
-		XTAL_DEF_(set) range = N_range;
-		XTAL_DEF_(set) mark  = range - U{1};
-		XTAL_DEF_(set) mask  = mark << shift;
+		XTAL_VAL_(set) shift = N_shift;
+		XTAL_VAL_(set) depth = N_depth;
+		XTAL_VAL_(set) range = N_range;
+		XTAL_VAL_(set) mark  = range - U{1};
+		XTAL_VAL_(set) mask  = mark << shift;
 
 	};
 	static constexpr field_type<0          , Nm       > mantissa{};
@@ -308,15 +308,15 @@ public:
 	U exponent_part : Nx = Nx;
 	U     sign_part : Nz = Nz;
 
-	XTAL_DEF_(let) operator() ()
+	XTAL_VAL_(let) operator() ()
 	const noexcept {return bit_cast<T>(*this);}
 
-	XTAL_NEW_(explicit)
+	XTAL_VAL_(new,explicit)
 	bit_flop(T o)
 	noexcept(false)
 	:	bit_flop{bit_cast<U>(XTAL_MOV_(o))}
 	{}
-	XTAL_NEW_(explicit)
+	XTAL_VAL_(new,explicit)
 	bit_flop(U o)
 	noexcept(false)
 	:	mantissa_part{o&mantissa.mask >> mantissa.shift}
@@ -324,10 +324,10 @@ public:
 	,	    sign_part{o&    sign.mask >>     sign.shift}
 	{/*this = bit_cast<W>(XTAL_REF_(o))*/}
 
-	XTAL_NEW_(delete) (bit_flop, noexcept=default)
-	XTAL_NEW_(create) (bit_flop, noexcept=default)
-	XTAL_NEW_(move)   (bit_flop, noexcept=default)
-	XTAL_NEW_(copy)   (bit_flop, noexcept=default)
+	XTAL_VAL_(delete) (bit_flop, noexcept=default)
+	XTAL_VAL_(create) (bit_flop, noexcept=default)
+	XTAL_VAL_(move)   (bit_flop, noexcept=default)
+	XTAL_VAL_(copy)   (bit_flop, noexcept=default)
 
 };
 template <std::integral T, int Nm, int Nx, int Nz> requires same_size_as<XTAL_STD_flt_2, T>
@@ -337,7 +337,7 @@ template <std::integral T, int Nm, int Nx, int Nz> requires same_size_as<XTAL_ST
 struct         bit_flop<T,     Nm,     Nx,     Nz> :         bit_flop   <XTAL_STD_flt_3, Nm, Nx, Nz> {};
 
 
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 bit_floss(auto &&v)
 noexcept -> decltype(auto)
 {
@@ -353,7 +353,7 @@ noexcept -> decltype(auto)
          but guaranteed to preserve type.
 */
 template <std::floating_point T, class S>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 XTAL_NYM_(copysign) (T const t, S const s)
 noexcept -> T
 {
@@ -375,14 +375,14 @@ noexcept -> T
 		return bit_cast<T>(XTAL_MOV_(t_)|XTAL_MOV_(s_));
 	}
 };
-XTAL_DEF_(let) copysign = [] XTAL_1FN_(call) (XTAL_NYM_(copysign));
+XTAL_VAL_(let) copysign = [] XTAL_1FN_(call) (XTAL_NYM_(copysign));
 static_assert(same_type_as<float, XTAL_ALL_(copysign(1.F, 1.F))>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <std::floating_point F>
-XTAL_DEF_(return,inline,set)
+XTAL_VAL_(return,inline,set)
 ldexp(F f, signed_case_t<F> x)
 noexcept -> auto
 {
@@ -410,7 +410,7 @@ struct plus_multiplies;
 template <>
 struct plus_multiplies<void>
 {
-	XTAL_DEF_(return,inline,let)
+	XTAL_VAL_(return,inline,let)
 	operator() (auto &&w, auto &&x, auto &&y) const
 	noexcept -> XTAL_ALL_(w + x*y)
 	{
@@ -440,7 +440,7 @@ struct plus_multiplies<void>
 		}
 	}
 	template <class V>
-	XTAL_DEF_(return,inline,let)
+	XTAL_VAL_(return,inline,let)
 	operator() (V const &w, std::complex<V> const &x, V const &y) const
 	noexcept -> std::complex<V>
 	{
@@ -452,7 +452,7 @@ struct plus_multiplies<void>
 		};}
 	}
 	template <class V>
-	XTAL_DEF_(return,inline,let)
+	XTAL_VAL_(return,inline,let)
 	operator() (V const &w, V const &x, std::complex<V> const &y) const
 	noexcept -> std::complex<V>
 	{
@@ -465,7 +465,7 @@ struct plus_multiplies<void>
 	}
 
 	template <class V>
-	XTAL_DEF_(return,inline,let)
+	XTAL_VAL_(return,inline,let)
 	operator() (std::complex<V> const &w, V const &x, V const &y) const
 	noexcept -> std::complex<V>
 	{
@@ -477,7 +477,7 @@ struct plus_multiplies<void>
 		};}
 	}
 
-	XTAL_DEF_(return,inline,let)
+	XTAL_VAL_(return,inline,let)
 	operator() (auto &&w, auto &&x, auto &&y, auto &&...ys) const
 	noexcept -> auto
 	requires (1 <= sizeof...(ys))
@@ -490,7 +490,7 @@ template <class T>
 struct plus_multiplies
 {
 	template <class W, class ...Xs>
-	XTAL_DEF_(return,inline,let)
+	XTAL_VAL_(return,inline,let)
 	operator() (W &&w, Xs &&...xs) const
 	noexcept -> auto
 	{
@@ -513,7 +513,7 @@ private:
 	using U = XTAL_NOM_(T);
 
 public:
-	XTAL_DEF_(return,inline,let)
+	XTAL_VAL_(return,inline,let)
 	operator() (auto &&u) const
 	noexcept -> auto
 	requires std::same_as<U, void> or std::same_as<U, XTAL_ALL_(u)>
@@ -529,7 +529,7 @@ private:
 	using U = XTAL_NOM_(T);
 
 public:
-	XTAL_DEF_(return,inline,let)
+	XTAL_VAL_(return,inline,let)
 	operator() (auto &&u) const
 	noexcept -> auto
 	requires std::same_as<U, void> or std::same_as<U, XTAL_ALL_(u)>

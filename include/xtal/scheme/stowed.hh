@@ -38,37 +38,37 @@ struct stowed<U_state, U_store>
 	//	using S_::S_;
 		using S_::self;
 		
-		XTAL_NEW_(delete) (subtype, noexcept=default)
-//		XTAL_NEW_(create) (subtype, noexcept=default)
-		XTAL_NEW_(move)   (subtype, noexcept=default)
-		XTAL_NEW_(copy)   (subtype, noexcept=default)
-		XTAL_NEW_(then)   (subtype, noexcept:subtype)
-	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
+		XTAL_VAL_(delete) (subtype, noexcept=default)
+//		XTAL_VAL_(create) (subtype, noexcept=default)
+		XTAL_VAL_(move)   (subtype, noexcept=default)
+		XTAL_VAL_(copy)   (subtype, noexcept=default)
+		XTAL_VAL_(induce) (subtype, noexcept:subtype)
+	//	XTAL_VAL_(reduce) (subtype, noexcept:S_)
 	
-		XTAL_NEW_(implicit)
+		XTAL_VAL_(new,implicit)
 		subtype()
 		noexcept
 		:	subtype{U_store()}
 		{}
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		subtype(auto &&...oo)
 		noexcept
 		:	subtype{U_store(), XTAL_REF_(oo)...}
 		{}
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		subtype(U_store o, auto &&...oo)
 		noexcept
 		:	S_{U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...}
 		{}
 
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		store(U_store o, auto &&...oo)
 		noexcept -> void
 		{
 			self(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) store(), S_::template head<constant_t<1>>())
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) state(auto &&...oo), S_::template head<constant_t<0>>(XTAL_REF_(oo)...))
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,get) store(), S_::template head<constant_t<1>>())
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,get) state(auto &&...oo), S_::template head<constant_t<0>>(XTAL_REF_(oo)...))
 
 	};
 };

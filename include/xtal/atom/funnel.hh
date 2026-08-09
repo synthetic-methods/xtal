@@ -58,7 +58,7 @@ struct funnel<A>
 		\note   	The final element is placed after `end()`,
 		         facilitating lookahead.
 		*/
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		homotype(          bond::seek_in_t<>, auto &&...oo)
 		noexcept(false)
 		:	u_buffer{                       U_value{XTAL_REF_(oo)}...}
@@ -69,28 +69,28 @@ struct funnel<A>
 		\note   	The initial and final elements are respectively placed before `begin()` and after `end()`,
 		         facilitating both lookbehind and lookahead.
 		*/
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		homotype(auto &&o, bond::seek_in_t<>, auto &&...oo)
 		noexcept(false)
 		:	u_buffer{U_value{XTAL_REF_(o)}, U_value{XTAL_REF_(oo)}...}
 		,	u_begin(1), u_end(0 < sizeof...(oo))
 		{}
 
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)   end(U_count n=0), std::prev(u_buffer.end  (), n + u_end  ))
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) begin(U_count n=0), std::next(u_buffer.begin(), n + u_begin))
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  peek(U_count n=0), *begin(n))
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  span(U_count n, U_count m), std::span(begin(n), end(m)))
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  span(U_count n), span(n, n))
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  span(         ), span(0, 0))
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)   end(U_count n=0), std::prev(u_buffer.end  (), n + u_end  ))
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,get) begin(U_count n=0), std::next(u_buffer.begin(), n + u_begin))
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)  peek(U_count n=0), *begin(n))
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)  span(U_count n, U_count m), std::span(begin(n), end(m)))
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)  span(U_count n), span(n, n))
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)  span(         ), span(0, 0))
 
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		advance(U_count n=1)
 		noexcept -> U_point
 		{
 			u_begin += n;
 			return begin();
 		}
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		abandon(U_count n=1)
 		noexcept -> U_point
 		{
@@ -100,28 +100,28 @@ struct funnel<A>
 			}
 			return begin();
 		}
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		free()
 		noexcept -> void
 		{
 			u_buffer.erase(u_buffer.begin(), end());
 		}
 
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		free(auto &&f)
 		noexcept -> void
 		{
 			u_buffer.erase(std::remove_if(begin(), end(), XTAL_REF_(f)), end());
 		}
 		template <auto  f>
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		free()
 		noexcept -> void
 		{
 			u_buffer.erase(std::remove_if(begin(), end(),           f ), end());
 		}
 		template <class F>
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		free()
 		noexcept -> void
 		{
@@ -132,7 +132,7 @@ struct funnel<A>
 		\note   	Cost can be amortized by invoking `advance` and `abandon` separately,
 		allowing for branchless `advance`ment.
 		*/
-		XTAL_DEF_(let)
+		XTAL_VAL_(let)
 		pop(U_point i)
 		noexcept -> void
 		{
@@ -141,20 +141,20 @@ struct funnel<A>
 			u_buffer.erase(i);
 			abandon(begin() == end());
 		}
-		XTAL_DEF_(let)
+		XTAL_VAL_(let)
 		pop()
 		noexcept -> void
 		{
 			advance();
 			abandon(begin() == end());
 		}
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		scan(auto &&w)
 		noexcept -> U_point
 		{
 			return std::lower_bound(begin(), u_buffer.end(), XTAL_REF_(w));
 		}
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		scan(auto &&w, auto &&f)
 		noexcept -> U_point
 		{
@@ -165,7 +165,7 @@ struct funnel<A>
 		/*!
 		\note   	Conflicting entries w.r.t. `==` are overwritten.
 		*/
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		push(same_q<U_value> auto &&u)
 		noexcept -> U_point
 		{
@@ -177,20 +177,20 @@ struct funnel<A>
 				return poke(v_, XTAL_REF_(u));
 			}
 		}
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		push(auto &&..._s)
 		noexcept -> U_point
 		{
 			return push(U_value(XTAL_REF_(_s)...));
 		}
 
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		poke(U_point v_, same_q<U_value> auto &&u)
 		noexcept -> U_point
 		{
 			return u_buffer.insert(v_, XTAL_REF_(u));
 		}
-		XTAL_DEF_(mutate,inline,let)
+		XTAL_VAL_(mutate,inline,let)
 		poke(U_point v_, auto &&..._s)
 		noexcept -> U_point
 		{

@@ -62,7 +62,7 @@ struct word
 		\brief  	Base constructor, expects `0`.
 		*/
 		template <integral_q A>
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		subtype(A &&a)
 		noexcept
 		{

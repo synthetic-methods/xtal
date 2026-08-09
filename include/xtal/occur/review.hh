@@ -18,7 +18,7 @@ template <class ..._s> concept  review_q = bond::tag_inner_p<review, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(let) review_f = []<class ...Us> (Us &&...us)
+XTAL_VAL_(let) review_f = []<class ...Us> (Us &&...us)
 XTAL_0FN_(to) (review_t<based_t<Us>...>(XTAL_REF_(us)...));
 
 
@@ -40,10 +40,10 @@ struct review<W>
 		using S_::self;
 		using S_::head;
 		
-		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) view, [] (auto &&o, auto &&...oo)
+		XTAL_FN1_(go) (XTAL_VAL_(return,inline,get) view, [] (auto &&o, auto &&...oo)
 		XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)
 		subview(auto &&...oo),
 		review_f(S_::subhead(XTAL_REF_(oo)...)))
 

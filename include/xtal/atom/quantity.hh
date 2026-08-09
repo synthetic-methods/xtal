@@ -78,27 +78,27 @@ public:
 		using S_::operator+; using S_::operator+=;
 		using S_::operator-; using S_::operator-=;
 
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w * self()  ;}
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::mul2_(w);}
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(return,inline,get) operator / (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::div2_(w);}
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(mutate,inline,get) operator *=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::mul1_(w);}
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(mutate,inline,get) operator /=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::div1_(w);}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w * self()  ;}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::mul2_(w);}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(return,inline,get) operator / (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::div2_(w);}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(mutate,inline,get) operator *=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::mul1_(w);}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(mutate,inline,get) operator /=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::div1_(w);}
 
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w + self()  ;}
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::add2_(w);}
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
-		template <quantity_plus_multiplies_q W> XTAL_DEF_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w + self()  ;}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::add2_(w);}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
+		template <quantity_plus_multiplies_q W> XTAL_VAL_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
 
-		XTAL_DEF_(return,inline,get)    operator + () const noexcept {return twin();}
-	//	XTAL_DEF_(return,inline,get)    operator + () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (+x)>(self());}
-		XTAL_DEF_(return,inline,get)    operator - () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (-x)>(self());}
+		XTAL_VAL_(return,inline,get)    operator + () const noexcept {return twin();}
+	//	XTAL_VAL_(return,inline,get)    operator + () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (+x)>(self());}
+		XTAL_VAL_(return,inline,get)    operator - () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (-x)>(self());}
 
-		XTAL_DEF_(mutate,inline,get)    operator *=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s *= T(w); return s;}
-		XTAL_DEF_(mutate,inline,get)    operator /=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s /= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get)    operator *=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s *= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get)    operator /=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s /= T(w); return s;}
 
-		XTAL_DEF_(mutate,inline,get)    operator +=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s += T(w); return s;}
-		XTAL_DEF_(mutate,inline,get)    operator -=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s -= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get)    operator +=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s += T(w); return s;}
+		XTAL_VAL_(mutate,inline,get)    operator -=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s -= T(w); return s;}
 
 	};
 	using type = bond::derive_t<homotype>;
@@ -141,14 +141,14 @@ public:
 
 	public:// CONSTRUCT
 	//	using S_::S_;
-		XTAL_NEW_(delete) (homotype, noexcept=default)
-		XTAL_NEW_(create) (homotype, noexcept=default)
-		XTAL_NEW_(move)   (homotype, noexcept=default)
-		XTAL_NEW_(copy)   (homotype, noexcept=default)
-		XTAL_NEW_(then)   (homotype, noexcept:homotype)
-		XTAL_NEW_(else)   (homotype, noexcept:S_)
+		XTAL_VAL_(delete) (homotype, noexcept=default)
+		XTAL_VAL_(create) (homotype, noexcept=default)
+		XTAL_VAL_(move)   (homotype, noexcept=default)
+		XTAL_VAL_(copy)   (homotype, noexcept=default)
+		XTAL_VAL_(induce) (homotype, noexcept:homotype)
+		XTAL_VAL_(reduce) (homotype, noexcept:S_)
 
-		XTAL_NEW_(implicit)
+		XTAL_VAL_(new,implicit)
 		homotype()
 		noexcept
 		requires un_v<0, size> and same_q<Us...>
@@ -159,7 +159,7 @@ public:
 		\brief  	Constructs the constant `quantity` using the `std::initializer_list` provided.
 		If `1 == w.size()`, the provided value is repeated.
 		*/
-		XTAL_NEW_(implicit)
+		XTAL_VAL_(new,implicit)
 		homotype(std::initializer_list<U_> xs)
 		noexcept
 		requires un_v<0, size> and same_q<Us...>
@@ -175,19 +175,19 @@ public:
 		using S_::operator*; using S_::operator*=;
 		using S_::operator/; using S_::operator/=;
 
-		template <quantity_multiplies_q W> XTAL_DEF_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w * self()  ;}
-		template <quantity_multiplies_q W> XTAL_DEF_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::mul2_(w);}
-		template <quantity_multiplies_q W> XTAL_DEF_(return,inline,get) operator / (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::div2_(w);}
-		template <quantity_multiplies_q W> XTAL_DEF_(mutate,inline,get) operator *=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::mul1_(w);}
-		template <quantity_multiplies_q W> XTAL_DEF_(mutate,inline,get) operator /=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::div1_(w);}
+		template <quantity_multiplies_q W> XTAL_VAL_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w * self()  ;}
+		template <quantity_multiplies_q W> XTAL_VAL_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::mul2_(w);}
+		template <quantity_multiplies_q W> XTAL_VAL_(return,inline,get) operator / (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::div2_(w);}
+		template <quantity_multiplies_q W> XTAL_VAL_(mutate,inline,get) operator *=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::mul1_(w);}
+		template <quantity_multiplies_q W> XTAL_VAL_(mutate,inline,get) operator /=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::div1_(w);}
 
-		XTAL_DEF_(mutate,inline,get) operator *=(std::initializer_list<U_> w)                         noexcept requires same_q<Us...> {auto &s = self(); s *= T(w); return s;}
-		XTAL_DEF_(mutate,inline,get) operator /=(std::initializer_list<U_> w)                         noexcept requires same_q<Us...> {auto &s = self(); s /= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get) operator *=(std::initializer_list<U_> w)                         noexcept requires same_q<Us...> {auto &s = self(); s *= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get) operator /=(std::initializer_list<U_> w)                         noexcept requires same_q<Us...> {auto &s = self(); s /= T(w); return s;}
 
 		/*!
 		\returns	The reduction of `self` w.r.t. multiplication.
 		*/
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		crush() const
 		noexcept -> auto
 		{
@@ -237,19 +237,19 @@ public:
 		using S_::operator+; using S_::operator+=;
 		using S_::operator-; using S_::operator-=;
 
-		template <quantity_plus_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w + self()  ;}
-		template <quantity_plus_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::add2_(w);}
-		template <quantity_plus_q W> XTAL_DEF_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
-		template <quantity_plus_q W> XTAL_DEF_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
-		template <quantity_plus_q W> XTAL_DEF_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
+		template <quantity_plus_q W> XTAL_VAL_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w + self()  ;}
+		template <quantity_plus_q W> XTAL_VAL_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::add2_(w);}
+		template <quantity_plus_q W> XTAL_VAL_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
+		template <quantity_plus_q W> XTAL_VAL_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
+		template <quantity_plus_q W> XTAL_VAL_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
 
-		XTAL_DEF_(mutate,inline,get) operator +=(std::initializer_list<U_> w)                   noexcept requires same_q<Us...> {auto &s = self(); s += T(w); return s;}
-		XTAL_DEF_(mutate,inline,get) operator -=(std::initializer_list<U_> w)                   noexcept requires same_q<Us...> {auto &s = self(); s -= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get) operator +=(std::initializer_list<U_> w)                   noexcept requires same_q<Us...> {auto &s = self(); s += T(w); return s;}
+		XTAL_VAL_(mutate,inline,get) operator -=(std::initializer_list<U_> w)                   noexcept requires same_q<Us...> {auto &s = self(); s -= T(w); return s;}
 
 		/*!
 		\returns	The reduction of `self` w.r.t. addition.
 		*/
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		crush() const
 		noexcept -> auto
 		{
@@ -264,9 +264,9 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(let) quantity_plus_multiplies_f = [] XTAL_1FN_(call) (_detail::factory<quantity_plus_multiplies_t >::make);
-XTAL_DEF_(let) quantity_multiplies_f      = [] XTAL_1FN_(call) (_detail::factory<quantity_multiplies_t      >::make);
-XTAL_DEF_(let) quantity_plus_f            = [] XTAL_1FN_(call) (_detail::factory<quantity_plus_t            >::make);
+XTAL_VAL_(let) quantity_plus_multiplies_f = [] XTAL_1FN_(call) (_detail::factory<quantity_plus_multiplies_t >::make);
+XTAL_VAL_(let) quantity_multiplies_f      = [] XTAL_1FN_(call) (_detail::factory<quantity_multiplies_t      >::make);
+XTAL_VAL_(let) quantity_plus_f            = [] XTAL_1FN_(call) (_detail::factory<quantity_plus_t            >::make);
 
 template <scalar_array_q  ...Us> requires quantity_multiplies_q <               Us...          > struct quantity<Us...> : quantity_multiplies<Us...> {};
 template <vector_array_q     Us> requires quantity_multiplies_q <typename fixed<Us>::value_type> struct quantity<Us   > : quantity_multiplies<Us   > {};

@@ -61,10 +61,10 @@ struct slider
 				E_pipe u_pipe{bond::seek_in_t<>{}, V_limits::min(), V_limits::max()};
 
 				//\
-				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip)
-				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip.head())
-				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  head_(int i), u_pipe.begin(i)->head())
-				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  tail_(int i), u_pipe.begin(i)->tail())
+				XTAL_FN2_(to) (XTAL_VAL_(return,inline,get) _drip(), u_drip)
+				XTAL_FN2_(to) (XTAL_VAL_(return,inline,get) _drip(), u_drip.head())
+				XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)  head_(int i), u_pipe.begin(i)->head())
+				XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)  tail_(int i), u_pipe.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;
@@ -74,7 +74,7 @@ struct slider
 				\returns The next (interpolated) value.
 				*/
 				template <auto ...>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				method()
 				noexcept -> decltype(auto)
 				{
@@ -88,7 +88,7 @@ struct slider
 				\brief   Forwards the message upstream.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				fuse(auto &&o)
 				noexcept -> signed
 				{
@@ -99,7 +99,7 @@ struct slider
 				\returns `0`.
 				*/
 				template <signed N_ion> requires in_v<N_ion, +1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				fuse(in_q<E_hold, E_ramp, event_type> auto &&o)
 				noexcept -> signed
 				{
@@ -111,7 +111,7 @@ struct slider
 				\brief   Forwards the message upstream.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
@@ -122,7 +122,7 @@ struct slider
 				\brief   Updates the head of the signal.
 				*/
 				template <signed N_ion> requires in_v<N_ion, +1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(same_q<U_hold> auto &&o, auto &&...oo)
 				noexcept -> signed
 				{
@@ -135,7 +135,7 @@ struct slider
 				/*!
 				\brief   Enqueues the given gradient event.
 				*/
-				XTAL_DEF_(mutate,inline,let)
+				XTAL_VAL_(mutate,inline,let)
 				enqueue(same_q<E_ramp> auto &&o)
 				noexcept -> void
 				{
@@ -145,7 +145,7 @@ struct slider
 				/*!
 				\brief   Constructs and enqueues the given event.
 				*/
-				XTAL_DEF_(mutate,inline,let)
+				XTAL_VAL_(mutate,inline,let)
 				enqueue(delay_type v, auto &&...oo)
 				noexcept -> void
 				{
@@ -155,7 +155,7 @@ struct slider
 				/*!
 				\brief   Deconstructs and enqueues the given event.
 				*/
-				XTAL_DEF_(mutate,inline,let)
+				XTAL_VAL_(mutate,inline,let)
 				enqueue(flow::cue_q auto &&o, auto &&...oo)
 				noexcept -> void
 				{
@@ -164,7 +164,7 @@ struct slider
 				/*!
 				\brief   Enqueues the value `x1` at `t1`.
 				*/
-				XTAL_DEF_(mutate,inline,let)
+				XTAL_VAL_(mutate,inline,let)
 				enqueue(same_q<U_hold> auto &&x1, delay_type t1)
 				noexcept -> void
 				{
@@ -173,7 +173,7 @@ struct slider
 				/*!
 				\brief   Enqueues the value `x1` at `t1`, ramping from `t0` to `t1`.
 				*/
-				XTAL_DEF_(mutate,let)
+				XTAL_VAL_(mutate,let)
 				enqueue(same_q<U_hold> auto &&x1, delay_type t1, delay_type t0)
 				noexcept -> void
 				{
@@ -191,7 +191,7 @@ struct slider
 				/*!
 				\brief   Reset the play-head, clearing all processed events, bringing forward any future events.
 				*/
-				XTAL_DEF_(let)
+				XTAL_VAL_(let)
 				tidy(bool proceed=true)
 				noexcept -> void
 				{
@@ -203,7 +203,7 @@ struct slider
 						}
 					}
 				}
-				XTAL_DEF_(let)
+				XTAL_VAL_(let)
 				tidy(delay_type const &v)
 				noexcept -> void
 				{
@@ -211,7 +211,7 @@ struct slider
 						tidy();
 					}
 				}
-				XTAL_DEF_(let)
+				XTAL_VAL_(let)
 				tidy(flow::cue_q auto const &o)
 				noexcept -> void
 				{

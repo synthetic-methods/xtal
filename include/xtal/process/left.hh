@@ -40,7 +40,7 @@ struct left
 	public:// OPERATE
 
 		template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&o, auto &&...oo) const
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(to_if) (XTAL_ANY_(Y_ const &).template method<Ns...>
@@ -48,7 +48,7 @@ struct left
 		{	return Y_::template method<Ns...>(X_       :: template method<Ns...>(XTAL_REF_(o)), XTAL_REF_(oo)...);
 		}
 		template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&o, auto &&...oo)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(to_if) (XTAL_ANY_(Y_       &).template method<Ns...>

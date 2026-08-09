@@ -39,10 +39,10 @@ struct resize<U>
 
 		using size_type = U;
 
-		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) size, [] (auto &&o, auto &&...oo)
+		XTAL_FN1_(go) (XTAL_VAL_(return,inline,get) size, [] (auto &&o, auto &&...oo)
 		XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		empty() const
 		noexcept -> bool
 		{
@@ -62,7 +62,7 @@ struct resize<U> : resize<counter_t<U>>
 template <> struct resize<void> : resize<size_type> {};
 template <> struct resize<    > : resize<size_type> {};
 
-XTAL_DEF_(let) resize_f = [] XTAL_1FN_(call) (resize_t<>);
+XTAL_VAL_(let) resize_f = [] XTAL_1FN_(call) (resize_t<>);
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -66,7 +66,7 @@ struct blob
 		/*!
 		\returns	`(void)` after overwriting the `byte`s in the blob with `(U) value`.
 		*/
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		fill(auto value=0)
 		noexcept -> void
 		{
@@ -78,7 +78,7 @@ struct blob
 		representing the state of the blob prior to updating with `vs...`.
 		*/
 		template <class ...Vs>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		form(Vs const &...vs) const
 		noexcept -> decltype(auto)
 		{
@@ -92,14 +92,14 @@ struct blob
 		accessed via value-based destructuring, or reference-based `get`.
 		*/
 		template <class ...Vs>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		form() const
 		noexcept -> decltype(auto)
 		{
 			return form<Vs &...>();
 		}
 		template <xtd::reference ...Vs>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		form() const
 		noexcept -> decltype(auto)
 		{
@@ -110,7 +110,7 @@ struct blob
 			(bond::seek_to_t<sizeof...(Vs)> {});
 		}
 		template <class V>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		form(int &i) const
 		noexcept -> decltype(auto)
 		{

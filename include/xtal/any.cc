@@ -339,7 +339,7 @@ struct mix
 	{
 	public:
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...xs)
 		const noexcept -> auto
 		{
@@ -360,7 +360,7 @@ struct static_onset_mix
 	public:
 
 		template <auto onset=0>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...xs)
 		const noexcept -> auto
 		{
@@ -378,7 +378,7 @@ struct dynamic_onset_mix
 	{
 	public:
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...xs)
 		noexcept -> auto
 		{
@@ -398,7 +398,7 @@ struct dynamic_term
 	{
 	public:
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&x)
 		noexcept -> auto
 		{
@@ -427,7 +427,7 @@ struct dynamic_count
 	public:
 		using T_::T_;
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method()
 		noexcept -> auto
 		{

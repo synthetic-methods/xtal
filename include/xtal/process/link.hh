@@ -58,7 +58,7 @@ struct linked
 		composed with the inherited `method` if the parent is a `defer`red `process`.
 		*/
 		template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...oo) const
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(to_if) (XTAL_ANY_(Y_ const &).template method<Ns...>
@@ -66,7 +66,7 @@ struct linked
 		{	return Y_::template method<Ns...>(X_       :: template method<Ns...>(XTAL_REF_(oo)...));
 		}
 		template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...oo)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(to_if) (XTAL_ANY_(Y_       &).template method<Ns...>

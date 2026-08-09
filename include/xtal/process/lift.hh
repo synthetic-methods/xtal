@@ -35,7 +35,7 @@ struct lifter
 		using X_ = S_;
 		using Y_ = U ;
 
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		y_(auto &&...oo)
 		noexcept -> decltype(auto)
 		{
@@ -49,14 +49,14 @@ struct lifter
 		using S_::S_;
 
 		template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...oo) const
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(to_if) (XTAL_ANY_(X_ const &).template method<Ns...>(XTAL_REF_(oo)...))
 		{	return                         y_(X_       :: template method<Ns...>(XTAL_REF_(oo)...));
 		}
 		template <auto ...Ns>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		method(auto &&...oo)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(to_if) (XTAL_ANY_(X_       &).template method<Ns...>(XTAL_REF_(oo)...))

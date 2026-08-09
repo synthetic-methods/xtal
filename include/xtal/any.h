@@ -256,7 +256,7 @@ XTAL_ENV_(push)
 #define XTAL_ANY_(...)                           ::std::declval<__VA_ARGS__>()     ///< Yields the existential value for a type.
 #define XTAL_MOV_(...)                           ::std::   move(__VA_ARGS__)       ///< Moves    a value.
 #define XTAL_REF_(...)    static_cast<decltype (__VA_ARGS__)&&>(__VA_ARGS__)       ///< Forwards a value.
-#define XTAL_VAL_(...)    static_cast<XTAL_ALL_(__VA_ARGS__)  >(__VA_ARGS__)       ///< Forwards a value.
+#define XTAL_RET_(...)    static_cast<XTAL_ALL_(__VA_ARGS__)  >(__VA_ARGS__)       ///< Forwards a value.
 #ifndef XTAL_DOC
 template <class X, class Y> concept XTAL_NYM_(generalized) = ::std::derived_from<XTAL_NOM_(Y), XTAL_NOM_(X)> and not ::std::same_as<XTAL_NOM_(X), XTAL_NOM_(Y)>;
 template <class X, class Y> concept XTAL_NYM_(specialized) = ::std::derived_from<XTAL_NOM_(X), XTAL_NOM_(Y)> and not ::std::same_as<XTAL_NOM_(Y), XTAL_NOM_(X)>;
@@ -267,66 +267,63 @@ template <class X         > concept XTAL_NYM_(synthesized) = not ::std::same_as<
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_DEF_(...)           XTAL_APP_(map) (XTAL_DEF_then_,__VA_ARGS__)       ///< Leading `[[attributes]]` and `keywords`.
-#define XTAL_DEF_then_(...)                          XTAL_DEF_##__VA_ARGS__
+#define XTAL_VAL_(...)           XTAL_APP_(map) (XTAL_VAL_then_,__VA_ARGS__)       ///< Leading `[[attributes]]` and `keywords`.
+#define XTAL_VAL_then_(...)                          XTAL_VAL_##__VA_ARGS__
 
 #if     XTAL_VER_(STD < 23)
-#define XTAL_DEF_export
-#define XTAL_DEF_import// TODO?
+#define XTAL_VAL_export
+#define XTAL_VAL_import// TODO?
 #else
-#define XTAL_DEF_export          export
-#define XTAL_DEF_import          import
+#define XTAL_VAL_export          export
+#define XTAL_VAL_import          import
 #endif
-#define XTAL_DEF_return          [[nodiscard]]
-#define XTAL_DEF_static          static
-#define XTAL_DEF_friend          friend
-#define XTAL_DEF_mutate        //NOTE: Mutability is the default!
+#define XTAL_VAL_return          [[nodiscard]]
+#define XTAL_VAL_static          static
+#define XTAL_VAL_common          inline
+#define XTAL_VAL_friend          friend
+#define XTAL_VAL_mutate        //NOTE: Mutability is the default!
 
 #ifdef  XTAL_DOC
-#define XTAL_DEF_verbatim
+#define XTAL_VAL_verbatim
 #elif   XTAL_ENV_MSVC
-#define XTAL_DEF_verbatim      //NOTE: Use `#pragma optimize("", {off,on})`~
+#define XTAL_VAL_verbatim      //NOTE: Use `#pragma optimize("", {off,on})`~
 #elif   XTAL_ENV_LLVM
-#define XTAL_DEF_verbatim        [[clang::optnone]]    __attribute__((optnone))
+#define XTAL_VAL_verbatim        [[clang::optnone]]    __attribute__((optnone))
 #elif   XTAL_ENV_GNUC
-#define XTAL_DEF_verbatim        [[gnu::optimize(0)]]  __attribute__((optimize(0)))
-#endif//XTAL_DEF_verbatim
+#define XTAL_VAL_verbatim        [[gnu::optimize(0)]]  __attribute__((optimize(0)))
+#endif//XTAL_VAL_verbatim
 
 #ifdef  XTAL_DOC
-#define XTAL_DEF_inline
+#define XTAL_VAL_inline
 #elif   XTAL_ENV_MSVC
-#define XTAL_DEF_inline        __forceinline
+#define XTAL_VAL_inline        __forceinline
 #else
-#define XTAL_DEF_inline        __attribute__((always_inline))
-#endif//XTAL_DEF_inline
+#define XTAL_VAL_inline        __attribute__((always_inline))
+#endif//XTAL_VAL_inline
 
-#define XTAL_DEF_explicit        constexpr explicit                             ///< Start `explicit` function.
-#define XTAL_DEF_implicit        constexpr                                      ///< Start `implicit` function.
-#define XTAL_DEF_let             constexpr          auto                                 ///< Start `auto` function.
-#define XTAL_DEF_get      inline constexpr decltype(auto)                       ///< Start `decltype(auto)` function.
-#define XTAL_DEF_met      inline constexpr          auto friend                          ///< Start `auto` function (friend).
-#define XTAL_DEF_set      static constexpr          auto                                 ///< Start `auto` function (static).
+#define XTAL_VAL_explicit        constexpr explicit                             ///< Start `explicit` function.
+#define XTAL_VAL_implicit        constexpr                                      ///< Start `implicit` function.
+#define XTAL_VAL_let             constexpr          auto                                 ///< Start `auto` function.
+#define XTAL_VAL_get      inline constexpr decltype(auto)                       ///< Start `decltype(auto)` function.
+#define XTAL_VAL_met      inline constexpr          auto friend                          ///< Start `auto` function (friend).
+#define XTAL_VAL_set      static constexpr          auto                                 ///< Start `auto` function (static).
+#define XTAL_VAL_new             XTAL_VAL_inline                                     ///< Start constructor.
 
-
-#define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
-#define XTAL_NEW_explicit        XTAL_DEF_inline constexpr explicit             ///< Start        `explicit` constructor.
-#define XTAL_NEW_implicit        XTAL_DEF_inline constexpr                      ///< Start        `implicit` constructor.
-
-#define XTAL_NEW_else(TYP,...)   template     <class ...XTAL_NYM_(As)>                          \
+#define XTAL_VAL_reduce(TYP,...) template     <class ...XTAL_NYM_(As)>                          \
                                  constexpr explicit TYP(XTAL_NYM_(As) &&...XTAL_NYM_(as))       \
                                __VA_ARGS__ {static_cast<XTAL_NYM_(As) &&> (XTAL_NYM_(as))...} {};
 
-#define XTAL_NEW_then(TYP,...)   template <XTAL_NYM_(relativized)  <TYP>    XTAL_NYM_(That)>    \
+#define XTAL_VAL_induce(TYP,...) template <XTAL_NYM_(relativized)  <TYP>    XTAL_NYM_(That)>    \
                                  constexpr     TYP(XTAL_NYM_(That)      &&  XTAL_NYM_(this))    \
                                __VA_ARGS__        (static_cast     <TYP &&>(XTAL_NYM_(this))) {};
 
-#define XTAL_NEW_copy(TYP,...)   constexpr     TYP             (TYP const &) __VA_ARGS__;\
+#define XTAL_VAL_copy(TYP,...)   constexpr     TYP             (TYP const &) __VA_ARGS__;\
                                  constexpr     TYP & operator= (TYP const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
-#define XTAL_NEW_move(TYP,...)   constexpr     TYP             (TYP      &&) __VA_ARGS__;\
+#define XTAL_VAL_move(TYP,...)   constexpr     TYP             (TYP      &&) __VA_ARGS__;\
                                  constexpr     TYP & operator= (TYP      &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
 
-#define XTAL_NEW_create(TYP,...) constexpr     TYP()                         __VA_ARGS__;
-#define XTAL_NEW_delete(TYP,...) constexpr    ~TYP()                         __VA_ARGS__;
+#define XTAL_VAL_create(TYP,...) constexpr     TYP()                         __VA_ARGS__;
+#define XTAL_VAL_delete(TYP,...) constexpr    ~TYP()                         __VA_ARGS__;
 
 
 #define XTAL_TYP_(ARG,...)       XTAL_TYP_##ARG __VA_OPT__((__VA_ARGS__))                ///< Type definition.

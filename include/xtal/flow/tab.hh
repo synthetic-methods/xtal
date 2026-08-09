@@ -55,7 +55,7 @@ struct tab
 		\brief  	Forwards message upstream.
 		*/
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(auto &&o)
 		noexcept -> signed
 		{
@@ -66,7 +66,7 @@ struct tab
 		attempt reconstruction.
 		*/
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(different_q<T_> auto &&o)
 		noexcept -> signed
 		requires bond::tab_compatible_q<T_, decltype(o)>

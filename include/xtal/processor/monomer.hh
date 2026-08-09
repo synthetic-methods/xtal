@@ -34,7 +34,7 @@ template <typename ...Qs>	concept monomer_body_q = bond::tag_inner_p<monomer, Qs
 \brief   Creates a `monomer` by lifting the given function/`process`, and attaching `As...`.
 */
 template <typename ...As>
-XTAL_DEF_(let) monomer_f = []<class U> (U &&u)
+XTAL_VAL_(let) monomer_f = []<class U> (U &&u)
 XTAL_0FN_(to) (monomer_t<based_t<U>, As...>(XTAL_REF_(u)));
 
 
@@ -87,17 +87,17 @@ struct monomer<U, As...>
 
 			public:// CONSTRUCT
 			//	using R_::R_;
-				XTAL_NEW_(delete) (subtype, noexcept=default)
-				XTAL_NEW_(create) (subtype, noexcept=default)
-				XTAL_NEW_(move)   (subtype, noexcept=default)
-				XTAL_NEW_(copy)   (subtype, noexcept=default)
-				XTAL_NEW_(then)   (subtype, noexcept:subtype)
-			//	XTAL_NEW_(else)   (subtype, noexcept:S_)
+				XTAL_VAL_(delete) (subtype, noexcept=default)
+				XTAL_VAL_(create) (subtype, noexcept=default)
+				XTAL_VAL_(move)   (subtype, noexcept=default)
+				XTAL_VAL_(copy)   (subtype, noexcept=default)
+				XTAL_VAL_(induce) (subtype, noexcept:subtype)
+			//	XTAL_VAL_(reduce) (subtype, noexcept:S_)
 
 				/*!
 				\brief  	Binds `Xs...` to a new `processor` instance.
 				*/
-				XTAL_NEW_(explicit)
+				XTAL_VAL_(new,explicit)
 				subtype(same_q<Xs> auto &&...xs)
 				noexcept
 				:	subtype{T_{}, XTAL_REF_(xs)...}
@@ -105,7 +105,7 @@ struct monomer<U, As...>
 				/*!
 				\brief  	Binds `Xs...` to the supplied `processor` instance.
 				*/
-				XTAL_NEW_(explicit)
+				XTAL_VAL_(new,explicit)
 				subtype(same_q<T_> auto &&t, same_q<Xs> auto &&...xs)
 				noexcept
 				:	subtype{R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...}
@@ -113,7 +113,7 @@ struct monomer<U, As...>
 				/*!
 				\brief  	Binds `Xs...` to the supplied `processor` instance, initializing `state` with `f`.
 				*/
-				XTAL_NEW_(explicit)
+				XTAL_VAL_(new,explicit)
 				subtype(auto &&f, same_q<T_> auto &&t, same_q<Xs> auto &&...xs)
 				noexcept
 				:	R_(XTAL_REF_(f), XTAL_REF_(t), XTAL_REF_(xs)...)
@@ -124,7 +124,7 @@ struct monomer<U, As...>
 				/*!
 				\brief  	Accessor for the underlying state.
 				*/
-				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)
+				XTAL_FN2_(to) (XTAL_VAL_(return,inline,get)
 				state(auto &&...oo),
 					R_::template head<Y_result>(XTAL_REF_(oo)...))
 
@@ -134,7 +134,7 @@ struct monomer<U, As...>
 				\brief  	Returns the current `state()`.
 				*/
 				XTAL_FN2_(to) (template <auto ...>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				method(), state())
 
 			public:// FLOW
@@ -142,7 +142,7 @@ struct monomer<U, As...>
 				\brief  	Forwards the message upstream.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
@@ -152,7 +152,7 @@ struct monomer<U, As...>
 				\brief  	Refreshes the current state when the `arguments` have changed.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(occur::cursor_q auto &&cur, auto &&...oo)
 				noexcept -> signed
 				{
@@ -198,7 +198,7 @@ struct monomer<U, As...>
 				\brief  	Returns the current `state()`.
 				*/
 				XTAL_FN2_(to) (template <auto ...>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				method(), state())
 				
 			public:// FLOW
@@ -206,7 +206,7 @@ struct monomer<U, As...>
 				\brief  	Forwards the message upstream.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				fuse(auto &&o)
 				noexcept -> signed
 				{
@@ -216,7 +216,7 @@ struct monomer<U, As...>
 				\brief  	Forwards the message upstream.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
@@ -229,7 +229,7 @@ struct monomer<U, As...>
 				resizing is effectively managed by the attached `occur::resize` instance.
 				*/
 				template <signed N_ion> requires in_v<N_ion, +1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				fuse(occur::resize_q auto &&o)
 				noexcept -> signed
 				{
@@ -252,7 +252,7 @@ struct monomer<U, As...>
 				otherwise the system is inconsistent and checked by `assert`ion.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(occur::cursor_q auto &&cur, auto &&...oo)
 				noexcept -> signed
 				{
@@ -266,7 +266,7 @@ struct monomer<U, As...>
 				in which case the `review` will be passed upstream.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux(occur::review_q auto &&rev, occur::cursor_q auto &&cur, auto &&...oo)
 				noexcept -> signed
 				{
@@ -281,7 +281,7 @@ struct monomer<U, As...>
 				\brief  	Forwards the message to `arguments`.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux_rest(auto &&...oo)
 				noexcept -> signed
 				{
@@ -292,7 +292,7 @@ struct monomer<U, As...>
 				skipping resizing wherever the current buffer is reused,
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				flux_rest(auto &&...oo)
 				noexcept -> signed
 				requires in_v<1, occur::resize_q<decltype(oo)>...>

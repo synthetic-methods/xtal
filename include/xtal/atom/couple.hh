@@ -20,20 +20,20 @@ template <class ...Us>	using   couple_t = typename couple<Us...>::type; ///<\bri
 template <class ...Us>	concept couple_q = bond::tag_inner_fixed_p<couple_t, Us...>;
 
 ///\brief Factory for `couple`.
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 couple_f(auto &&...oo)
 noexcept -> decltype(auto)
 {
 	return _detail::factory<couple_t>::make(XTAL_REF_(oo)...);
 }
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 couple_f(decltype(std::in_place), auto &&o)
 noexcept -> decltype(auto)
 {
 	using O = objective_t<XTAL_ALL_(o)>;
 	return couple_t<O[2]>{std::in_place, XTAL_REF_(o)};
 }
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 couple_f(auto &&o, decltype(std::in_place))
 noexcept -> decltype(auto)
 {
@@ -82,7 +82,7 @@ struct couple
 		using U_arg = complete_t<value_type, scale_type>;
 
 		template <int N_slot=0>
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		versus_f(auto &&v)
 		noexcept -> auto
 		{
@@ -100,27 +100,27 @@ struct couple
 	public:// CONSTRUCT
 		using S_::S_;
 
- 		XTAL_NEW_(explicit)
+ 		XTAL_VAL_(new,explicit)
 		homotype(different_q<std::in_place_t> auto &&u, std::in_place_t)
 		noexcept
 		requires in_v<size, 2>
 		:	S_{versus_f< 0>(u), versus_f< 1>(u)}
 		{}
- 		XTAL_NEW_(explicit)
+ 		XTAL_VAL_(new,explicit)
 		homotype(std::in_place_t, different_q<std::in_place_t> auto &&u)
 		noexcept
 		requires in_v<size, 2>
 		:	S_{versus_f<-1>(u), versus_f<0>(u)}
 		{}
 
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		homotype(U_arg const u, std::in_place_t)
  		noexcept
 		requires in_v<size, 2>
 		:	S_{versus_f< 0>(u), versus_f< 1>(u)}
  		{
  		}
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		homotype(std::in_place_t, U_arg const u)
  		noexcept
 		requires in_v<size, 2>
@@ -132,17 +132,17 @@ struct couple
 		using S_::operator+; using S_::operator+=;
 		using S_::operator-; using S_::operator-=;
 
-		template <couple_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w + self()  ;}
-		template <couple_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::add2_(w);}
-		template <couple_q W> XTAL_DEF_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
-		template <couple_q W> XTAL_DEF_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
-		template <couple_q W> XTAL_DEF_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
+		template <couple_q W> XTAL_VAL_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w + self()  ;}
+		template <couple_q W> XTAL_VAL_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::add2_(w);}
+		template <couple_q W> XTAL_VAL_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
+		template <couple_q W> XTAL_VAL_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
+		template <couple_q W> XTAL_VAL_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
 
 		/*!
 		\brief  	Produces the progressive sum/difference, starting from zero if post-fixed.
 		\brief  	Defined only for `const this`, because this is whack (but fun).
 		*/
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator++() const
 		noexcept -> auto
 		{
@@ -152,7 +152,7 @@ struct couple
 			});
 			return t;
 		}
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator--() const
 		noexcept -> auto
 		{
@@ -163,7 +163,7 @@ struct couple
 			return t;
 		}
 
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator++(int) const
 		noexcept -> auto
 		requires same_q<Us...>
@@ -177,7 +177,7 @@ struct couple
 			});
 			return t;
 		}
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator--(int) const
 		noexcept -> auto
 		requires same_q<Us...>
@@ -192,13 +192,13 @@ struct couple
 			return t;
 		}
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		operator ~ () const
 		noexcept -> auto
 		{
 			return flipped();
 		}
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flipped() const
 		noexcept -> auto
 		{
@@ -206,7 +206,7 @@ struct couple
 			auto const &e1 = S_::template element<1>();
 			return S_::form(e1, e0);
 		}
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flipped(simplex_field_q auto const side) const
 		noexcept -> auto
 		{
@@ -221,7 +221,7 @@ struct couple
 		\returns	The ratio between the two elements of `this`, raised to the power `-1 <= N_pow <= 1`.
 		*/
 		template <int N_pow=1> requires (size == 2)
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		ratio() const
 		noexcept -> auto
 		{
@@ -235,7 +235,7 @@ struct couple
 
 
 		template <int N_dir=0>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		resolution() const
 		noexcept -> decltype(auto)
 		{
@@ -243,14 +243,14 @@ struct couple
 			XTAL_0IF (N_dir ==  1) {return self().template element<0>();}
 			XTAL_0IF (N_dir == -1) {return self().template element<1>();}
 		}
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		resolution(constant_q auto const n) const
 		noexcept -> decltype(auto)
 		{
 			return resolution<XTAL_ALL_(n){}>();
 		}
 
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		resolution() const
 		noexcept -> decltype(auto)
 		{
@@ -261,7 +261,7 @@ struct couple
 		\returns	The mutually inverse `lhs +/- rhs` scaled by `reflector<N_par>()`.
 		*/
 		template <int N_dir=0>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		reflection() const
 		noexcept -> auto
 		requires (size == 2) and same_q<Us...>
@@ -273,7 +273,7 @@ struct couple
 			XTAL_0IF (N_dir ==  1) {return x + y;}
 			XTAL_0IF (N_dir == -1) {return x - y;}
 		}
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		reflection(constant_q auto const n) const
 		noexcept -> decltype(auto)
 		requires (size == 2) and same_q<Us...>
@@ -281,14 +281,14 @@ struct couple
 			return reflection<XTAL_ALL_(n){}>();
 		}
 
-		XTAL_DEF_(return,inline,let)  maximum() const noexcept -> auto const & {return *xtd::ranges::max_element(self());}
-		XTAL_DEF_(return,inline,let)  minimum() const noexcept -> auto const & {return *xtd::ranges::min_element(self());}
-		XTAL_DEF_(return,inline,let)  miximum() const noexcept -> auto const & {
+		XTAL_VAL_(return,inline,let)  maximum() const noexcept -> auto const & {return *xtd::ranges::max_element(self());}
+		XTAL_VAL_(return,inline,let)  minimum() const noexcept -> auto const & {return *xtd::ranges::min_element(self());}
+		XTAL_VAL_(return,inline,let)  miximum() const noexcept -> auto const & {
 			auto const &[min_, max_] = xtd::ranges::minmax_element(self());
 			return std::tie(*min_, *max_);
 		}
 		template <int N=0>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		extremum() const
 		noexcept -> auto
 		{
@@ -298,11 +298,11 @@ struct couple
 			XTAL_0IF_(else)  {return miximum();}
 		}
 
-		XTAL_DEF_(return,inline,let) maximal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (std::lcm)>();}
-		XTAL_DEF_(return,inline,let) minimal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (std::gcd)>();}
-		XTAL_DEF_(return,inline,let) miximal() const noexcept -> auto {return bond::pack_f(minimal(), maximal());}
+		XTAL_VAL_(return,inline,let) maximal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (std::lcm)>();}
+		XTAL_VAL_(return,inline,let) minimal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (std::gcd)>();}
+		XTAL_VAL_(return,inline,let) miximal() const noexcept -> auto {return bond::pack_f(minimal(), maximal());}
 		template <int N=0>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		extremal() const
 		noexcept -> auto
 		{

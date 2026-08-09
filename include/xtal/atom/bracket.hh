@@ -18,7 +18,7 @@ template <class ...Us>	struct  bracket;
 template <class ...Us>	using   bracket_t = typename bracket<Us...>::type;
 template <class ...Us>	concept bracket_q = bond::tag_inner_fixed_p<bracket_t, Us...>;
 
-XTAL_DEF_(let) bracket_f = [] XTAL_1FN_(call) (_detail::factory<bracket_t>::make);
+XTAL_VAL_(let) bracket_f = [] XTAL_1FN_(call) (_detail::factory<bracket_t>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ struct bracket
 
 	public:// OPERATE
 
-		XTAL_DEF_(return,inline,friend,let)
+		XTAL_VAL_(return,inline,friend,let)
 		operator==(homotype const &s, homotype const &t)
 		noexcept -> bool
 		{
@@ -85,12 +85,12 @@ struct bracket
 		/*!
 		\returns	A `revalue_f`d instance of `this`.
 		*/
-		XTAL_FN2_(to) (XTAL_DEF_(return,inline,let) reform(), apply())
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,let) reform(), apply())
 
 		/*!
 		\returns	A `revalue_f`d instance of `this`.
 		*/
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		apply() const
 		noexcept -> decltype(auto)
 		{
@@ -107,7 +107,7 @@ struct bracket
 		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.
 		*/
 		template <complete_q F>
-		XTAL_DEF_(return,inline,explicit)
+		XTAL_VAL_(return,inline,explicit)
 		operator F() const
 		noexcept
 		{
@@ -118,7 +118,7 @@ struct bracket
 		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.
 		*/
 		template <class F>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		apply() const
 		noexcept -> decltype(auto)
 		{
@@ -128,7 +128,7 @@ struct bracket
 		\returns	The result of applying `f` to the `revalue_f`s of `this`.
 		*/
 		template <auto  f>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		apply() const
 		noexcept -> decltype(auto)
 		{
@@ -137,7 +137,7 @@ struct bracket
 		/*!
 		\returns	The result of applying `f` to the `revalue_f`s of `this`.
 		*/
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		apply(auto &&f) const
 		noexcept -> decltype(auto)
 		{

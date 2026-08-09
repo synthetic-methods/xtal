@@ -35,7 +35,7 @@ struct qualify
 	template <vector_array_q W>
 	class epitype<W>
 	{
-		XTAL_DEF_(set) N = xtd::        extent_v<W>;
+		XTAL_VAL_(set) N = xtd::        extent_v<W>;
 		XTAL_TYP_(set) U = xtd:: remove_extent_t<W>;
 		XTAL_TYP_(set) V = std:: remove_cvref_t<U>;
 		XTAL_TYP_(set) T = xtd::qualify_cvref_t<W, T_<V>[N]>;

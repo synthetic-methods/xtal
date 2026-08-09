@@ -50,14 +50,14 @@ struct trace
 				using R_::R_;
 
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				fuse(auto &&o)
 				noexcept -> signed
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
 				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
+				XTAL_VAL_(return,inline,let)
 				fuse(same_q<T_> auto &&o)
 				noexcept -> signed
 				{

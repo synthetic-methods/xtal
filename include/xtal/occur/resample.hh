@@ -35,19 +35,19 @@ struct resample
 	public:// CONSTRUCT
 	//	using S_::S_;
 		
-		XTAL_NEW_(delete) (subtype, noexcept=default)
-//		XTAL_NEW_(create) (subtype, noexcept=default)
-		XTAL_NEW_(move)   (subtype, noexcept=default)
-		XTAL_NEW_(copy)   (subtype, noexcept=default)
-		XTAL_NEW_(then)   (subtype, noexcept:subtype)
-		XTAL_NEW_(else)   (subtype, noexcept:S_)
+		XTAL_VAL_(delete) (subtype, noexcept=default)
+//		XTAL_VAL_(create) (subtype, noexcept=default)
+		XTAL_VAL_(move)   (subtype, noexcept=default)
+		XTAL_VAL_(copy)   (subtype, noexcept=default)
+		XTAL_VAL_(induce) (subtype, noexcept:subtype)
+		XTAL_VAL_(reduce) (subtype, noexcept:S_)
 
-		XTAL_NEW_(explicit)
+		XTAL_VAL_(new,explicit)
 		subtype(number_q auto v, auto &&...oo)
 		noexcept
 		:	subtype{U2{static_cast<U0>(v), std::in_place}, XTAL_REF_(oo)...}
 		{}
-		XTAL_NEW_(implicit)
+		XTAL_VAL_(new,implicit)
 		subtype()
 		noexcept
 		:	subtype{1}
@@ -55,29 +55,29 @@ struct resample
 
 	public:// OPERATE
 
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		sample_f(auto &&o, auto &&...oo)
 		noexcept -> decltype(auto)
 		{
 			return XTAL_REF_(o).head(XTAL_REF_(oo)...);
 		}
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		period_f(auto &&o, auto &&...oo)
 		noexcept -> decltype(auto)
 		{
 			static_assert(0 == sizeof...(oo));
 			return get<1>(sample_f(XTAL_REF_(o)));
 		}
-		XTAL_DEF_(return,inline,set)
+		XTAL_VAL_(return,inline,set)
 		  rate_f(auto &&o, auto &&...oo)
 		noexcept -> decltype(auto)
 		{
 			static_assert(0 == sizeof...(oo));
 			return get<0>(sample_f(XTAL_REF_(o)));
 		}
-		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) sample, sample_f)
-		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) period, period_f)
-		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get)   rate,   rate_f)
+		XTAL_FN1_(go) (XTAL_VAL_(return,inline,get) sample, sample_f)
+		XTAL_FN1_(go) (XTAL_VAL_(return,inline,get) period, period_f)
+		XTAL_FN1_(go) (XTAL_VAL_(return,inline,get)   rate,   rate_f)
 
 	};
 };
@@ -85,7 +85,7 @@ struct resample
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(let) resample_f = [] XTAL_1FN_(call) (resample_t<>);
+XTAL_VAL_(let) resample_f = [] XTAL_1FN_(call) (resample_t<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

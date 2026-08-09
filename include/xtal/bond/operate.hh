@@ -29,13 +29,13 @@ struct operate : Fs...
 
 	using Fs::operator()...;
 
-	template <class ...Ts> XTAL_DEF_(inline,let) operator() (std::variant<Ts...>       &&v) noexcept -> decltype(auto) {return std::visit(XTAL_MOV_(v), *this);}
-	template <class ...Ts> XTAL_DEF_(inline,let) operator() (std::variant<Ts...> const &&v) noexcept -> decltype(auto) {return std::visit(XTAL_MOV_(v), *this);}
-	template <class ...Ts> XTAL_DEF_(inline,let) operator() (std::variant<Ts...>        &v) noexcept -> decltype(auto) {return std::visit(XTAL_REF_(v), *this);}
-	template <class ...Ts> XTAL_DEF_(inline,let) operator() (std::variant<Ts...> const  &v) noexcept -> decltype(auto) {return std::visit(XTAL_REF_(v), *this);}
+	template <class ...Ts> XTAL_VAL_(inline,let) operator() (std::variant<Ts...>       &&v) noexcept -> decltype(auto) {return std::visit(XTAL_MOV_(v), *this);}
+	template <class ...Ts> XTAL_VAL_(inline,let) operator() (std::variant<Ts...> const &&v) noexcept -> decltype(auto) {return std::visit(XTAL_MOV_(v), *this);}
+	template <class ...Ts> XTAL_VAL_(inline,let) operator() (std::variant<Ts...>        &v) noexcept -> decltype(auto) {return std::visit(XTAL_REF_(v), *this);}
+	template <class ...Ts> XTAL_VAL_(inline,let) operator() (std::variant<Ts...> const  &v) noexcept -> decltype(auto) {return std::visit(XTAL_REF_(v), *this);}
 
 	template <class T>
-	XTAL_DEF_(return,inline,set)
+	XTAL_VAL_(return,inline,set)
 	object()
 	noexcept -> auto
 	{
@@ -46,7 +46,7 @@ struct operate : Fs...
 		XTAL_0IF_(to) (U{operate{}()})
 	}
 	template <class T>
-	XTAL_DEF_(return,inline,set)
+	XTAL_VAL_(return,inline,set)
 	subject()
 	noexcept -> auto
 	{
@@ -60,7 +60,7 @@ struct operate : Fs...
 		}
 	}
 	template <class T>
-	XTAL_DEF_(return,inline,set)
+	XTAL_VAL_(return,inline,set)
 	surject()
 	noexcept -> auto
 	{
@@ -68,11 +68,11 @@ struct operate : Fs...
 	}
 
 	template <class T>
-	XTAL_DEF_(return,inline,implicit)
+	XTAL_VAL_(return,inline,implicit)
 	operator T() const
 	noexcept {return object<T>();}
 
-	XTAL_DEF_(return,inline,met) operator + (operate const &t)
+	XTAL_VAL_(return,inline,met) operator + (operate const &t)
 	noexcept -> auto
 	{
 		auto constexpr value = operate{}();
@@ -81,7 +81,7 @@ struct operate : Fs...
 		XTAL_0IF (un_v<integral_q<value_type>>) return operate<decltype([] XTAL_1FN_(to) (+                 value ))>{};
 		XTAL_0IF (in_v<integral_q<value_type>>) return operate<decltype([] XTAL_1FN_(to) (+xtd::signed_cast(value)))>{};
 	}
-	XTAL_DEF_(return,inline,met) operator - (operate const &t)
+	XTAL_VAL_(return,inline,met) operator - (operate const &t)
 	noexcept -> auto
 	{
 		auto constexpr value = operate{}();
@@ -90,7 +90,7 @@ struct operate : Fs...
 		XTAL_0IF (un_v<integral_q<value_type>>) return operate<decltype([] XTAL_1FN_(to) (-                 value ))>{};
 		XTAL_0IF (in_v<integral_q<value_type>>) return operate<decltype([] XTAL_1FN_(to) (-xtd::signed_cast(value)))>{};
 	}
-	XTAL_DEF_(return,inline,met) operator ~ (operate const &t)
+	XTAL_VAL_(return,inline,met) operator ~ (operate const &t)
 	noexcept -> auto
 	{
 		auto constexpr value = operate{}();
@@ -98,50 +98,50 @@ struct operate : Fs...
 		return operate<decltype([] XTAL_1FN_(to) (~value))>{};
 	}
 
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator <=> (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (object<T>() <=> t)
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  == (same_q<operate> auto const &, T const &t) noexcept -> bool   requires XTAL_TRY_(to) (object<T>()  == t)
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator <=> (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t <=> object<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  == (T const &t, same_q<operate> auto const &) noexcept -> bool   requires XTAL_TRY_(to) (t  == object<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator <=> (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (object<T>() <=> t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  == (same_q<operate> auto const &, T const &t) noexcept -> bool   requires XTAL_TRY_(to) (object<T>()  == t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator <=> (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t <=> object<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  == (T const &t, same_q<operate> auto const &) noexcept -> bool   requires XTAL_TRY_(to) (t  == object<T>())
 
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  -  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  -  t)
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  +  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  +  t)
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  *  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  *  t)
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  /  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  /  t)
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  %  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  %  t)
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  &  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  &  t)
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  ^  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  ^  t)
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  |  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  |  t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  -  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  -  t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  +  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  +  t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  *  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  *  t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  /  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  /  t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  %  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  %  t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  &  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  &  t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  ^  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  ^  t)
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  |  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  |  t)
 	
-	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  -  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() - T{}()))>{})
-	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  +  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() + T{}()))>{})
-	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  *  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() * T{}()))>{})
-	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  /  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() / T{}()))>{})
-	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  %  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() % T{}()))>{})
-	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  &  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() & T{}()))>{})
-	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  ^  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() ^ T{}()))>{})
-	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  |  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() | T{}()))>{})
+	template <    constant_q T> XTAL_VAL_(return,inline,met) operator  -  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() - T{}()))>{})
+	template <    constant_q T> XTAL_VAL_(return,inline,met) operator  +  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() + T{}()))>{})
+	template <    constant_q T> XTAL_VAL_(return,inline,met) operator  *  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() * T{}()))>{})
+	template <    constant_q T> XTAL_VAL_(return,inline,met) operator  /  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() / T{}()))>{})
+	template <    constant_q T> XTAL_VAL_(return,inline,met) operator  %  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() % T{}()))>{})
+	template <    constant_q T> XTAL_VAL_(return,inline,met) operator  &  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() & T{}()))>{})
+	template <    constant_q T> XTAL_VAL_(return,inline,met) operator  ^  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() ^ T{}()))>{})
+	template <    constant_q T> XTAL_VAL_(return,inline,met) operator  |  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() | T{}()))>{})
 
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  -  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  -  subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  +  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  +  subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  *  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  *  subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  /  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  *  surject<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  %  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  %  subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  &  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  &  subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  ^  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  ^  subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  |  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  |  subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator >>  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t >>  subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator <<  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t <<  subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  -  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  -  subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  +  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  +  subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  *  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  *  subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  /  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  *  surject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  %  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  %  subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  &  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  &  subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  ^  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  ^  subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator  |  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  |  subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator >>  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t >>  subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(return,inline,met) operator <<  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t <<  subject<T>())
 
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  -= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  -= subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  += (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  += subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  *= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  *= subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  /= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  *= surject<T>())
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  %= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  %= subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  &= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  &= subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  ^= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  ^= subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  |= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  |= subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator <<= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t <<= subject<T>())
-	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator >>= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t >>= subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator  -= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  -= subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator  += (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  += subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator  *= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  *= subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator  /= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  *= surject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator  %= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  %= subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator  &= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  &= subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator  ^= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  ^= subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator  |= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  |= subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator <<= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t <<= subject<T>())
+	template <inapplicable_p T> XTAL_VAL_(mutate,inline,met) operator >>= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t >>= subject<T>())
 
 };
 template <inapplicable_q T>
@@ -172,7 +172,7 @@ operate(Fs...) -> operate<Fs...>;
 otherwise fractional mutiplication by `exp2(t)`.
 */
 template <inapplicable_p T, class ...Fs>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 operator << (operate<Fs...> const &, T const &t)
 noexcept -> decltype(auto)
 {
@@ -191,7 +191,7 @@ noexcept -> decltype(auto)
 otherwise fractional division by `exp2(t)`.
 */
 template <inapplicable_p T, class ...Fs>
-XTAL_DEF_(return,inline,let)
+XTAL_VAL_(return,inline,let)
 operator >> (operate<Fs...> const &, T const &t)
 noexcept -> decltype(auto)
 {

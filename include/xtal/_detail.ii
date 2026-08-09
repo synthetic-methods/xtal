@@ -13,15 +13,15 @@ namespace _detail
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <iterator_q I > XTAL_DEF_(return,inline,let)    move_it(I i) noexcept -> auto {return xtd::ranges::   make_move_iterator(i);}
-template <iterator_q I > XTAL_DEF_(return,inline,let) reverse_it(I i) noexcept -> auto {return xtd::ranges::make_reverse_iterator(i);}
+template <iterator_q I > XTAL_VAL_(return,inline,let)    move_it(I i) noexcept -> auto {return xtd::ranges::   make_move_iterator(i);}
+template <iterator_q I > XTAL_VAL_(return,inline,let) reverse_it(I i) noexcept -> auto {return xtd::ranges::make_reverse_iterator(i);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 while_copy_to(Y_ y0, X_ x0, X_ xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
@@ -33,7 +33,7 @@ noexcept -> void
 }
 
 template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 while_move_to(Y_ y0, X_ x0, X_ xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
@@ -48,7 +48,7 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 while_copy_to(Y_ y0, X_ x0, distance_t<X_> sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
@@ -59,7 +59,7 @@ noexcept -> void
 }
 
 template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 while_move_to(Y_ y0, X_ x0, distance_t<X_> sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
@@ -74,7 +74,7 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 copy_to(Y_ y0, X_ x0, X_ xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
@@ -120,7 +120,7 @@ noexcept -> void
 }
 
 template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 move_to(Y_ y0, X_ x0, X_ xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
@@ -145,7 +145,7 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 copy_to(Y_ y0, X_ x0, integral_q auto sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
@@ -169,7 +169,7 @@ noexcept -> void
 }
 
 template <auto f=std::identity{}, iterator_q Y_, iterator_q X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 move_to(Y_ y0, X_ x0, integral_q auto sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
@@ -195,7 +195,7 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f=std::identity{}, iterator_q Y_, iterable_q Xs>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 copy_to(Y_ y0, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
 {
@@ -207,7 +207,7 @@ noexcept -> void
 }
 
 template <auto f=std::identity{}, iterator_q Y_, iterable_q Xs>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 move_to(Y_  y0, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
 {
@@ -217,7 +217,7 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f=std::identity{}, iterable_q Ys, iterable_q Xs>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 copy_to(Ys &ys, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
 {
@@ -225,7 +225,7 @@ noexcept -> void
 }
 
 template <auto f=std::identity{}, iterable_q Ys, iterable_q Xs>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 move_to(Ys &ys, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
 {
@@ -237,7 +237,7 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <iterator_q Y_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 swap_to(Y_ y0, Y_ const yM, Y_ const yN, signed const ord=sequential_q<Y_>)
 noexcept -> void
 {
@@ -253,7 +253,7 @@ noexcept -> void
 
 
 template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 swap_with(Y_ y0, X_ const x0, X_ const xN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
@@ -267,21 +267,21 @@ noexcept -> void
 	}
 }
 template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 swap_with(Y_ y0, X_ x0, distance_t<X_> sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
 	swap_with(y0, x0, point_f(x0, sN), ord);
 }
 template <iterator_q Y_, iterable_q Xs>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 swap_with(Y_  y0, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
 {
 	swap_with(y0, point_f(xs), count_f(xs), ord);
 }
 template <iterable_q Ys, iterable_q Xs>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 swap_with(Ys &ys, Xs &&xs, signed const ord=sequential_q<Xs>)
 noexcept -> void
 {
@@ -292,7 +292,7 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <iterator_q Y_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 fill_with(Y_ y0, distance_t<Y_> sN, deiteratee_t<Y_> const &y, signed const ord=sequential_q<Y_>)
 noexcept -> void
 {
@@ -313,7 +313,7 @@ noexcept -> void
 	while (sN--) {y0[sN] = y;}
 }
 template <iterator_q Y_>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 initialize_with(Y_ y0, distance_t<Y_> sN, deiteratee_t<Y_> const &y, signed const ord=sequential_q<Y_>)
 noexcept -> void
 {
@@ -338,7 +338,7 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f, auto &&...fs>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 apply_to(iterable_q auto &yN, signed const ord=sequential_q<decltype(yN)>)
 noexcept -> void
 {
@@ -346,7 +346,7 @@ noexcept -> void
 	move_to<f>(yN.begin(), yN, ord);
 }
 template <auto f, auto &&...fs>
-XTAL_DEF_(inline,let)
+XTAL_VAL_(inline,let)
 apply_to(auto &y1, signed const ord=0)
 noexcept -> void
 {

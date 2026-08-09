@@ -43,10 +43,10 @@ struct define
 
 	public:// FLOW
 
-		XTAL_DEF_(return,inline,let) influx(auto &&...oo) noexcept -> signed {return self().template flux<+1>(XTAL_REF_(oo)...);}
-		XTAL_DEF_(return,inline,let) efflux(auto &&...oo) noexcept -> signed {return self().template flux<-1>(XTAL_REF_(oo)...);}
-		XTAL_DEF_(return,inline,let) effuse(auto &&    o) noexcept -> signed {return self().template fuse<-1>(XTAL_REF_(o)    );}
-		XTAL_DEF_(return,inline,let) infuse(auto &&    o) noexcept -> signed {return self().template fuse<+1>(XTAL_REF_(o)    );}
+		XTAL_VAL_(return,inline,let) influx(auto &&...oo) noexcept -> signed {return self().template flux<+1>(XTAL_REF_(oo)...);}
+		XTAL_VAL_(return,inline,let) efflux(auto &&...oo) noexcept -> signed {return self().template flux<-1>(XTAL_REF_(oo)...);}
+		XTAL_VAL_(return,inline,let) effuse(auto &&    o) noexcept -> signed {return self().template fuse<-1>(XTAL_REF_(o)    );}
+		XTAL_VAL_(return,inline,let) infuse(auto &&    o) noexcept -> signed {return self().template fuse<+1>(XTAL_REF_(o)    );}
 		/*!
 		\brief  	Flux handler: resolves the given message,
 		resorting to `fuse` each comoponent separately if unmatched.
@@ -63,14 +63,14 @@ struct define
 		remains unchanged `+1`, or was unrecognized `-1`.
 		*/
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(auto &&...oo)
 		noexcept -> signed
 		{
 			return -1;
 		}
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(variable_q auto &&o, auto &&...oo)
 		noexcept -> signed
 		{
@@ -84,7 +84,7 @@ struct define
 		\brief  	A ternary integer (\see `flux`).
 		*/
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(auto &&o)
 		noexcept -> signed
 		{
@@ -96,7 +96,7 @@ struct define
 			}
 		}
 		template <signed N_ion> requires in_v<N_ion, 0>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(same_q<T> auto &&o)
 		noexcept -> signed
 		{
@@ -105,17 +105,17 @@ struct define
 
 	public:// SCHEDULE
 
-		XTAL_DEF_(return,inline,let) delay()         noexcept -> auto {return bond::fit<signed>::delta_f(count_f(self()));}
-		XTAL_DEF_(mutate,inline,let) belay()         noexcept -> auto {return        delay();}
-		XTAL_DEF_(mutate,inline,let) relay(auto &&i) noexcept -> auto {return self().delay();}
-	//	XTAL_DEF_(return,inline,let) relay(auto &&i) noexcept -> auto {return std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
+		XTAL_VAL_(return,inline,let) delay()         noexcept -> auto {return bond::fit<signed>::delta_f(count_f(self()));}
+		XTAL_VAL_(mutate,inline,let) belay()         noexcept -> auto {return        delay();}
+		XTAL_VAL_(mutate,inline,let) relay(auto &&i) noexcept -> auto {return self().delay();}
+	//	XTAL_VAL_(return,inline,let) relay(auto &&i) noexcept -> auto {return std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
 		/*!
 		\brief  	Relays all spooled events while invoking the supplied callback for each intermediate segment.
 		\details	The callback parameters are the `counted_t` indicies and the segment index.
 		*/
-		XTAL_DEF_(return,inline,let) pump(auto const &f            ) noexcept -> signed {return pump(f, 0);}
-		XTAL_DEF_(return,inline,let) pump(auto const &f, signed &&n) noexcept -> signed {return pump(f, n);}
-		XTAL_DEF_(return,let)
+		XTAL_VAL_(return,inline,let) pump(auto const &f            ) noexcept -> signed {return pump(f, 0);}
+		XTAL_VAL_(return,inline,let) pump(auto const &f, signed &&n) noexcept -> signed {return pump(f, n);}
+		XTAL_VAL_(return,let)
 		pump(auto const &f, signed &n)
 		noexcept -> signed
 		{
@@ -155,7 +155,7 @@ struct refine
 		\returns	`self()` after `influx`ing the given message,
 		resolving `this` before any dependencies.
 		*/
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator <<=(auto &&o)
 		noexcept -> decltype(auto)
 		{
@@ -166,7 +166,7 @@ struct refine
 		\returns	`self()` after `efflux`ing the given message,
 		resolving any dependencies before `this`.
 		*/
-		XTAL_DEF_(inline,let)
+		XTAL_VAL_(inline,let)
 		operator >>=(auto &&o)
 		noexcept -> decltype(auto)
 		{
@@ -177,7 +177,7 @@ struct refine
 	public:// FLOW
 
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		refuse(bond::tupack_q auto &&o)
 		noexcept -> signed
 		{
@@ -185,7 +185,7 @@ struct refine
 		}
 
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(auto &&...oo)
 		noexcept -> signed
 		{
@@ -197,7 +197,7 @@ struct refine
 			}
 		}
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(auto &&o)
 		noexcept -> signed
 		{
@@ -205,7 +205,7 @@ struct refine
 		}
 
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(auto &&o, auto &&...oo)
 		noexcept -> signed
 		requires requires {refuse<N_ion>(XTAL_REF_(o));}
@@ -214,7 +214,7 @@ struct refine
 				XTAL_1FN_(and) (flux<N_ion>(XTAL_MOV_(oo)...)) (refuse<N_ion>(XTAL_REF_(o)));
 		}
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(auto &&o)
 		noexcept -> signed
 		requires XTAL_TRY_(to)
@@ -251,7 +251,7 @@ struct defer
 
 	public:// FLOW
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux_this(auto &&...oo)
 		noexcept -> signed
 		{
@@ -264,7 +264,7 @@ struct defer
 			}
 		}
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux_head(auto &&...oo)
 		noexcept -> signed
 		{
@@ -281,7 +281,7 @@ struct defer
 		When `N_ion == -1`, effluxes via `this`, then via the proxied value if supported.
 		*/
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		flux(auto &&...oo)
 		noexcept -> signed
 		{
@@ -302,14 +302,14 @@ struct defer
 		\note   	Assigns the given value `O` if it matches the proxied type `U`.
 		*/
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(auto &&o)
 		noexcept -> signed
 		{
 			return S_::template fuse<N_ion>(XTAL_REF_(o));
 		}
 		template <signed N_ion> requires in_v<N_ion, 0>
-		XTAL_DEF_(return,inline,let)
+		XTAL_VAL_(return,inline,let)
 		fuse(same_q<U> auto &&o)
 		noexcept -> signed
 		{

@@ -32,7 +32,7 @@ struct factory
 	the commonality of the supplied arguments.
 	*/
 	template <auto f=std::identity{}, class ...Xs>
-	XTAL_DEF_(return,inline,set)
+	XTAL_VAL_(return,inline,set)
 	make(Xs &&...xs)
 	noexcept -> auto
 	{
@@ -100,7 +100,7 @@ struct aligned<T>
 	\returns	The next available slot for `T`, rounded up to the nearest `T`-boundary.
 	\returns	The most effective packing is attained by ordering the `Ts...` from-largest-to-smallest.
 	*/
-	XTAL_DEF_(return,inline,set)
+	XTAL_VAL_(return,inline,set)
 	advance(auto &i)
 	noexcept -> auto
 	{
