@@ -135,6 +135,14 @@ struct superbucket<A>
 	public:// CONSTRUCT
 		using S_::S_;
 
+		template <fixed_valued_q<archetype> X_> requires (N <= fixed<X_>::extent())
+		XTAL_VAL_(new,explicit)
+		homotype(X_ &&x_)
+		noexcept
+		:	S_(point_f<0>(x_), point_f<N>(x_))
+		{
+		}
+
 	};
 	using type = bond::derive_t<homotype>;
 
@@ -315,8 +323,7 @@ struct bucket
 		*/
 		XTAL_FN2_(to) (template <class ...Xs>
 		XTAL_VAL_(return,inline,let)
-		reform(),
-			form_t<Xs...>(S_::self()))
+		reform(), form_t<Xs...>(self()))
 
 	public:// OPERATE
 		using S_::self;
@@ -328,32 +335,32 @@ struct bucket
 		/*!
 		\returns	The first `resize` elements of `this` as a truncated view of `U`.
 		*/
-		XTAL_FN2_(do) (template <scalar_array_q U_val=value_type>
+		XTAL_FN2_(do) (template <scalar_array_q U_form=value_type>
 		XTAL_VAL_(return,inline,let)
-		self(cardinal_constant_q auto resize),
+		self(cardinal_constant_q auto N_form),
 		{
-			bool constexpr K_default = same_q<U_val, value_type>;
+			bool constexpr K_default = same_q<U_form, value_type>;
 			bool constexpr K_uniform = same_q<Us...>;
 			XTAL_IF0
-			XTAL_0IF (K_default and resize == size()) {
+			XTAL_0IF (K_default and N_form == size()) {
 				return self();
 			}
-			XTAL_0IF (K_uniform and resize <= size()) {
-				return reform<U_val(&)[resize]>();
+			XTAL_0IF (K_uniform and N_form <= size()) {
+				return form_t<U_form(&)[N_form]>(self());
 			}
 			XTAL_0IF_(else) {
 				static_assert(K_default);
 				return [&]<auto ...I> (bond::seek_in_t<I...>)
 					XTAL_0FN_(to) (reform(get<I>(self())...))
-				(bond::seek_to_t<resize>{});
+				(bond::seek_to_t<N_form>{});
 			}
-			static_assert(resize <= size());
+			static_assert(N_form <= size());
 		})
-		XTAL_FN2_(do) (template <scalar_array_q U_val=value_type>
+		XTAL_FN2_(do) (template <scalar_array_q U_form=value_type>
 		XTAL_VAL_(return,inline,let)
 		self( ordinal_constant_q auto desize),
 		{
-			return self<U_val>(cardinal_constant_t<desize + size()>{});
+			return self<U_form>(cardinal_constant_t<desize + size()>{});
 		})
 
 	public:
@@ -371,40 +378,40 @@ struct bucket
 		/*!
 		\returns	A copy of `this` truncated to the first `resize` elements.
 		*/
-		template <scalar_array_q U_val=value_type>
+		template <scalar_array_q U_form=value_type>
 		XTAL_VAL_(return,inline,let)
-		twin(cardinal_constant_q auto resize) const
+		twin(cardinal_constant_q auto N_form) const
 		noexcept -> auto
 		{
-			bool constexpr K_default = same_q<U_val, value_type>;
+			bool constexpr K_default = same_q<U_form, value_type>;
 			bool constexpr K_uniform = same_q<Us...>;
 			XTAL_IF0
-			XTAL_0IF (K_default and resize == size()) {
+			XTAL_0IF (K_default and N_form == size()) {
 				return twin();
 			}
-			XTAL_0IF (K_uniform and resize == size()) {
-				return reform<U_val  [resize]>();
+			XTAL_0IF (K_uniform and N_form == size()) {
+				return reform<U_form  [N_form]>();
 			}
 			XTAL_0IF_(else) {
 			//	static_assert(K_default);// Not necessary?
 				return [&]<auto ...I> (bond::seek_in_t<I...>)
 					XTAL_0FN_(to) (form(got<I>(self())...))
-				(bond::seek_to_t<resize>{});
+				(bond::seek_to_t<N_form>{});
 			}
 		}
-		template <scalar_array_q U_val=value_type>
+		template <scalar_array_q U_form=value_type>
 		XTAL_VAL_(return,inline,let)
 		twin( ordinal_constant_q auto desize) const
 		noexcept -> auto
 		{
-			return twin<U_val>(cardinal_constant_t<desize + size()>{});
+			return twin<U_form>(cardinal_constant_t<desize + size()>{});
 		}
 
 	public:// ACCESS
-		static auto constexpr devalue_f = std::identity{};///<\returns The internal value.
-		static auto constexpr revalue_f = std::identity{};///<\returns The external value.
-		static auto constexpr deindex_f = std::identity{};///<\returns The internal index.
-		static auto constexpr reindex_f = std::identity{};///<\returns The external index.
+		XTAL_VAL_(set) devalue_f = std::identity{};///<\returns The internal value.
+		XTAL_VAL_(set) revalue_f = std::identity{};///<\returns The external value.
+		XTAL_VAL_(set) deindex_f = std::identity{};///<\returns The internal index.
+		XTAL_VAL_(set) reindex_f = std::identity{};///<\returns The external index.
 
 		template <index_type N_ind>
 		XTAL_VAL_(return,inline,set)
