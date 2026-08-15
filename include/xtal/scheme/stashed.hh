@@ -38,17 +38,21 @@ struct stashed
 	public:// ACCESS
 		using S_::head;
 
-		/*!
-		\returns	The contents of `stash` as a tuple of `Vs &...`.
-		*/
+		XTAL_FN2_(to) (template <class V> requires variable_q<V>
+		XTAL_VAL_(return,inline,get) stash1(), get<0>(stash<V>()))
+		///<\returns	The contents of `stash` as the value `V &`.
+
+		XTAL_FN2_(to) (template <class V> requires variable_q<V>
+		XTAL_VAL_(return,inline,get) stash1(V const &v), get<0>(head().form(v)))
+		///<\returns	The contents of `stash` as the value `V` prior to replacement with `vv`.
+		
 		XTAL_FN2_(to) (template <class ...Vs> requires variable_q<Vs...>
 		XTAL_VAL_(return,inline,get) stash(), head().template form<Vs...>())
-		
-		/*!
-		\returns	The contents of `stash` as a tuple of `Vs &...` prior to replacement with `vs...`.
-		*/
+		///<\returns	The contents of `stash` as a tuple of `Vs &...`.
+
 		XTAL_FN2_(to) (template <class ...Vs> requires variable_q<Vs...>
 		XTAL_VAL_(return,inline,get) stash(Vs const &...vs), head().form(vs...))
+		///<\returns	The contents of `stash` as a tuple of `Vs  ...` prior to replacement with `vs...`.
 		
 		template <auto u>
 		XTAL_VAL_(inline,let) stash(                 ) noexcept -> void {head().fill(u  );}///< Clears/fills `stash` with the given `byte`.

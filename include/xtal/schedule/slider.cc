@@ -50,7 +50,7 @@ TAG_("slider", "process")
 
 		auto z_cursor = occur::  cursor_t<>(0x020);
 		auto z_resize = occur::  resize_t<>(0x020);
-		auto z_sample = occur::resample_t<>(44100);
+		auto z_sample = occur::quartz_t<>(44100);
 
 		//\
 		U_processor::template bind_t<> z;

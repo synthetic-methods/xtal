@@ -75,7 +75,7 @@ public:
 		\brief  	Defines a non-resizable collection of predetermined-capacity with the given `value_type`.
 		*/
 		template <class U>
-		using store_t = atom:: bucket_t<U[N]>;
+		using store_t = atom::bucket_t<U[N]>;
 
 	};
 	template <class S> requires (0 != N and M != N) and  ordinal_q<typename fluid<A>::value_type>

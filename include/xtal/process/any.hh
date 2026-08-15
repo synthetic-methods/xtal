@@ -233,7 +233,7 @@ struct refine
 	public:// CONSTRUCT
 		using S_::S_;
 
-	public:// BRACKET
+	public:// bucket
 
 		template <class ...Xs>
 		struct combined   : confined<typename S_::template binding<Xs...>> {};

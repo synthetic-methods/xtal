@@ -333,6 +333,27 @@ struct bucket
 		XTAL_VAL_(set) mask = size_constant_t<size - 1>{};
 
 		/*!
+		\returns	`true` if component-wise equal, `false` otherwise.
+		*/
+		XTAL_VAL_(return,inline,friend,let)
+		operator==(homotype const &s, homotype const &t)
+		noexcept -> bool
+		{
+			XTAL_IF0
+		//	XTAL_0IF (same_q<Us...> and atomic_q<value_type>) {
+		//		return 0 == std::memcmp(s.data(), t.data(), S_::size_bytes());//TODO: Not working for complex values?
+		//	}
+			XTAL_0IF XTAL_TRY_(to) (
+				static_cast<S_ const &>(s) == static_cast<S_ const &>(t)
+			)
+			XTAL_0IF_(else) {
+				return [&]<auto ...I>(bond::seek_in_t<I...>)
+					XTAL_0FN_(to) (...and (get<I>(s) == get<I>(t)))
+				(bond::seek_to_t<size>{});
+			}
+		}
+
+		/*!
 		\returns	The first `resize` elements of `this` as a truncated view of `U`.
 		*/
 		XTAL_FN2_(do) (template <scalar_array_q U_form=value_type>
@@ -362,9 +383,6 @@ struct bucket
 		{
 			return self<U_form>(cardinal_constant_t<desize + size()>{});
 		})
-
-	public:
-	//	using S_::twin;
 
 		/*!
 		\returns	A copy of `this`.
@@ -473,6 +491,71 @@ struct bucket
 		XTAL_FN1_(go) (template <auto ...Ns> XTAL_VAL_(return,inline,let) operator(), T::template coelement_f<Ns...>)
 	//	XTAL_FN2_(to) (template <index_type N_ind > XTAL_VAL_(return,inline,let) operator() (       ), coelement<N_ind>())
 	//	XTAL_FN2_(to) (template <integral_q N_ind > XTAL_VAL_(return,inline,let) operator() (N_ind i), coelement(i))
+
+	public:// APPLY
+		/*!
+		\returns	A `revalue_f`d instance of `this`.
+		*/
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,let) reform(), apply())
+
+		/*!
+		\returns	A `revalue_f`d instance of `this`.
+		*/
+		XTAL_VAL_(return,inline,let)
+		apply() const
+		noexcept -> decltype(auto)
+		{
+			using F = decltype(T::revalue_f);
+			if constexpr (same_q<Us...>) {
+				return apply<typename S_::template form_t<return_t<F, value_type>[size]>>();
+			}
+			else {
+				return apply<return_t<F, Us>...>();
+			}
+		}
+
+		/*!
+		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.
+		*/
+		template <complete_q F>
+		XTAL_VAL_(return,inline,explicit)
+		operator F() const
+		noexcept
+		{
+			return apply<F>();
+		}
+
+		/*!
+		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.
+		*/
+		template <class F>
+		XTAL_VAL_(return,inline,let)
+		apply() const
+		noexcept -> decltype(auto)
+		{
+			return apply<bond::operate<F>{}>();
+		}
+		/*!
+		\returns	The result of applying `f` to the `revalue_f`s of `this`.
+		*/
+		template <auto  f>
+		XTAL_VAL_(return,inline,let)
+		apply() const
+		noexcept -> decltype(auto)
+		{
+			return apply(f);
+		}
+		/*!
+		\returns	The result of applying `f` to the `revalue_f`s of `this`.
+		*/
+		XTAL_VAL_(return,inline,let)
+		apply(auto &&f) const
+		noexcept -> decltype(auto)
+		{
+			return [this, f=XTAL_REF_(f)]<auto ...I> (bond::seek_in_t<I...>)
+				XTAL_0FN_(to) (f(self().template coelement<I>()...))
+			(bond::seek_to_t<size>{});
+		}
 
 	};
 	using type = bond::derive_t<homotype>;

@@ -11,20 +11,20 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s>	struct   resample;
-template <class ..._s>	using    resample_t =  confined_t<resample<_s...>>;
-template <class ..._s>	concept  resample_q = bond::tag_inner_p<resample, _s...>;
+template <class ..._s>	struct   quartz;
+template <class ..._s>	using    quartz_t =  confined_t<quartz<_s...>>;
+template <class ..._s>	concept  quartz_q = bond::tag_inner_p<quartz, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-struct resample
+struct quartz
 {
 	using U0 = typename bond::fit<>::alpha_type;
 	using U2 = atom::couple_t<U0[2]>;
 
-	using superkind = bond::compose<flow::tag<resample>, defer<U2>, As...>;
+	using superkind = bond::compose<flow::tag<quartz>, defer<U2>, As...>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -85,7 +85,7 @@ struct resample
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_VAL_(let) resample_f = [] XTAL_1FN_(call) (resample_t<>);
+XTAL_VAL_(let) quartz_f = [] XTAL_1FN_(call) (quartz_t<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

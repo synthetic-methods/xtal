@@ -1,7 +1,6 @@
 #include "./any.cc"
 #include "./blob.cc"
 #include "./bucket.cc"
-#include "./bracket.cc"
 #include "./buffer.cc"
 #include "./couple.cc"
 #include "./differential.cc"

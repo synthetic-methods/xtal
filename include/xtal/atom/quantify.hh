@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./bracket.hh"
+#include "./bucket.hh"
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief   Extends `bracket` with component-wise operation.
+\brief   Extends `bucket` with component-wise operation.
 \note    Abstract `quantity`.
 */
 
@@ -43,7 +43,7 @@ struct quantify
 	using delta_type = typename U_fit::delta_type;
 
 	template <class T>
-	using endotype = typename bracket<Us...>::template homotype<T>;
+	using endotype = typename bucket<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<quantify_t>>;
@@ -75,6 +75,7 @@ struct quantify
 		template <size_type I> XTAL_VAL_(return,inline,set) zip_got(bucket_q auto &&t) noexcept -> decltype(auto) requires XTAL_TRY_(to) (got<I>(XTAL_REF_(t)))
 
 	public:
+	//	TODO: Implement `zip_*` for non-`constexpr` functions?
 		/*!
 		\brief  	Determines whether the operation `f` can be applied at the value-level.
 		*/

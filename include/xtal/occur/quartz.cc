@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./resample.hh"// testing...
+#include "./quartz.hh"// testing...
 
 
 
@@ -13,22 +13,22 @@ namespace xtal::occur::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("resample")
+TAG_("quartz")
 {
 	TRY_("construction")
 	{
 		using U = double; using U_fit = bond::fit<U>;
 		using V =  float; using V_fit = bond::fit<V>;
 
-		resample_t<V> o;
+		quartz_t<V> o;
 		TRUE_(V_fit::diplo_f(0) == o.  rate());
 		TRUE_(V_fit::haplo_f(0) == o.period());
 
-		o   = resample_t<V>{(unsigned short) 16};
+		o   = quartz_t<V>{(unsigned short) 16};
 		TRUE_(V_fit::diplo_f(4) == o.  rate());
 		TRUE_(V_fit::haplo_f(4) == o.period());
 
-		o <<= resample_t<U>{(unsigned  long) 32};
+		o <<= quartz_t<U>{(unsigned  long) 32};
 		TRUE_(V_fit::diplo_f(5) == o.  rate());
 		TRUE_(V_fit::haplo_f(5) == o.period());
 

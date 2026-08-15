@@ -93,6 +93,15 @@ TAG_("bucket")
 //		TRUE_(u.size() == 1);
 //
 //	}
+	TRY_("bucket equality")
+	{
+		W_alpha w_alpha{ 1 ,  2 };
+		W_aphex w_aphex{{1}, {2}};
+
+		TRUE_(W_alpha{ 1 ,  2 } == w_alpha);
+		TRUE_(W_aphex{{1}, {2}} == w_aphex);
+
+	}
 }
 /***/
 

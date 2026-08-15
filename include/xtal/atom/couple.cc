@@ -43,14 +43,14 @@ TAG_("couple")
 		using U = unsigned;
 		using V =   signed;
 
-		using U0 = couple_t<U[0] >; using _U0 = bracket_t<U[0] >;
-		using V0 = couple_t<V[0] >; using _V0 = bracket_t<V[0] >;
-		using U1 = couple_t<U[1] >; using _U1 = bracket_t<U[1] >;
-		using V1 = couple_t<V[1] >; using _V1 = bracket_t<V[1] >;
-		using U2 = couple_t<U[2] >; using _U2 = bracket_t<U[2] >;
-		using V2 = couple_t<V[2] >; using _V2 = bracket_t<V[2] >;
-		using UV = couple_t<U, V>; using _UV = bracket_t<U, V>;
-		using VU = couple_t<V, U>; using _VU = bracket_t<V, U>;
+		using U0 = couple_t<U[0] >; using _U0 = bucket_t<U[0] >;
+		using V0 = couple_t<V[0] >; using _V0 = bucket_t<V[0] >;
+		using U1 = couple_t<U[1] >; using _U1 = bucket_t<U[1] >;
+		using V1 = couple_t<V[1] >; using _V1 = bucket_t<V[1] >;
+		using U2 = couple_t<U[2] >; using _U2 = bucket_t<U[2] >;
+		using V2 = couple_t<V[2] >; using _V2 = bucket_t<V[2] >;
+		using UV = couple_t<U, V>; using _UV = bucket_t<U, V>;
+		using VU = couple_t<V, U>; using _VU = bucket_t<V, U>;
 
 		static_assert(    bond::tab_comparable_q< V1,  V1>);// `    ==` (shallow)
 		static_assert(not bond::tab_comparable_q< V1, _V1>);// `not ==` (shallow)
