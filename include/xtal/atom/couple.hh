@@ -17,7 +17,7 @@ providing even/odd-reflection iff `size() == 2`.
 */
 template <class ...Us>	struct  couple;
 template <class ...Us>	using   couple_t = typename couple<Us...>::type; ///<\brief  Type-factory for `couple`.
-template <class ...Us>	concept couple_q = bond::tag_inner_fixed_p<couple_t, Us...>;
+template <class ...Ts>	concept couple_q = bond::tag_inner_fixed_p<couple_t, Ts...>;
 
 ///\brief Factory for `couple`.
 XTAL_VAL_(return,inline,let)
@@ -45,10 +45,8 @@ noexcept -> decltype(auto)
 ////////////////////////////////////////////////////////////////////////////////
 
 template <scalar_array_q ...Us> requires same_q<Us...>
-struct couple<Us ...>
-:	couple<common_t<Us...>[sizeof...(Us)]>
-{
-};
+struct couple<Us ...> : couple<common_t<Us...>[sizeof...(Us)]>
+{};
 template <class ...Us>
 struct couple
 {
@@ -68,6 +66,7 @@ struct couple
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
+		using A_ = typename S_:: archetype;
 		static auto constexpr N_ = static_cast<int>(S_::size());
 
 	public:// ACCESS
@@ -166,7 +165,7 @@ struct couple
 		XTAL_VAL_(inline,let)
 		operator++(int) const
 		noexcept -> auto
-		requires same_q<Us...>
+		requires fixed_valued_q<A_>
 		{
 			auto t = S_::twin();
 			value_type u{};
@@ -180,7 +179,7 @@ struct couple
 		XTAL_VAL_(inline,let)
 		operator--(int) const
 		noexcept -> auto
-		requires same_q<Us...>
+		requires fixed_valued_q<A_>
 		{
 			auto t = S_::twin();
 			value_type u;
@@ -204,7 +203,7 @@ struct couple
 		{
 			auto const &e0 = S_::template element<0>();
 			auto const &e1 = S_::template element<1>();
-			return S_::form(e1, e0);
+			return S_::reform(e1, e0);
 		}
 		XTAL_VAL_(return,inline,let)
 		flipped(simplex_field_q auto const side) const
@@ -214,7 +213,7 @@ struct couple
 			auto const &e1 = S_::template element<1>();
 			auto const  f0 =   half*(e0 + e1);
 			auto const  f1 =   side*(f0 - e1);
-			return S_::form(f0 + f1, f0 - f1);
+			return S_::reform(f0 + f1, f0 - f1);
 		}
 
 		/*!
@@ -264,19 +263,19 @@ struct couple
 		XTAL_VAL_(return,inline,let)
 		reflection() const
 		noexcept -> auto
-		requires (size == 2) and same_q<Us...>
+		requires (size == 2) and fixed_valued_q<A_>
 		{
 			auto const &x = self().template element<0>();
 			auto const &y = self().template element<1>();
 			XTAL_IF0
-			XTAL_0IF (N_dir ==  0) {return S_::form(x + y, x - y);}
+			XTAL_0IF (N_dir ==  0) {return S_::reform(x + y, x - y);}
 			XTAL_0IF (N_dir ==  1) {return x + y;}
 			XTAL_0IF (N_dir == -1) {return x - y;}
 		}
 		XTAL_VAL_(return,inline,let)
 		reflection(constant_q auto const n) const
 		noexcept -> decltype(auto)
-		requires (size == 2) and same_q<Us...>
+		requires (size == 2) and fixed_valued_q<A_>
 		{
 			return reflection<XTAL_ALL_(n){}>();
 		}

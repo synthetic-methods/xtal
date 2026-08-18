@@ -119,7 +119,7 @@ struct refine
 
 		XTAL_VAL_(new,implicit)
 		subtype(std::initializer_list<U_> u_)
-		noexcept requires make_p<W_, std::initializer_list<U_>>
+		noexcept requires requires {W_(u_);}
 		:	S_{W_(u_)}
 		{}
 

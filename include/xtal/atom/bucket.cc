@@ -51,8 +51,11 @@ TAG_("bucket")
 	}
 	TRY_("bucket expansion")
 	{
-		using W2 = bucket_t<T_alpha[2]>;
-		using W3 = bucket_t<T_alpha[3]>;
+		using M2 = bucket_t<union FOO, T_alpha[2]>;
+		using W2 = bucket_t<           T_alpha[2]>;
+		using W3 = bucket_t<           T_alpha[3]>;
+
+		static_assert(different_q<M2, W3>);
 
 		auto w2 = W2{1, 2}; auto _w3 = w2.twin(cardinal_constant_t<3>{});
 		auto w3 = W3{1, 2};

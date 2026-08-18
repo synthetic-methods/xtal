@@ -31,10 +31,8 @@ template <class U, auto  N, auto  ...Ns> struct   quantify<U(&)[N][Ns]...> : qua
 ////////////////////////////////////////////////////////////////////////////////
 
 template <scalar_array_q ...Us> requires same_q<Us...>
-struct quantify<Us ...>
-:	quantify<common_t<Us...>[sizeof...(Us)]>
-{
-};
+struct quantify<Us ...> : quantify<common_t<Us...>[sizeof...(Us)]>
+{};
 template <class ...Us>
 struct quantify
 {
@@ -52,6 +50,7 @@ struct quantify
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
+		using A_ = typename S_:: archetype;
 		using V_ = typename S_::scale_type;
 		using U_ = typename S_::value_type;
 		using U0 = typename S_::template tuple_element<0>::type;
@@ -80,7 +79,7 @@ struct quantify
 		\brief  	Determines whether the operation `f` can be applied at the value-level.
 		*/
 		template <class U, auto f>
-		XTAL_VAL_(set) zip_value_q = std::conditional_t<same_q<Us...>
+		XTAL_VAL_(set) zip_value_q = std::conditional_t<fixed_valued_q<A_>
 			,	constant_t<un_v<0, requires (U_ u_, U u) {f(u_, u);}   >>
 			,	constant_t<un_v<0, requires (Us u_, U u) {f(u_, u);}...>>
 		>{}();
@@ -116,7 +115,7 @@ struct quantify
 		noexcept -> decltype(auto)
 		{
 			return [&] <auto ...I>(bond::seek_in_t<I...>)
-				XTAL_0FN_(to) (S_::form(zip_from<f, I>(   ts...)  ...)) (bond::seek_to_t<size> {});
+				XTAL_0FN_(to) (S_::reform(zip_from<f, I>(   ts...)  ...)) (bond::seek_to_t<size> {});
 		}
 		/*!
 		\brief  	Evaluates `f` across `s[*], ts[*]...`.
@@ -127,7 +126,7 @@ struct quantify
 		noexcept -> decltype(auto)
 		{
 			return [&] <auto ...I>(bond::seek_in_t<I...>)
-				XTAL_0FN_(to) (         zip_into<f, I>(s, ts...), ... ) (bond::seek_to_t<size> {});
+				XTAL_0FN_(to) (           zip_into<f, I>(s, ts...), ... ) (bond::seek_to_t<size> {});
 		}
 		/*!
 		\returns	This after applying the vector operation `f`.
@@ -175,7 +174,7 @@ struct quantify
 			}
 			else {
 				return [&]<auto ...I> (bond::seek_in_t<I...>)
-					XTAL_0FN_(to) (u +...+ (scale_type{cosign_v<I>}*get<I>(s)))
+					XTAL_0FN_(to) (u +...+ (scale_type{sigpar_v<I>}*get<I>(s)))
 				(bond::seek_to_t<size>{});
 			}
 		}
@@ -199,7 +198,7 @@ struct quantify
 			bond::seek_to_e<size>([&]<constant_q I> (I)
 			XTAL_0FN -> void {
 				sigma_type constexpr  i{I{}};
-				scale_type constexpr _1{cosign_v<i>};
+				scale_type constexpr _1{sigpar_v<i>};
 				auto const &v = get<I>(s);
 				XTAL_IF0
 				XTAL_0IF (0 < N_sgn) {u = xtd::plus_multiplies{}(XTAL_MOV_(u),    v, v);}
@@ -208,7 +207,7 @@ struct quantify
 
 			return u;
 		}
-		template <int N_sgn=1> requires same_q<Us...>
+		template <int N_sgn=1> requires fixed_valued_q<A_>
 		XTAL_VAL_(return,inline,let)
 		product(auto &&t) const
 		noexcept -> auto
@@ -220,7 +219,7 @@ struct quantify
 			bond::seek_to_e<size>([&, this]<constant_q I> (I)
 			XTAL_0FN -> void {
 				sigma_type constexpr  i{I{}};
-				scale_type constexpr _1{cosign_v<i>};
+				scale_type constexpr _1{sigpar_v<i>};
 				XTAL_IF0
 				XTAL_0IF (0 < N_sgn) {u = xtd::plus_multiplies{}(XTAL_MOV_(u),    get<i>(s), get<i>(t));}
 				XTAL_0IF (N_sgn < 0) {u = xtd::plus_multiplies{}(XTAL_MOV_(u), _1*get<i>(s), get<i>(t));}
@@ -244,25 +243,26 @@ struct quantify
 
 	//	Vector reflection (performed component-wise):
 
-		template <int N_sgn=1>
+		template <int N_ind=-1>
 		XTAL_VAL_(inline,let)
-		flip()
+		negate()
 		noexcept -> auto &
 		{
 			XTAL_IF0
-			XTAL_0IF (0 <= N_sgn) {
-				return self();
-			}
-			XTAL_0IF (N_sgn <  0) {
+			XTAL_0IF (N_ind <  0) {
 				return zip_with<[] (auto &x) XTAL_0FN_(to) (x = -XTAL_MOV_(x))>();
 			}
+			XTAL_0IF (0 <= N_ind) {
+				get<N_ind>(self()) = -XTAL_MOV_(get<N_ind>(self()));
+				return self();
+			}
 		}
-		template <int N_sgn=1>
+		template <int N_ind=-1>
 		XTAL_VAL_(inline,let)
-		flipped()
+		negated()
 		noexcept -> auto
 		{
-			return twin().template flip<N_sgn>();
+			return twin().template negate<N_ind>();
 		}
 
 		XTAL_VAL_(return,inline,let) operator - () noexcept -> auto requires requires (U_ u) {-u;}{return zip_with<[] (           auto const &u) XTAL_0FN_(to) (-u)>();}

@@ -16,7 +16,7 @@ jobs:
         bt: [Debug,         Release]
         os: [macOS, Ubuntu         ]
       # os: [macOS, Ubuntu, Windows]
-    
+
     runs-on: ${{matrix.os}}-latest
 
     steps:

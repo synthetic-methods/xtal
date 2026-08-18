@@ -2,6 +2,7 @@
 #include "./compose.cc"
 #include "./depose.cc"
 #include "./derive.cc"
+#include "./devoid.cc"
 #include "./fit.cc"
 #include "./operate.cc"
 #include "./pack.cc"

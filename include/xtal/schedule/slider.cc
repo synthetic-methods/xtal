@@ -15,65 +15,46 @@ namespace xtal::schedule::_test
 
 TAG_("slider", "process")
 {
-	using _fit = bond::fit<>;
-	using T_sigma = typename _fit::sigma_type;
-	using T_delta = typename _fit::delta_type;
-	using T_alpha = typename _fit::alpha_type;
+	using U_fit = bond::fit<>;
+	using U_sigma = typename U_fit::sigma_type;
+	using U_delta = typename U_fit::delta_type;
+	using U_alpha = typename U_fit::alpha_type;
 
 	/**/
 	TRY_("continuous")
 	{
+		using flow::cue_f;
 		using namespace scheme;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
-		using U_cursor = occur::cursor_t<>;
+		using Par_cursor = occur::cursor_t<>;
+		using Sxd_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
 
-		using U0_cue   = flow::cue_s<>;
-		using U1_cue   = flow::cue_s<U0_cue>;
-		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
-		using U1_event = flow::cue_s<U0_event>;
-		
-		using W0_event = atom::differential_t<std::plus<U0_event>[2]>;
-		using V_event = flow::cue_s<>;
-		
-		using Z_process = process::confined_t<
-			typename U_slider::template suspend<U1_event>
+		using Par_ramp = occur::reinferred_t<class RAMP, U_alpha>;
+		using Prx_ramp = process::confined_t<
+			typename Sxd_slider::template suspend<flow::cue_s<Par_ramp>>
 		>;
-		using U_processor = processor::monomer_t<Z_process
+		using Pxr_ramp = processor::monomer_t<Prx_ramp
 		,	scheme::stored <null_type[0x100]>
 		,	scheme::spooled<null_type[0x100]>
 		>;
 
-		auto z_cursor = occur::  cursor_t<>(0x020);
-		auto z_resize = occur::  resize_t<>(0x020);
+		auto z_cursor = occur::cursor_t<>(0x020);
+		auto z_resize = occur::resize_t<>(0x020);
 		auto z_sample = occur::quartz_t<>(44100);
 
 		//\
-		U_processor::template bind_t<> z;
-		auto z = U_processor::bind_f();
+		Pxr_ramp::template bind_t<> z;
+		auto z = Pxr_ramp::bind_f();
 		
-		U0_event u0(0);
-		U1_event u1(2, u0);
-
-		U0_event v0(2);
-		U1_event v1(2, u0);
-
-		u0 += v0;
-//		u1 += v1;
-
-		z <<= u0;
-		z <<= u1;
-
-		W0_event w0{u0};
-
-		z <<=                         U0_event{ 0.00} ;
-		z <<= U1_cue(0x08, 0x10).then(U0_event{ 0.99});
-		z <<= U1_cue(0x10, 0x28).then(U0_event{-0.99});
-	//	z <<= U1_cue(0x30, 0x40).then(U0_event{ 0.00});
+		z <<=                        Par_ramp{ 0.00};
+		z <<= cue_f(0x08, 0x10) <<   Par_ramp{ 0.99};
+		z <<= cue_f(0x10, 0x28) <<   Par_ramp{-0.99};
+	//	z <<= cue_f(0x08, 0x10).then(Par_ramp{ 0.99});
+	//	z <<= cue_f(0x10, 0x28).then(Par_ramp{-0.99});
 
 		z <<= z_sample;
 		z <<= z_resize;
@@ -86,7 +67,7 @@ TAG_("slider", "process")
 
 		//	TRUE_(2 >= z.ensemble().size());// Still decaying...
 		}
-		z <<= U1_cue(0x10, 0x20).then(U0_event{ 0.00});
+		z <<= cue_f(0x10, 0x20).then(Par_ramp{ 0.00});
 		TRUE_(0 == z.efflux(z_cursor++));
 		{
 			echo_plot_<28>(z.store(), 0x08, 0x10);
@@ -100,68 +81,49 @@ TAG_("slider", "process")
 	/**/
 	TRY_("continuous")
 	{
+		using flow::cue_f;
 		using namespace scheme;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
-		using U_cursor = occur::cursor_t<>;
+		using Sxd_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
+		using Par_cursor = occur::cursor_t<>;
 
-		using U0_cue   = flow::cue_s<>;
-		using U1_cue   = flow::cue_s<U0_cue>;
 
-		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
-		using U1_event = flow::cue_s<U0_event>;
+		using Par_ramp = occur::reinferred_t<class RAMP, U_alpha>;
+		using Dif_ramp = atom::differential_t<std::plus<Par_ramp>[2]>;
+		using Prx_ramp = process::confined_t<void
+		,	typename Sxd_slider::template suspend<flow::cue_s<Par_ramp>>
+		>;
+		Prx_ramp u_gate;
 		
-		using W0_event = atom::differential_t<std::plus<U0_event>[2]>;
-		using V_event  = flow::cue_s<>;
-		
-		using U_suspend = typename U_slider::template suspend<U1_event>;
-		using U_process = process::confined_t<U_suspend>;
+		u_gate <<=                 (Par_ramp{2.0});
+		u_gate <<= cue_f(2, 6).then(Par_ramp{4.0});
+		u_gate <<= cue_f(7, 9).then(Par_ramp{5.0});
 
-		U_process u_gate;
-		
-		U0_event u0(2);
-		U1_event u1(2, u0);
-
-		U0_event v0(2);
-		U1_event v1(2, u0);
-
-		u0 += v0;
-//		u1 += v1;
-
-		u_gate <<= u0;
-		u_gate <<= u1;
-
-		W0_event w0{u0};
-
-		u_gate <<=                   U0_event{2.0} ;
-		u_gate <<= U1_cue(2, 6).then(U0_event{4.0});
-		u_gate <<= U1_cue(7, 9).then(U0_event{5.0});
-
-		TRUE_((T_alpha) u_gate() == 2.0);//  0
-		TRUE_((T_alpha) u_gate() == 2.0);//  1
-		TRUE_((T_alpha) u_gate() == 2.0);//  2 <<
-		TRUE_((T_alpha) u_gate() == 2.5);//  3
-		TRUE_((T_alpha) u_gate() == 3.0);//  4
-		TRUE_((T_alpha) u_gate() == 3.5);//  5
+		TRUE_((U_alpha) u_gate() == 2.0);//  0
+		TRUE_((U_alpha) u_gate() == 2.0);//  1
+		TRUE_((U_alpha) u_gate() == 2.0);//  2 <<
+		TRUE_((U_alpha) u_gate() == 2.5);//  3
+		TRUE_((U_alpha) u_gate() == 3.0);//  4
+		TRUE_((U_alpha) u_gate() == 3.5);//  5
 //		
-		u_gate >>= U_cursor(N_store);
-		u_gate <<= (V_event) 4 << (U0_event) 9.0;
+		u_gate >>= Par_cursor(N_store);
+		u_gate <<= cue_f(4) << (Par_ramp) 9.0;
 //		
-		TRUE_((T_alpha) u_gate() == 4.0);//  6 >>
-		TRUE_((T_alpha) u_gate() == 4.0);//  7 <<
-		TRUE_((T_alpha) u_gate() == 4.5);//  8
-		TRUE_((T_alpha) u_gate() == 5.0);//  9 >>
-		TRUE_((T_alpha) u_gate() == 9.0);// 10
-		TRUE_((T_alpha) u_gate() == 9.0);// 11
+		TRUE_((U_alpha) u_gate() == 4.0);//  6 >>
+		TRUE_((U_alpha) u_gate() == 4.0);//  7 <<
+		TRUE_((U_alpha) u_gate() == 4.5);//  8
+		TRUE_((U_alpha) u_gate() == 5.0);//  9 >>
+		TRUE_((U_alpha) u_gate() == 9.0);// 10
+		TRUE_((U_alpha) u_gate() == 9.0);// 11
 		
-		u_gate <<= (V_event) 1 << (U0_event) 1.0;
+		u_gate <<= cue_f(1) << (Par_ramp) 1.0;
 		
-		TRUE_((T_alpha) u_gate() == 9.0);// 12
-		TRUE_((T_alpha) u_gate() == 1.0);// 13
+		TRUE_((U_alpha) u_gate() == 9.0);// 12
+		TRUE_((U_alpha) u_gate() == 1.0);// 13
 
 	//	TODO: Test that the queue is being culled. \
 
@@ -170,32 +132,32 @@ TAG_("slider", "process")
 	/**/
 	TRY_("discrete")
 	{
+		using flow::cue_f;
 		using namespace scheme;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
-		using U_cursor = occur::cursor_t<>;
+		using Sxd_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
+		using Par_cursor = occur::cursor_t<>;
 
-		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_slider::template suspend<V_value>>;
+		using Par_step = occur::reinferred_t<class STEP, U_alpha>;
+		using Prx_step = process::confined_t<typename Sxd_slider::template suspend<Par_step>>;
 
-		using U_event = flow::cue_s<V_value>;
-		using V_event = flow::cue_s<>;
+		using U_event = flow::cue_s<Par_step>;
 		
-		Z_value u_gate;
+		Prx_step u_gate;
 		
-		u_gate <<=                 (V_value)  7;
-	//	u_gate <<= (V_event)  0 << (V_value)  7;
-		u_gate <<= (V_event)  1 << (V_value)  1;
-		u_gate <<= (V_event)  3 << (V_value) -1;
-		u_gate <<= (V_event)  4 << (V_value)  1;
-		u_gate <<= (V_event)  5 << (V_value) -1;
-		u_gate <<= (V_event)  7 << (V_value)  7;
-		u_gate <<= (V_event)  7 << (V_value) 77;
-		u_gate <<= (V_event) 10 << (V_value) 99;
+		u_gate <<=              (Par_step)  7;
+	//	u_gate <<= cue_f( 0) << (Par_step)  7;
+		u_gate <<= cue_f( 1) << (Par_step)  1;
+		u_gate <<= cue_f( 3) << (Par_step) -1;
+		u_gate <<= cue_f( 4) << (Par_step)  1;
+		u_gate <<= cue_f( 5) << (Par_step) -1;
+		u_gate <<= cue_f( 7) << (Par_step)  7;
+		u_gate <<= cue_f( 7) << (Par_step) 77;
+		u_gate <<= cue_f(10) << (Par_step) 99;
 		
 		TRUE_(u_gate() ==  7);
 		TRUE_(u_gate() ==  1);
@@ -208,8 +170,8 @@ TAG_("slider", "process")
 		TRUE_(u_gate() == 77);
 	//	TRUE_(u_gate() == 99);
 	//	...
-		u_gate >>= U_cursor(N_store);
-		u_gate <<= (V_event) 4 << (V_value) 11;
+		u_gate >>= Par_cursor(N_store);
+		u_gate <<= cue_f(4) << (Par_step) 11;
 
 		TRUE_(u_gate() == 77);
 		TRUE_(u_gate() == 99);
@@ -225,29 +187,28 @@ TAG_("slider", "process")
 	/**/
 	TRY_("through")
 	{
-
+		using flow::cue_f;
 		using namespace scheme;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
-		using U_cursor = occur::cursor_t<>;
-		using V_event = flow::cue_s<>;
+		using Sxd_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
+		using Par_cursor = occur::cursor_t<>;
 		
-		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_slider::template suspend<V_value>>;
+		using Par_step   = occur::reinferred_t<class STEP, U_alpha>;
+		using Prx_step   = process::confined_t<typename Sxd_slider::template suspend<Par_step>>;
 
-		Z_value u_gate;
+		Prx_step u_gate;
 		
-	//	u_gate <<= (V_event) 0 << (V_value)  7;
-		u_gate <<=                (V_value)  7;
+	//	u_gate <<= cue_f(0) << (Par_step)  7;
+		u_gate <<=             (Par_step)  7;
 		TRUE_(u_gate() ==  7);
 	//	...
-		u_gate >>= U_cursor(N_store);
-	//	u_gate <<= (V_event) 0 << (V_value) 11;
-		u_gate <<=                (V_value) 11;
+		u_gate >>= Par_cursor(N_store);
+	//	u_gate <<= cue_f(0) << (Par_step) 11;
+		u_gate <<=             (Par_step) 11;
 		TRUE_(u_gate() == 11);
 
 	}
@@ -259,66 +220,64 @@ TAG_("slider", "process")
 template <typename ...As>
 void slider_processor()
 {
-	using _fit = bond::fit<>;
-	using T_sigma = typename _fit::sigma_type;
-	using T_delta = typename _fit::delta_type;
-	using T_alpha = typename _fit::alpha_type;
+	using U_fit = bond::fit<>;
+	using U_sigma = typename U_fit::sigma_type;
+	using U_delta = typename U_fit::delta_type;
+	using U_alpha = typename U_fit::alpha_type;
 
+	using flow::cue_f;
 	using namespace scheme;
 //	using namespace schedule;
-
-	class L_gate;
 
 	int constexpr N_store = (1<<3);
 	int constexpr N_spool = (1<<7);
 	
-	using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
+	using Sxd_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
 
-	using U_resize = occur::resize_t<>;
-	using U_cursor = occur::cursor_t<>;
-	using U_store = std::array<T_alpha, N_store>;
-	U_store u_store{};
+	using Par_resize = occur::resize_t<>;
+	using Par_cursor = occur::cursor_t<>;
+	using Arr_store  = std::array<U_alpha, N_store>;
+	Arr_store u_store{};
 
-	using V_value  = occur::reinferred_t<L_gate, T_alpha>;
-	using Fn_gate = process::confined_t<typename U_slider::template suspend<V_value>>;
-	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
-	auto  fx_gate = Fx_gate::bind_f();
+	using Par_step  = occur::reinferred_t<union STEP, U_alpha>;
+	using Prx_step  = process::confined_t<typename Sxd_slider::template suspend<Par_step>>;
+	using Pxr_step  = processor::monomer_t<Prx_step, As...>;
+	auto  pxr_step  = Pxr_step::bind_f();
 	
-	using U_event = flow::cue_s<V_value>;
-	using V_event = flow::cue_s<>;
+	using U_event  = flow::cue_s<Par_step>;
 
-	fx_gate <<= U_resize(N_store);
+	pxr_step <<= Par_resize(N_store);
 	/*/
-	fx_gate <<= (V_event) 0 << (V_value)  7;
-	fx_gate <<= (V_event) 1 << (V_value)  1;
-	fx_gate <<= (V_event) 3 << (V_value) -1;
-	fx_gate <<= (V_event) 4 << (V_value)  1;
-	fx_gate <<= (V_event) 5 << (V_value) -1;
-	fx_gate <<= (V_event) 7 << (V_value)  7;
-	fx_gate <<= (V_event) 7 << (V_value) 77;
+	pxr_step <<= cue_f(0) << (Par_step)  7;
+	pxr_step <<= cue_f(1) << (Par_step)  1;
+	pxr_step <<= cue_f(3) << (Par_step) -1;
+	pxr_step <<= cue_f(4) << (Par_step)  1;
+	pxr_step <<= cue_f(5) << (Par_step) -1;
+	pxr_step <<= cue_f(7) << (Par_step)  7;
+	pxr_step <<= cue_f(7) << (Par_step) 77;
 	/*/
-	fx_gate <<= U_event(0,  7);
-	fx_gate <<= U_event(1,  1);
-	fx_gate <<= U_event(3, -1);
-	fx_gate <<= U_event(4,  1);
-	fx_gate <<= U_event(5, -1);
-	fx_gate <<= U_event(7,  7);
-	fx_gate <<= U_event(7, 77);
+	pxr_step <<= U_event(0,  7);
+	pxr_step <<= U_event(1,  1);
+	pxr_step <<= U_event(3, -1);
+	pxr_step <<= U_event(4,  1);
+	pxr_step <<= U_event(5, -1);
+	pxr_step <<= U_event(7,  7);
+	pxr_step <<= U_event(7, 77);
 	/***/
 
-	fx_gate >>= U_cursor(N_store)*0; xtd::ranges::copy(fx_gate, u_store.begin());
-	TRUE_(u_store == U_store {  7,  1,  1, -1,  1, -1, -1, 77});
+	pxr_step >>= Par_cursor(N_store)*0; xtd::ranges::copy(pxr_step, u_store.begin());
+	TRUE_(u_store == Arr_store {  7,  1,  1, -1,  1, -1, -1, 77});
 
 	/**/
-//	fx_gate <<= (V_event) 0 << (V_value) 77;
-	fx_gate <<= (V_event) 4 << (V_value) 11;
+//	pxr_step <<= cue_f(0) << (Par_step) 77;
+	pxr_step <<= cue_f(4) << (Par_step) 11;
 	/*/
-//	fx_gate <<= U_event(0, 77);
-	fx_gate <<= U_event(4, 11);
+//	pxr_step <<= U_event(0, 77);
+	pxr_step <<= U_event(4, 11);
 	/***/
 
-	fx_gate >>= U_cursor(N_store)*1; xtd::ranges::copy(fx_gate, u_store.begin());
-	TRUE_(u_store == U_store { 77, 77, 77, 77, 11, 11, 11, 11});
+	pxr_step >>= Par_cursor(N_store)*1; xtd::ranges::copy(pxr_step, u_store.begin());
+	TRUE_(u_store == Arr_store { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
 TAG_("slider", "processor")

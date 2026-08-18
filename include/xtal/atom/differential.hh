@@ -24,10 +24,8 @@ XTAL_VAL_(let) differential_f = [] XTAL_1FN_(call) (_detail::factory<differentia
 ////////////////////////////////////////////////////////////////////////////////
 
 template <scalar_array_q ...Us> requires same_q<Us...>
-struct differential<Us ...>
-:	differential<common_t<Us...>[sizeof...(Us)]>
-{
-};
+struct differential<Us ...> : differential<common_t<Us...>[sizeof...(Us)]>
+{};
 template <class ...Us>
 struct differential
 {
@@ -43,7 +41,8 @@ struct differential
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
-	
+		using A_ = typename S_:: archetype;
+
 	public:// CONSTRUCT
 		using S_::S_;
 

@@ -14,7 +14,7 @@ namespace xtal::occur
 \brief
 Tracks the logical progression of contiguous block-based `processor`s.
 
-\details   
+\details
 Characterized by the integral-valued `step` and `size`,
 with arithmetic operations for adjacent movement and comparison.
 

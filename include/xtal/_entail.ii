@@ -97,16 +97,16 @@ template <class  F, class ..._s>	XTAL_TYP_(ask)       automorphism_p	= (some_q<_
 ////////////////////////////////////////////////////////////////////////////////
 // Valued...
 
-using _retail::                      sign_v;// Evaluates `Replace[0->Z]@Sign[N]`.
-using _retail::                    cosign_v;// Evaluates `(-1)^N == Cos[Pi*N]`.
+using _retail::                    modulo_v;// Evaluates `Mod[N, M]`
+using _retail::                    magnum_v;// Evaluates `Abs[N]`.
+using _retail::                    signum_v;// Evaluates `Replace[0->Z]@Sign[N]`.
+using _retail::                    sigpar_v;// Evaluates `(-1)^N` or `Cos[Pi*N]`.
 using _retail::                      skip_v;
-using _retail::                    modulo_v;
 using _retail::                        in_v;
 using _retail::                        un_v;
 using _retail::                        in_q;
 using _retail::                        un_q;
 
-using _retail::                  variable;
 using _retail::         terminal_constant_v;
 using _retail::         terminal_constant_t;
 using _retail::         integral_constant_t;
@@ -486,7 +486,7 @@ noexcept -> auto
 	return T_{XTAL_REF_(t)}|XTAL_MOV_(n_);
 }
 template <iterable_q T>
-using derange_t = XTAL_ALL_(derange_f(XTAL_ANY_(T))); 
+using derange_t = XTAL_ALL_(derange_f(XTAL_ANY_(T)));
 
 /*!
 \returns The result of zipping `...xs` with `f(...)`.

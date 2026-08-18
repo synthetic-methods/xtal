@@ -36,8 +36,8 @@ struct define_super
 		XTAL_VAL_(new,explicit)
 		subtype(auto &&...oo)
 		noexcept
-		requires make_p<S_, decltype(oo)...>
-		:	S_{XTAL_REF_(oo)...}
+		requires requires {S_(XTAL_REF_(oo)...);}
+		:	S_(XTAL_REF_(oo)...)
 		{}
 
 	public:// ACCESS
@@ -196,7 +196,6 @@ struct defer_field
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S>;
-		using U_ = initializer_t<U>;
 
 	public:
 		using head_type =  based_t<U>;
@@ -224,26 +223,27 @@ struct defer_field
 		XTAL_VAL_(new,implicit)
 		subtype()
 		noexcept
-		requires make_p<body_type>
+		requires requires {body_type{ };}
 		:	body_part{}
 		{}
 		/*!
 		\brief  	Constructs `this` using an `initializer_list` if supported.
 		*/
 		XTAL_VAL_(new,implicit)
-		subtype(std::initializer_list<U_> o)
+		subtype(std::initializer_list<initializer_t<U>> o)
 		noexcept
-		requires initializer_q<body_type>
+		requires requires {body_type(o);} and initializer_q<body_type>
 		:	body_part(o)
 		{}
 		/*!
 		\brief  	Constructs `this` using the first argument, forwarding the rest to the parent.
 		*/
 		XTAL_VAL_(new,explicit)
-		subtype(make_q<head_type> auto &&o, auto &&...oo)
+		subtype(auto &&o, auto &&...oo)
 		noexcept
+		requires requires {head_type(XTAL_REF_(o));}
 		:	S_{XTAL_REF_(oo)...}
-		,	body_part{member_f<head_type>(XTAL_REF_(o))}
+		,	body_part(member_f<head_type>(XTAL_REF_(o)))
 		{}
 
 		/*!
@@ -455,8 +455,9 @@ struct defer_field<unit_type[N_width]>
 		,	body_part(head_type(o)&(N_width - 1))
 		{}
 		XTAL_VAL_(new,explicit)
-		subtype(make_p<head_type> auto &&o, auto &&...oo)
+		subtype(auto &&o, auto &&...oo)
 		noexcept
+		requires requires {head_type(XTAL_REF_(o));}
 		:	S_{XTAL_REF_(oo)...}
 		,	body_part(member_f<head_type>(XTAL_REF_(o)))
 		{}

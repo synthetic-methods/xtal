@@ -112,8 +112,10 @@ struct stage
 
 XTAL_VAL_(let) stage_f = [] (auto &&o)
 XTAL_0FN {
-	if constexpr (stage_q<decltype(o)>)
-		{return XTAL_REF_(o);} else {return stage_t<>{XTAL_REF_(o)};}
+	using O = XTAL_ALL_(o);
+	XTAL_IF0
+	XTAL_0IF (in_v<stage_q<O>>) {return          (XTAL_REF_(o));}
+	XTAL_0IF (un_v<stage_q<O>>) {return stage_t<>{XTAL_REF_(o)};}
 };
 
 

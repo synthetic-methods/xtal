@@ -221,8 +221,8 @@ seek_expose_f(seek_in_t<Ns...>)
 noexcept -> decltype(auto)
 {
 	XTAL_IF0
-	XTAL_0IF (2 == sizeof...(Ns)) {return std::tuple<constant_t<Ns>...>{};}
-	XTAL_0IF (2 != sizeof...(Ns)) {return std::pair <constant_t<Ns>...>{};}
+	XTAL_0IF (2 == sizeof...(Ns)) {return std::tuple <constant_t<Ns>...>{};}
+	XTAL_0IF (2 != sizeof...(Ns)) {return std::pair  <constant_t<Ns>...>{};}
 }
 template        <int I= terminal_constant_v<int>, int ...Ns>
 requires different_v<I, terminal_constant_v<int>>
@@ -258,6 +258,11 @@ seek_impose
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+template <integral_q auto I>
+XTAL_VAL_(let) seek_argument_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN_(to) (get<I>(std::tuple<Xs...>{XTAL_REF_(xs)...}));
+///<\brief   Retrieves the indexed argument.
 
 template <integral_q auto ...Ns>
 XTAL_VAL_(let) seek_in_e = [] (auto const &f)

@@ -93,10 +93,10 @@ TAG_("process", "attach")
 	,	XTAL_APP_(let) (3, LHS,  left)
 	,	XTAL_APP_(let) (5, RHS, right)
 	};
-	using _fit = bond::fit<>;
-	using T_sigma = typename _fit::sigma_type;
-	using T_delta = typename _fit::delta_type;
-	using T_alpha = typename _fit::alpha_type;
+	using U_fit = bond::fit<>;
+	using U_sigma = typename U_fit::sigma_type;
+	using U_delta = typename U_fit::delta_type;
+	using U_alpha = typename U_fit::alpha_type;
 
 	using L01 = process::confined_t<typename Ox_level::template poll<LHS>>;
 	using L10 = process::confined_t<typename Ox_level::template poll<RHS>>;
@@ -122,12 +122,12 @@ TAG_("process", "attach")
 
 TAG_("process", "construct")
 {
-	using _fit = bond::fit<>;
-	using T_sigma = typename _fit::sigma_type;
-	using T_delta = typename _fit::delta_type;
-	using T_alpha = typename _fit::alpha_type;
+	using U_fit = bond::fit<>;
+	using U_sigma = typename U_fit::sigma_type;
+	using U_delta = typename U_fit::delta_type;
+	using U_alpha = typename U_fit::alpha_type;
 
-	TRY_("lifting")
+	TRY_("lifting via variable value")
 	{
 		auto const f = process::let_f([] (auto &&...xs) XTAL_0FN_(to) (XTAL_REF_(xs) +...+ 0));
 		TRUE_(10 == f.method(1, 2, 3, 4));
@@ -135,6 +135,36 @@ TAG_("process", "construct")
 		TRUE_(10 == f.reify() (1, 2, 3, 4));
 
 	}
+	TRY_("lifting via constant type")
+	{
+		using F = process::let_t<constant_t<1>>;
+		auto f = F{};
+		TRUE_(1 == f.method());
+		TRUE_(1 == f());
+		TRUE_(1 == f.reify() ());
+
+	}
+	TRY_("lifting via operational type")
+	{
+		using F = process::let_t<decltype(one)>;
+		using G = process::let_t<operate<decltype([] XTAL_1FN_(to) ((U_alpha) 1))>>;
+		auto f = F{};
+		TRUE_(1 == f.method());
+		TRUE_(1 == f());
+		TRUE_(1 == f.reify() ());
+
+		using H = process::let_t<operate<std::array<U_alpha, 2>>>;
+
+	}
+//	TRY_("lifting via functional type")
+//	{
+//		using F = process::let_t<decltype([] XTAL_1FN_(to) ((U_alpha) 1))>;
+//		auto f = F{};
+//		TRUE_((U_alpha) 1 == f.method());
+//		TRUE_((U_alpha) 1 == f());
+//		TRUE_((U_alpha) 1 == f.reify() ());
+//
+//	}
 }
 
 

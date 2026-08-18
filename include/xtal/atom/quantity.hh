@@ -35,10 +35,8 @@ template <class     ...Ts>	XTAL_TYP_(ask) quantity_q = quantity_plus_multiplies_
 ////////////////////////////////////////////////////////////////////////////////
 
 template <scalar_array_q ...Us> requires same_q<Us...>
-struct quantity_plus_multiplies<Us ...>
-:	quantity_plus_multiplies<common_t<Us...>[sizeof...(Us)]>
-{
-};
+struct quantity_plus_multiplies<Us ...> : quantity_plus_multiplies<common_t<Us...>[sizeof...(Us)]>
+{};
 template <class ...Us>
 struct quantity_plus_multiplies
 {
@@ -62,6 +60,7 @@ public:
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
+		using A_ = typename S_:: archetype;
 		using U_ = typename S_::value_type;
 
 	public:// ACCESS
@@ -71,7 +70,7 @@ public:
 
 	public:// CONSTRUCT
 		using S_::S_;
-
+		
 	public:// OPERATE
 		using S_::operator*; using S_::operator*=;
 		using S_::operator/; using S_::operator/=;
@@ -94,11 +93,11 @@ public:
 	//	XTAL_VAL_(return,inline,get)    operator + () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (+x)>(self());}
 		XTAL_VAL_(return,inline,get)    operator - () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (-x)>(self());}
 
-		XTAL_VAL_(mutate,inline,get)    operator *=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s *= T(w); return s;}
-		XTAL_VAL_(mutate,inline,get)    operator /=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s /= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get)    operator *=(std::initializer_list<U_> w)       noexcept requires fixed_valued_q<A_> {auto &s = self(); s *= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get)    operator /=(std::initializer_list<U_> w)       noexcept requires fixed_valued_q<A_> {auto &s = self(); s /= T(w); return s;}
 
-		XTAL_VAL_(mutate,inline,get)    operator +=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s += T(w); return s;}
-		XTAL_VAL_(mutate,inline,get)    operator -=(std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s -= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get)    operator +=(std::initializer_list<U_> w)       noexcept requires fixed_valued_q<A_> {auto &s = self(); s += T(w); return s;}
+		XTAL_VAL_(mutate,inline,get)    operator -=(std::initializer_list<U_> w)       noexcept requires fixed_valued_q<A_> {auto &s = self(); s -= T(w); return s;}
 
 	};
 	using type = bond::derive_t<homotype>;
@@ -111,10 +110,8 @@ public:
 \brief   Extends `quantify` with component-wise multiplication.
 */
 template <scalar_array_q ...Us> requires same_q<Us...>
-struct quantity_multiplies<Us ...>
-:	quantity_multiplies<common_t<Us...>[sizeof...(Us)]>
-{
-};
+struct quantity_multiplies<Us ...> : quantity_multiplies<common_t<Us...>[sizeof...(Us)]>
+{};
 template <class ...Us>
 struct quantity_multiplies
 {
@@ -133,6 +130,7 @@ public:
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
+		using A_ = typename S_:: archetype;
 		using U_ = typename S_::value_type;
 
 	public:// ACCESS
@@ -141,6 +139,7 @@ public:
 
 	public:// CONSTRUCT
 	//	using S_::S_;
+
 		XTAL_VAL_(delete) (homotype, noexcept=default)
 		XTAL_VAL_(create) (homotype, noexcept=default)
 		XTAL_VAL_(move)   (homotype, noexcept=default)
@@ -151,7 +150,7 @@ public:
 		XTAL_VAL_(new,implicit)
 		homotype()
 		noexcept
-		requires un_v<0, size> and same_q<Us...>
+		requires un_v<0, size> and fixed_valued_q<A_>
 		{
 			_detail::initialize_with(S_::begin(), size(), U_{one});
 		}
@@ -162,7 +161,7 @@ public:
 		XTAL_VAL_(new,implicit)
 		homotype(std::initializer_list<U_> xs)
 		noexcept
-		requires un_v<0, size> and same_q<Us...>
+		requires un_v<0, size> and fixed_valued_q<A_>
 		{
 			auto const sN = xs.   size(); assert(sN <= size);
 			auto       x0 = xs.  begin();
@@ -181,8 +180,8 @@ public:
 		template <quantity_multiplies_q W> XTAL_VAL_(mutate,inline,get) operator *=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::mul1_(w);}
 		template <quantity_multiplies_q W> XTAL_VAL_(mutate,inline,get) operator /=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::div1_(w);}
 
-		XTAL_VAL_(mutate,inline,get) operator *=(std::initializer_list<U_> w)                         noexcept requires same_q<Us...> {auto &s = self(); s *= T(w); return s;}
-		XTAL_VAL_(mutate,inline,get) operator /=(std::initializer_list<U_> w)                         noexcept requires same_q<Us...> {auto &s = self(); s /= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get) operator *=(std::initializer_list<U_> w)                         noexcept requires fixed_valued_q<A_> {auto &s = self(); s *= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get) operator /=(std::initializer_list<U_> w)                         noexcept requires fixed_valued_q<A_> {auto &s = self(); s /= T(w); return s;}
 
 		/*!
 		\returns	The reduction of `self` w.r.t. multiplication.
@@ -205,10 +204,8 @@ public:
 \brief   Extends `quantify` with component-wise addition.
 */
 template <scalar_array_q ...Us> requires same_q<Us...>
-struct quantity_plus<Us ...>
-:	quantity_plus<common_t<Us...>[sizeof...(Us)]>
-{
-};
+struct quantity_plus<Us ...> : quantity_plus<common_t<Us...>[sizeof...(Us)]>
+{};
 template <class ...Us>
 struct quantity_plus
 {
@@ -224,6 +221,7 @@ public:
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
+		using A_ = typename S_:: archetype;
 		using U_ = typename S_::value_type;
 
 	public:// ACCESS
@@ -243,8 +241,8 @@ public:
 		template <quantity_plus_q W> XTAL_VAL_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
 		template <quantity_plus_q W> XTAL_VAL_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
 
-		XTAL_VAL_(mutate,inline,get) operator +=(std::initializer_list<U_> w)                   noexcept requires same_q<Us...> {auto &s = self(); s += T(w); return s;}
-		XTAL_VAL_(mutate,inline,get) operator -=(std::initializer_list<U_> w)                   noexcept requires same_q<Us...> {auto &s = self(); s -= T(w); return s;}
+		XTAL_VAL_(mutate,inline,get) operator +=(std::initializer_list<U_> w)                   noexcept requires fixed_valued_q<A_> {auto &s = self(); s += T(w); return s;}
+		XTAL_VAL_(mutate,inline,get) operator -=(std::initializer_list<U_> w)                   noexcept requires fixed_valued_q<A_> {auto &s = self(); s -= T(w); return s;}
 
 		/*!
 		\returns	The reduction of `self` w.r.t. addition.

@@ -30,7 +30,12 @@ template <           >	struct  cue<> : cell::header<signed, bond::tag<cue_s>> {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_VAL_(let) cue_f = [] XTAL_1FN_(call) (cue_s<>);
+XTAL_VAL_(let) cue_f = [] (auto &&...oo)
+XTAL_0FN {
+	XTAL_IF0
+	XTAL_0IF (1 == sizeof...(oo)) {return       cue_s<> (XTAL_REF_(oo)...);}
+	XTAL_0IF (2 == sizeof...(oo)) {return cue_s<cue_s<>>(XTAL_REF_(oo)...);}
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -216,7 +216,7 @@ struct define
 
 The type-constructors `compose` and `compose_s` are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
 
-```c++   
+```c++
 using T = compose<A, Z>::template subtype<S>;
 using T = compose<A>::template subtype<S, Z>;
 using T = compose<>::template subtype<S, Z, A>;

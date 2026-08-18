@@ -94,53 +94,7 @@ struct define
 			};
 		};
 		/*!
-		\brief  	Attaches `T`, appending the instance to the arguments of `method`.
-		*/
-		template <extent_type N_mask=1>
-		struct affix
-		{
-			using superkind = typename T::template attach<N_mask>;
-
-			template <class R>
-			class subtype : public bond::compose_s<R, superkind>
-			{
-				using R_ = bond::compose_s<R, superkind>;
-
-			public:// CONSTRUCT
-				using R_::R_;
-
-			public:// OPERATE
-				using R_::self;
-
-				template <auto ...Ns>
-				XTAL_VAL_(return,inline,let)
-				method(auto &&...oo)
-				noexcept -> decltype(auto)
-				requires requires (R_       &r_) {
-					r_ .template method<Ns...>(XTAL_REF_(oo)..., XTAL_ANY_(T).head());
-				}
-				{
-					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template headed<T>());
-				}
-				template <auto ...Ns>
-				XTAL_VAL_(return,inline,let)
-				method(auto &&...oo) const
-				noexcept -> decltype(auto)
-				requires requires (R_ const &r_) {
-					r_ .template method<Ns...>(XTAL_REF_(oo)..., XTAL_ANY_(T).head());
-				}
-				{
-					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template headed<T>());
-				}
-
-			};
-		};
-		/*!
-		\brief  	Attaches `T` as a member of `this`,
-		`dispatch`ing a conditional indicating positivity.
-		*/
-		/*!
-		\note   	Automatic attachment is currently disabled!
+		\brief  	Defines/`dispatch`es a value indicating whether `T` is non-zero.
 		*/
 		template <extent_type N_mask=1>
 		struct clutch
@@ -265,6 +219,7 @@ struct define
 
 			};
 		};
+
 		/*!
 		\brief  	Uses the current `T` as the return value of `method`.
 		*/
@@ -288,6 +243,60 @@ struct define
 				{
 					return head();
 				}
+
+			};
+		};
+		/*!
+		\brief  	Attaches `T`, appending the instance to the arguments of `method`.
+		*/
+		template <extent_type N_mask=1>
+		struct prefix
+		{
+			using superkind = typename T::template attach<N_mask>;
+
+			template <class R>
+			class subtype : public bond::compose_s<R, superkind>
+			{
+				using R_ = bond::compose_s<R, superkind>;
+
+			public:// CONSTRUCT
+				using R_::R_;
+
+			public:// OPERATE
+
+				XTAL_FN2_(do) (template <auto ...Ns>
+				XTAL_VAL_(return,inline,let)
+				method(auto &&...oo),
+				noexcept -> decltype(auto)
+				requires XTAL_TRY_(to) (qualify_f<R_>(*this).template method<Ns...>
+					(qualify_f<R_>(*this).template headed<T>(), XTAL_REF_(oo)...)))
+
+			};
+		};
+		/*!
+		\brief  	Attaches `T`, appending the instance to the arguments of `method`.
+		*/
+		template <extent_type N_mask=1>
+		struct suffix
+		{
+			using superkind = typename T::template attach<N_mask>;
+
+			template <class R>
+			class subtype : public bond::compose_s<R, superkind>
+			{
+				using R_ = bond::compose_s<R, superkind>;
+
+			public:// CONSTRUCT
+				using R_::R_;
+
+			public:// OPERATE
+
+				XTAL_FN2_(do) (template <auto ...Ns>
+				XTAL_VAL_(return,inline,let)
+				method(auto &&...oo),
+				noexcept -> decltype(auto)
+				requires XTAL_TRY_(to) (qualify_f<R_>(*this).template method<Ns...>
+					(XTAL_REF_(oo)..., qualify_f<R_>(*this).template headed<T>())))
 
 			};
 		};

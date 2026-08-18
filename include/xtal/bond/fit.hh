@@ -376,7 +376,7 @@ public:
 	diplo_f(auto const &n_zoom)
 	noexcept -> alpha_type
 	{
-		auto constexpr o_silon = alpha_1/alpha_type{sigma_1 << fraction.depth - sign_v<N_silon>*N_silon};
+		auto constexpr o_silon = alpha_1/alpha_type{sigma_1 << fraction.depth - signum_v<N_silon>*N_silon};
 		XTAL_IF0
 		XTAL_0IF (0 < N_silon) {return diplo_f(n_zoom, alpha_1 + alpha_type{0.50}/o_silon);}
 		XTAL_0IF (N_silon < 0) {return diplo_f(n_zoom, alpha_1 - alpha_type{0.25}/o_silon);}

@@ -20,7 +20,7 @@ Defines an `any_q` based on the product-type of `Ts...`.
 The member `type` is defined by `inferred_t<Ts...>`.
 */
 template <class ...Ts>	struct    packed;
-template <class ...Ts>	using     packed_t =  typename packed<Ts...>::type;///<\brief Produces the `type` for `packed<Ts...>`.
+template <class ...Ts>	using     packed_t = typename packed<Ts...>::type;///<\brief Produces the `type` for `packed<Ts...>`.
 template <class ...Ts>	concept   packed_q = bond::tag_inner_p<packed, Ts...>;///<\brief Determines whether `Ts...` were decorated by `packed`.
 
 XTAL_VAL_(let) packed_f = []<class ...Ts> (Ts &&...ts)
@@ -73,7 +73,14 @@ struct   packed
 	using type = subtype<any_t<>>;
 
 };
-
+template <vector_array_q A, typename ...As> requires (1 == xtd::extent_v<A>)
+struct   packed<A, As...> : packed<                                               xtd::remove_extent_t<A>, As...>
+{
+};
+template <vector_array_q A, typename ...As> requires (2 <= xtd::extent_v<A>)
+struct   packed<A, As...> : packed<xtd::remove_extent_t<A>[xtd::extent_v<A> - 1], xtd::remove_extent_t<A>, As...>
+{
+};
 /*!
 \brief
 Defines an `any_q` based on the product-type of `Ts...`

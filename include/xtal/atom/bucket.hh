@@ -40,6 +40,11 @@ template <class ...Us> using    superbucket_t = typename superbucket<Us...>::typ
 template <class U, auto N, auto ...Ns> struct superbucket<U   [N][Ns]...> : superbucket<superbucket_t<U[Ns]...>   [N]> {};
 template <class U, auto N, auto ...Ns> struct superbucket<U(&)[N][Ns]...> : superbucket<superbucket_t<U[Ns]...>(&)[N]> {};
 
+template <scalar_array_q ...Us> requires same_q<Us...>
+struct superbucket<Us ...>
+:	superbucket<common_t<Us...>[sizeof...(Us)]>
+{
+};
 template <scalar_array_q ...Us> requires different_q<Us...>
 struct superbucket<Us...>
 {
@@ -178,6 +183,10 @@ struct superbucket<A>
 		template <size_type I>
 		struct      tuple_element {using type = U;};
 
+	protected:
+		template <size_type I>
+		using       tuple_element_t = typename tuple_element<I>::type;
+
 		static_assert(std::same_as<U, typename S_::value_type>);
 
 	public:// OPERATE
@@ -194,11 +203,11 @@ struct superbucket<A>
 	//	XTAL_VAL_(reduce) (homotype, noexcept:S_)
 
 		XTAL_VAL_(new,explicit)
-		homotype(variable<size_type> const n)
+		homotype(std::variant<size_type> const n)
 		noexcept
 		{
 			if constexpr (un_v<0, size>) {
-				if (n < size or std::is_constant_evaluated()) {
+				if (get<size_type>(n) < size or std::is_constant_evaluated()) {
 					S_::fill(value_type{});
 				}
 			}
@@ -210,34 +219,35 @@ struct superbucket<A>
 		XTAL_VAL_(new,implicit)
 		homotype()
 		noexcept
-		:	homotype(variable{size_type{}})
+		:	homotype(std::variant<size_type>{size_type{}})
 		{
-		}
-		XTAL_VAL_(new,explicit)
-		homotype(iterable_q auto &&xs)
-		noexcept
-		requires epimorphic_q<homotype, decltype(xs)>
-		:	homotype(variable{count_f(xs)})
-		{
-			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
-			_detail::copy_to<T::devalue_f>(S_::begin(), point_f(XTAL_REF_(xs)), n);
 		}
 		XTAL_VAL_(new,implicit)
 		homotype(std::initializer_list<value_type> xs)
 		noexcept
-		:	homotype(variable{count_f(xs)})
+		:	homotype(std::variant<size_type>{count_f(xs)})
 		{
 			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
-			_detail::move_to<T::devalue_f>(S_::begin(), point_f(xs), n);
+			_detail::copy_to<T::devalue_f>(S_::begin(), point_f(          xs ), n);
+		}
+		XTAL_VAL_(new,explicit)
+		homotype(iterable_q auto &&xs)
+		noexcept
+		requires infungible_q<homotype, decltype(xs)> and epimorphic_q<homotype, decltype(xs)>
+		:	homotype(std::variant<size_type>{count_f(xs)})
+		{
+			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
+			_detail::copy_to<T::devalue_f>(S_::begin(), point_f(XTAL_REF_(xs)), n);
 		}
 
 		XTAL_VAL_(new,explicit)
 		homotype(make_q<typename T::devalue_type> auto &&...xs)
 		noexcept
-		requires requires {archetype{XTAL_REF_(xs)...};}
+		requires in_v<same_q<decltype(T::devalue_f), decltype(T::revalue_f)>>
+		and      requires {archetype{XTAL_REF_(xs)...};}
 		:	S_([&]<auto ...I> (bond::seek_in_t<I...>)
 				XTAL_0FN_(to) (static_cast<S_ &&>(archetype{XTAL_REF_(xs)...,
-					std::tuple_element_t<I + sizeof...(xs), archetype>{}...}))
+				    tuple_element_t<I + sizeof...(xs)>{}...}))
 				(bond::seek_to_t<size - sizeof...(xs)>{})
 			)
 		{
@@ -245,8 +255,8 @@ struct superbucket<A>
 		XTAL_VAL_(new,explicit)
 		homotype(make_q<typename T::revalue_type> auto &&...xs)
 		noexcept
-		requires different_q<decltype(T::devalue_f), decltype(T::revalue_f)>
-		:	homotype{T::devalue_f(XTAL_REF_(xs))...}
+		requires un_v<same_q<decltype(T::devalue_f), decltype(T::revalue_f)>>
+		:	homotype(T::devalue_f(XTAL_REF_(xs))...)
 		{
 		}
 
@@ -257,24 +267,21 @@ struct superbucket<A>
 
 
 }///////////////////////////////////////////////////////////////////////////////
-
-template <scalar_array_q ...Us> requires same_q<Us...>
-struct bucket<Us ...>
-:	bucket<common_t<Us...>[sizeof...(Us)]>
-{
-};
 /*!
 \brief Defines a fixed-width `std::array`- or `std::tuple`-like container.
 
-If `same_q<Us...`, the member-`type` is `std::derived_from<std::tuple<Us...>>`.
+If `different_q<Us...`, the member-`type` is `std::derived_from<std::tuple<Us...>>`.
 Otherwise, the member-`type` derives from `std::span` or `std::array`,
 depending respectively on whether the supplied signature is referenced or unreferenced.
 */
+template <scalar_array_q ...Us> requires same_q<Us...>
+struct bucket<Us ...> : bucket<common_t<Us...>[sizeof...(Us)]>
+{};
 template <class ...Us>
 struct bucket
 {
 	template <class T>
-	using endotype = typename _detail::superbucket<Us...>::template homotype<T>;
+	using endotype = typename bond::devoid_s<_detail::superbucket, Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<bucket_t>>;
@@ -284,12 +291,14 @@ struct bucket
 	{
 		using S_ = holotype<T>;
 
-		template <class _, class ...As> struct form_           {using type = bond::compose_s<T, bond::tagged<As...>>;};
-		template <class _             > struct form_<_, Us...> {using type = T;};
-		template <class _             > struct form_<_       > {using type = T;};
+		template <class T_, class ...As> struct form_            {using type = bond::compose_s<T_, bond::tagged<As...>>;};
+		template <class T_             > struct form_<T_, Us...> {using type = T_;};
+		template <class T_             > struct form_<T_       > {using type = T_;};
 		
-		template <class _, scalar_array_q ...As> requires same_q<As...>
-		struct form_<_, As...> : form_<_, common_t<As...>[sizeof...(As)]> {};
+		template <class T_, scalar_array_q ...As> requires same_q<As...>
+		struct form_<T_, As...>
+		:	    form_<T_, common_t<As...>[sizeof...(As)]>
+		{};
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -305,14 +314,16 @@ struct bucket
 		/*!
 		\brief  	Reinvokes the current `template` (uniquely determined by the `bond::tag`s).
 		*/
-		template <class ...Xs> using form_t = typename form_<void, Xs...>::type;
+		template <class ...Xs>
+		XTAL_TYP_(set)
+		form_t = typename form_<T, Xs...>::type;
 		
 		/*!
 		\returns	A specialized instance of the underlying template using the argument types `Xs...`.
 		*/
 		template <class ...Xs>
 		XTAL_VAL_(return,inline,set)
-		form(Xs &&...xs)
+		reform(Xs &&...xs)
 		noexcept -> auto
 		{
 			return form_t<xtd::decay_xvalue_t<Xs>...>{XTAL_REF_(xs)...};
@@ -323,12 +334,12 @@ struct bucket
 		*/
 		XTAL_FN2_(to) (template <class ...Xs>
 		XTAL_VAL_(return,inline,let)
-		reform(), form_t<Xs...>(self()))
+		deform(), form_t<Xs...>(self()))
 
 	public:// OPERATE
 		using S_::self;
 		using S_::size;
-		static cardinal_constant_t<std::rank_v<common_t<Us...>>> constexpr rank{};
+	//	static cardinal_constant_t<std::rank_v<common_t<Us...>>> constexpr rank{};
 
 		XTAL_VAL_(set) mask = size_constant_t<size - 1>{};
 
@@ -340,7 +351,7 @@ struct bucket
 		noexcept -> bool
 		{
 			XTAL_IF0
-		//	XTAL_0IF (same_q<Us...> and atomic_q<value_type>) {
+		//	XTAL_0IF (fixed_valued_q<archetype> and atomic_q<value_type>) {
 		//		return 0 == std::memcmp(s.data(), t.data(), S_::size_bytes());//TODO: Not working for complex values?
 		//	}
 			XTAL_0IF XTAL_TRY_(to) (
@@ -361,7 +372,7 @@ struct bucket
 		self(cardinal_constant_q auto N_form),
 		{
 			bool constexpr K_default = same_q<U_form, value_type>;
-			bool constexpr K_uniform = same_q<Us...>;
+			bool constexpr K_uniform = fixed_valued_q<archetype>;
 			XTAL_IF0
 			XTAL_0IF (K_default and N_form == size()) {
 				return self();
@@ -372,7 +383,7 @@ struct bucket
 			XTAL_0IF_(else) {
 				static_assert(K_default);
 				return [&]<auto ...I> (bond::seek_in_t<I...>)
-					XTAL_0FN_(to) (reform(get<I>(self())...))
+					XTAL_0FN_(to) (deform(get<I>(self())...))
 				(bond::seek_to_t<N_form>{});
 			}
 			static_assert(N_form <= size());
@@ -391,7 +402,7 @@ struct bucket
 		twin() const
 		noexcept -> auto
 		{
-			return reform<std::remove_cvref_t<Us>...>();
+			return deform<std::remove_cvref_t<Us>...>();
 		}
 		/*!
 		\returns	A copy of `this` truncated to the first `resize` elements.
@@ -402,18 +413,18 @@ struct bucket
 		noexcept -> auto
 		{
 			bool constexpr K_default = same_q<U_form, value_type>;
-			bool constexpr K_uniform = same_q<Us...>;
+			bool constexpr K_uniform = fixed_valued_q<archetype>;
 			XTAL_IF0
 			XTAL_0IF (K_default and N_form == size()) {
 				return twin();
 			}
 			XTAL_0IF (K_uniform and N_form == size()) {
-				return reform<U_form  [N_form]>();
+				return deform<U_form  [N_form]>();
 			}
 			XTAL_0IF_(else) {
 			//	static_assert(K_default);// Not necessary?
 				return [&]<auto ...I> (bond::seek_in_t<I...>)
-					XTAL_0FN_(to) (form(got<I>(self())...))
+					XTAL_0FN_(to) (reform(got<I>(self())...))
 				(bond::seek_to_t<N_form>{});
 			}
 		}
@@ -472,7 +483,7 @@ struct bucket
 		element_f(auto &&o, index_type i)
 		noexcept -> decltype(auto)
 		{
-			static_assert(same_q<Us...>);
+			static_assert(fixed_valued_q<archetype>);
 			auto const K_ind = T::deindex_f(N_ind + i);
 			return qualify_f<archetype>(XTAL_REF_(o)).operator[](K_ind);
 		}
@@ -496,7 +507,7 @@ struct bucket
 		/*!
 		\returns	A `revalue_f`d instance of `this`.
 		*/
-		XTAL_FN2_(to) (XTAL_VAL_(return,inline,let) reform(), apply())
+		XTAL_FN2_(to) (XTAL_VAL_(return,inline,let) deform(), apply())
 
 		/*!
 		\returns	A `revalue_f`d instance of `this`.
@@ -506,7 +517,7 @@ struct bucket
 		noexcept -> decltype(auto)
 		{
 			using F = decltype(T::revalue_f);
-			if constexpr (same_q<Us...>) {
+			if constexpr (fixed_valued_q<archetype>) {
 				return apply<typename S_::template form_t<return_t<F, value_type>[size]>>();
 			}
 			else {

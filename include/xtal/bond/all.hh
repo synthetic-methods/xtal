@@ -2,6 +2,7 @@
 #include "./compose.hh"
 #include "./depose.hh"
 #include "./derive.hh"
+#include "./devoid.hh"
 #include "./fit.hh"
 #include "./operate.hh"
 #include "./pack.hh"

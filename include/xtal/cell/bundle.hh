@@ -54,7 +54,7 @@ struct bundle
 		subtype(Xs &&...xs)
 		noexcept
 	//	requires make_p<H_, Xs...>
-		:	S_{H_{XTAL_REF_(xs)...}}
+		:	S_{H_(XTAL_REF_(xs)...)}
 		{}
 
 	public:// ACCESS
